@@ -1,0 +1,65 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+build/
+*.dart.map
+*.info.json
+*.log
+*.packages
+*.pub-cache
+.flutter-plugins
+.flutter-plugins-dependencies
+**/doc/api/
+
+# Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+.out/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/libraries
+.idea/artifacts.xml
+.idea/caches
+.idea/modules.xml
+.idea/vcs.xml
+.cxx/
+.gradle/
+local.properties
+GeneratedPluginRegistrant.java
+
+# VS Code
+.vscode/
+*.code-workspace
+.history/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ملفات الـ Keys (أضف أي ملف خاص بالمفاتيح)
+*.key
+*.jks
+*.keystore
+secrets.dart
+keys.dart
+api_keys.dart
+.env
+
+# ملفات التطبيق
+*.apk
+*.aab
+*.app
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# تقارير الأخطاء
+*.log
+test/*.log.diff
