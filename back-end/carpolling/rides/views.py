@@ -6,8 +6,7 @@ from rest_framework import status, permissions
 from .models import Ride
 
 class CreateRideAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
+    
     def post(self, request):
         user = request.user
         if user.user_type != "driver":
@@ -18,16 +17,13 @@ class CreateRideAPIView(APIView):
         
         serializer = CreateRideSerializer(data=request.data)
         if serializer.is_valid():
-            # Set the car image to the driver's profile picture
-            ride = serializer.save(driver=user.driver, car_image=user.driver.profile_picture)
+          
+            ride = serializer.save(driver=user.driver, car_image=user.profile_picture)
             return Response(CreateRideSerializer(ride).data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
 class UpdateRideView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request, ride_id):
         try:
@@ -35,7 +31,7 @@ class UpdateRideView(APIView):
         except Ride.DoesNotExist:
             return Response({"error": "Ride not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # مسموح التعديل فقط إذا كانت الرحلة Active
+
         if ride.status != Ride.RideStatus.ACTIVE:
             return Response({"error": "Only active rides can be updated"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -46,7 +42,6 @@ class UpdateRideView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CancelRideView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, ride_id):
         try:
@@ -57,34 +52,32 @@ class CancelRideView(APIView):
         if ride.status != Ride.RideStatus.ACTIVE:
             return Response({"error": "Only active rides can be cancelled"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # حذف الرحلة من قاعدة البيانات
-        ride.delete()
-        return Response({"message": "Ride deleted successfully"}, status=status.HTTP_200_OK)
-
-
+        ride.status = Ride.RideStatus.CANCELLED
+        ride.save()
+        return Response({"message": "Ride cancelled successfully"}, status=status.HTTP_200_OK)
 
 class CreateReservationView(APIView):
-    permission_classes = [permissions.IsAuthenticated]  # لازم تسجيل دخول
 
     def post(self, request, *args, **kwargs):
+
         if not hasattr(request.user, 'rider'):
-            return Response({"error": "Only riders can search for rides"}, status=status.HTTP_403_FORBIDDEN)
-        serializer = CreateReservationSerializer(data=request.data)
+            return Response(
+                {"error": "Only riders can create reservations."}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = CreateReservationSerializer(data=request.data, context={'request': request})
 
         if serializer.is_valid():
-            # تعيين الراكب من المستخدم الحالي
             serializer.save(rider=request.user.rider)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
 class SearchRides(APIView):
-    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        # أخذ قيم البحث من Query Params
+       
         location = request.query_params.get('location')
         destination = request.query_params.get('destination')
 
@@ -94,25 +87,41 @@ class SearchRides(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # البحث عن الرحلات
         rides = Ride.objects.filter(
             location__icontains=location,
             destination__icontains=destination,
-            status='active'  # نعرض فقط الرحلات النشطة
+            status=Ride.RideStatus.ACTIVE
         )
 
         serializer = RideSearchSerializer(rides, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 class MyRidesView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        if not hasattr(user, 'driver'):
-            return Response({"error": "Only drivers can view their rides"}, status=status.HTTP_403_FORBIDDEN)
+        if user.user_type== 'driver':
+            try:
+                driver= user.driver
+            except AttributeError:
+                return Response({"error": "Driver profile not found"}, status= status.HTTP_404_NOT_FOUND)
+            rides= Ride.objects.filter(driver= driver, status=Ride.RideStatus.ACTIVE).order_by('-id')
+            serializer= RideSearchSerializer(rides, many= True)
+            return Response({
+                "user_type": "driver",
+                "rides": serializer.data
+            }, status=status.HTTP_200_OK)
+        elif user.user_type== 'rider':
+            try:
+                rider= user.rider
+            except AttributeError:
+                return Response({"error": "Rider profile not found"}, status= status.HTTP_404_NOT_FOUND)
+            reservations= Reservation.objects.filter(rider= rider).order_by('-id')
+            serializer= ReservationDetailSerializer(reservations, many= True)
+            return Response({
+                "user_type": "rider",
+                "reservations" : serializer.data
+            }, status= status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid user type"}, status=status.HTTP_400_BAD_REQUEST)
 
-        rides = Ride.objects.filter(driver=user.driver).order_by('-id')
-        serializer = RideSearchSerializer(rides, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -18,36 +18,54 @@ class UpdateRideSerializer(serializers.ModelSerializer):
         fields = ["id", "location", "destination", "departure_time", "arrival_time", "cost", "capacity", "status"]
 
 
-
-
 class CreateReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = ['id', 'ride', 'rider', 'status']
-        read_only_fields = ['status', ]
+        fields = ['id', 'ride', 'rider', 'status', "created_at"]
+        read_only_fields = ['status', 'rider'] 
 
     def validate(self, attrs):
         ride = attrs.get('ride')
+        rider = self.context['request'].user.rider 
 
-       
-        if ride.capacity == 0:
-            raise serializers.ValidationError("No available seats.")
+        if ride.available_seats <= 0: 
+            raise serializers.ValidationError("No available seats left on this ride.")
+
+        if Reservation.objects.filter(ride=ride, rider=rider).exists():
+            raise serializers.ValidationError("You have already reserved a seat on this ride.")
+            
+        if ride.driver.user == self.context['request'].user:
+            raise serializers.ValidationError("You cannot reserve your own ride.")
         return attrs
 
     def create(self, validated_data):
-        ride = validated_data['ride']
-
         reservation = Reservation.objects.create(**validated_data)
-
-        ride.capacity -= 1
-        ride.save()
-
         return reservation
 
 
+
 class RideSearchSerializer(serializers.ModelSerializer):
-    car_image = serializers.ImageField(source='driver.profile_picture', read_only=True)
+    car_image = serializers.ImageField( read_only=True)
 
     class Meta:
         model = Ride
-        fields = ["id", "location", "destination", "departure_time", "arrival_time", "cost", "car_image", "capacity"]
+        fields = ["id", "location", "destination", "departure_time", "arrival_time", "cost", "car_image", "capacity", ]
+
+class ReservationDetailSerializer(serializers.ModelSerializer):
+    ride_details= RideSearchSerializer(source= 'ride', read_only= True)
+    driver_name= serializers.CharField(source= 'ride.driver.user.name', read_only= True)
+    class Meta:
+        model= Reservation
+        fields= ['id', 'status', 'payment', 'ride_details', 'driver_name', "created_at"]
+
+class UpdateReservationStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = ['status']
+
+    def validate_status(self, value):
+        if value not in ['accepted', 'rejected']:
+            raise serializers.ValidationError("Status must be accepted or rejected.")
+        return value
+    
+
