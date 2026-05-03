@@ -1,14 +1,16 @@
 import email
 from django.shortcuts import render
 from rest_framework.views import APIView
-from rest_framework import status,generics
+from rest_framework import status
 from rest_framework.response import Response  
 from .serializers import *
 from rest_framework import permissions
+
 from .models import  MainUser, Driver, Rider
 import requests # add this
 from django.conf import settings
 from requests.auth import HTTPBasicAuth
+from oauth2_provider.models import AccessToken, RefreshToken
 
 class CreateAccount(APIView):
     permission_classes = [permissions.AllowAny]
@@ -20,7 +22,7 @@ class CreateAccount(APIView):
 
             client_id = getattr(settings, 'OAUTH_CLIENT_ID', None)
             client_secret = getattr(settings, 'OAUTH_CLIENT_SECRET', None)
-            token_url = getattr(settings, 'OAUTH_TOKEN_URL', 'http://127.0.0.1:8000/auth/token')
+            token_url = getattr(settings, 'OAUTH_TOKEN_URL', 'http://127.0.0.1:8000/auth/token/')
 
             r = requests.post(
                 token_url,
@@ -44,8 +46,6 @@ class CreateAccount(APIView):
         return Response(reg_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
 class Login(APIView):
     permission_classes=[permissions.AllowAny]
     def post(self,request) :
@@ -55,9 +55,9 @@ class Login(APIView):
 
         email=log_serializer.validated_data['email']
         password=log_serializer.validated_data['password']
-        token_url = getattr(settings, 'OAUTH_TOKEN_URL', 'http://127.0.0.1:8000/auth/token')
-        client_id = getattr(settings, 'OAUTH_CLIENT_ID', 'Your Client ID')
-        client_secret = getattr(settings, 'OAUTH_CLIENT_SECRET', 'Your Client Secret')
+        token_url = getattr(settings, 'OAUTH_TOKEN_URL', 'http://127.0.0.1:8000/auth/token/')
+        client_id = getattr(settings, 'OAUTH_CLIENT_ID', 'u5MEK0ILdprDvG4m09N3HLTAyDb5YFsUUPoLM0AN')
+        client_secret = getattr(settings, 'OAUTH_CLIENT_SECRET', 'tR08mgYk8fOrMX7CZ3zZkKSr6DJO9MIzz8HSowh9f8g06r4m3hp3CyWOxBXhbb7s404BcGYyvJbsFH1aGaBkAP8t3nhT5pMoWg76jUMRJuT9ZeErE7AQzU6HAwI2Pqsy')
 
         try:
             resp = requests.post(token_url, data={
@@ -93,10 +93,24 @@ class Login(APIView):
         return Response(token_data, status=status.HTTP_200_OK)
 
             
+class Logout(APIView):
+
+    def post(self, request):
+        try:
+            token = request.auth  
+
+            if token:
+                RefreshToken.objects.filter(access_token=token).delete()
+                token.delete()
+                return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"detail": "Token not found."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            return Response({"detail": "Error during logout", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ViewProfile(APIView):
-    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -123,7 +137,6 @@ class ViewProfile(APIView):
 
 
 class UpdateDriverProfile(APIView):
-    permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request):
         user = request.user
@@ -146,7 +159,6 @@ class UpdateDriverProfile(APIView):
 
 
 class UpdateRiderProfile(APIView):
-    permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request):
         user = request.user

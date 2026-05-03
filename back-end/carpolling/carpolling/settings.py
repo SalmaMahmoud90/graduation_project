@@ -27,8 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*", "127.0.0.1", "10.0.2.2"]
 
-
-
+ADMIN_EMAIL= 'admin@hopon.com'
+ADMIN_PASSWORD= '12345'
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,11 +45,13 @@ INSTALLED_APPS = [
     'drf_social_oauth2',
     'corsheaders',
     'users',
-    'rides'
+    'rides',
+    'dashboard',
+    'drf_spectacular',
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'drf_social_oauth2.backends.DjangoOAuth2',
+    'oauth2_provider.backends.OAuth2Backend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -57,10 +59,18 @@ REST_FRAMEWORK = {
    'DEFAULT_AUTHENTICATION_CLASSES': (
        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  
        'drf_social_oauth2.authentication.SocialAuthentication',
-   )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PERMISSION_CLASSES': [
+        'users.permissions.IsActiveUser',
+    ]
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+SPECTACULAR_SETTINGS= {
+    'TITLE': 'carpooling API',
+    'VERSION': '0.29.0'
+}
+CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
    "http://localhost:3000",
@@ -112,8 +122,12 @@ WSGI_APPLICATION = 'carpolling.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'carpool_db',
+        'USER': 'root',
+        'PASSWORD': '12345',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -173,8 +187,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.MainUser'
 
 
-OAUTH_CLIENT_ID = 'tAo6nA7eitpnHP8IHQBloZWTKgn2nsyvyy6igR8t'
-OAUTH_CLIENT_SECRET = 'lIUEfNNZ2tBgxlTQIM3KuYREa4nv8tgRVj9yCBLInQLyYFPdsHkoaHEzip2G2AlFYosSIV25wOGL7m46pkmMvk62vM23fXp9WJrHKrQCwRhQRxvK9adUjUznZBhdNn0t'
+OAUTH_CLIENT_ID = 'u5MEK0ILdprDvG4m09N3HLTAyDb5YFsUUPoLM0AN'
+OAUTH_CLIENT_SECRET = 'tR08mgYk8fOrMX7CZ3zZkKSr6DJO9MIzz8HSowh9f8g06r4m3hp3CyWOxBXhbb7s404BcGYyvJbsFH1aGaBkAP8t3nhT5pMoWg76jUMRJuT9ZeErE7AQzU6HAwI2Pqsy'
 OAUTH_TOKEN_URL = 'http://127.0.0.1:8000/auth/token/'
 
 

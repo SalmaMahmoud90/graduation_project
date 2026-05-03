@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from django.conf import settings
 from .models import MainUser, Driver, Rider, AppAdmin
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -8,10 +10,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
     def validate(self, attrs):
         user_type = attrs.get('user_type')
+        email= attrs.get('email')
+        password= attrs.get('password')
         if user_type == 'admin':
-            if MainUser.objects.filter(user_type='admin').exists():
+            if email != settings.ADMIN_EMAIL or password != settings.ADMIN_PASSWORD:
                 raise serializers.ValidationError(
-                    {"user_type": "An admin account already exists."}
+                    {"user_type": "An admin account is wrong."}
                 )
         return attrs
     def create(self, validated_data):
@@ -70,7 +74,7 @@ class RiderProfileSerializer(serializers.ModelSerializer):
 
 
 class DriverProfileUpdateSerializer(serializers.ModelSerializer):
-    # الحقول من MainUser
+    
     name = serializers.CharField(source="user.name", required=False)
     language1 = serializers.CharField(source="user.language1", required=False)
     language2 = serializers.CharField(source="user.language2", required=False)  
@@ -93,13 +97,13 @@ class DriverProfileUpdateSerializer(serializers.ModelSerializer):
         ]
 
     def update(self, instance, validated_data):
-        # تحديث بيانات المستخدم MainUser
+        
         user_data = validated_data.pop("user", {})
         for attr, value in user_data.items():
             setattr(instance.user, attr, value)
         instance.user.save()
 
-        # تحديث بيانات Driver
+        
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -108,7 +112,7 @@ class DriverProfileUpdateSerializer(serializers.ModelSerializer):
 
 
 
-class RiderProfileUpdateSerializer(serializers.Serializer):
+class RiderProfileUpdateSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=False, allow_blank=True)
     language1 = serializers.CharField(required=False, allow_blank=True)
     language2 = serializers.CharField(required=False, allow_blank=True)
@@ -116,7 +120,7 @@ class RiderProfileUpdateSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
 
     class Meta:
-        model = Driver
+        model = Rider
         fields = [
             "name",
             "language1",
@@ -126,13 +130,13 @@ class RiderProfileUpdateSerializer(serializers.Serializer):
         ]
 
     def update(self, instance, validated_data):
-        # تحديث بيانات المستخدم MainUser
+     
         user_data = validated_data.pop("user", {})
         for attr, value in user_data.items():
             setattr(instance.user, attr, value)
         instance.user.save()
 
-        # تحديث بيانات Driver
+        
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()

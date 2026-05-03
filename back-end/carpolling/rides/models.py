@@ -12,7 +12,7 @@ class Ride(models.Model):
     location = models.CharField(max_length=50)
     destination = models.CharField(max_length=50)
     driver = models.ForeignKey("users.Driver", on_delete=models.CASCADE, related_name="rides")
-    cost = models.CharField(max_length=50)
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
     capacity = models.IntegerField()
     status = models.CharField(max_length=20, choices=RideStatus.choices, default=RideStatus.ACTIVE)
     rider = models.ManyToManyField(Rider, through='Reservation', related_name="rides")
@@ -39,6 +39,9 @@ class Reservation(models.Model):
     rider = models.ForeignKey(Rider, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=ReservationStatus.choices, default=ReservationStatus.PENDING)
     payment = models.CharField(max_length=20, choices=PaymentStatus.choices, default=PaymentStatus.UNPAID)
+    created_at= models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.rider.user.name} -> {self.ride}"
+    class Meta:
+        unique_together = ['ride', 'rider']
