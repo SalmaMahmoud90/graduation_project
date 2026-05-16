@@ -63,7 +63,12 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PERMISSION_CLASSES': [
         'users.permissions.IsActiveUser',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS':
+        'users.pagination.CustomerCursorPagination',
+
+    'PAGE_SIZE': 10,
+    
 }
 
 SPECTACULAR_SETTINGS= {

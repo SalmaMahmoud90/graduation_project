@@ -33,7 +33,7 @@ class MainUser(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=15, null=True)
     email = models.EmailField(unique=True)
     profile_picture = models.ImageField(upload_to='profiles/%Y/%m/%d/', null=True, blank=True)
-    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, null=False, blank=True)
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, null=True, blank=True)
     phone= models.CharField(max_length= 50, unique= True, null=True, blank=True)
     language1= models.CharField(max_length=50,null=True, blank=True) 
     language2= models.CharField(max_length=50,null=True, blank=True) 

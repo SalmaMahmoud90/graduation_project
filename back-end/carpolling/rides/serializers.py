@@ -46,17 +46,18 @@ class CreateReservationSerializer(serializers.ModelSerializer):
 
 class RideSearchSerializer(serializers.ModelSerializer):
     car_image = serializers.ImageField( read_only=True)
-
+    available_seats = serializers.IntegerField(read_only=True)
     class Meta:
         model = Ride
-        fields = ["id", "location", "destination", "departure_time", "arrival_time", "cost", "car_image", "capacity", ]
+        fields = ["id", "location", "destination", "departure_time", "arrival_time", "cost", "car_image", "capacity", "available_seats", "status"]
 
 class ReservationDetailSerializer(serializers.ModelSerializer):
-    ride_details= RideSearchSerializer(source= 'ride', read_only= True)
-    driver_name= serializers.CharField(source= 'ride.driver.user.name', read_only= True)
+    ride_location= serializers.CharField(source= 'ride.location', read_only= True)
+    ride_destination= serializers.CharField(source= 'ride.destination', read_only= True)
+    rider_name= serializers.CharField(source= 'rider.user.name', read_only= True)
     class Meta:
         model= Reservation
-        fields= ['id', 'status', 'payment', 'ride_details', 'driver_name', "created_at"]
+        fields= ['id', 'rider_name', 'status', 'payment', 'ride_location', 'ride_destination', "created_at"]
 
 class UpdateReservationStatusSerializer(serializers.ModelSerializer):
     class Meta:
