@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     'social_django',
     'drf_social_oauth2',
     'corsheaders',
-    'users',
-    'rides',
-    'dashboard',
     'drf_spectacular',
+    # local apps
+    'users.apps.UsersConfig',
+    'rides.apps.RidesConfig',
+    'dashboard.apps.DashboardConfig',
+    'notifications.apps.NotificationsConfig'
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -65,7 +67,7 @@ REST_FRAMEWORK = {
         'users.permissions.IsActiveUser',
     ],
     'DEFAULT_PAGINATION_CLASS':
-        'users.pagination.CustomerCursorPagination',
+        'users.pagination.CustomerLimitOffsetPagination',
 
     'PAGE_SIZE': 10,
     
