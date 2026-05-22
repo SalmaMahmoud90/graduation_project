@@ -26,6 +26,12 @@ class CreateRideAPIView(APIView):
 class UpdateRideView(APIView):
 
     def patch(self, request, ride_id):
+        user = request.user
+        if user.user_type != "driver":
+            return Response(
+                {"error": "Only drivers can update rides"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
         try:
             ride = Ride.objects.get(id=ride_id, driver=request.user.driver)
         except Ride.DoesNotExist:
@@ -44,6 +50,12 @@ class UpdateRideView(APIView):
 class CancelRideView(APIView):
 
     def delete(self, request, ride_id):
+        user = request.user
+        if user.user_type != "driver":
+            return Response(
+                {"error": "Only drivers can delete rides"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
         try:
             ride = Ride.objects.get(id=ride_id, driver=request.user.driver)
         except Ride.DoesNotExist:
@@ -54,12 +66,20 @@ class CancelRideView(APIView):
 
         ride.status = Ride.RideStatus.CANCELLED
         ride.save()
+        Reservation.objects.filter(
+        ride=ride,
+        status__in=[
+            Reservation.ReservationStatus.PENDING,
+            Reservation.ReservationStatus.ACCEPTED
+        ]
+        ).update(
+            status=Reservation.ReservationStatus.CANCELLED
+        )
         return Response({"message": "Ride cancelled successfully"}, status=status.HTTP_200_OK)
 
 class CreateReservationView(APIView):
 
     def post(self, request, *args, **kwargs):
-
         if not hasattr(request.user, 'rider'):
             return Response(
                 {"error": "Only riders can create reservations."}, 
@@ -67,12 +87,92 @@ class CreateReservationView(APIView):
             )
 
         serializer = CreateReservationSerializer(data=request.data, context={'request': request})
-
         if serializer.is_valid():
             serializer.save(rider=request.user.rider)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CancelReservationView(APIView):
+    def post(self, request, reservation_id):
+        user= request.user
+        if user.user_type != "rider":
+            return Response(
+                {"error": "Only riders can canceled reservations"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        try:
+            reservation= Reservation.objects.get(id= reservation_id)
+        except Reservation.DoesNotExist:
+            return Response({"error": "Reservation not found"}, status= status.HTTP_404_NOT_FOUND)
+        if reservation.rider.user != user:
+            return Response(
+                {"error": "You can only canceled your reservations"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        if reservation.status in [
+            Reservation.ReservationStatus.REJECTED,
+            Reservation.ReservationStatus.CANCELLED
+        ]:
+            return Response({"error": "Only pending reservations can be canceled"}, status=status.HTTP_400_BAD_REQUEST)
+        reservation.status = Reservation.ReservationStatus.CANCELLED
+        reservation.save()
+        return Response(
+            {"message": "Reservation canceled successfully"},
+            status=status.HTTP_200_OK
+        )
+
+class AcceptReservationView(APIView):
+    def post(self, request, reservation_id):
+        user = request.user
+        if user.user_type != "driver":
+            return Response(
+                {"error": "Only drivers can accept reservations"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        try:
+            reservation = Reservation.objects.get(id=reservation_id)
+        except Reservation.DoesNotExist:
+            return Response({"error": "Reservation not found"}, status=status.HTTP_404_NOT_FOUND)
+        if reservation.ride.driver.user != user:
+            return Response(
+                {"error": "You can only accept reservations for your rides"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        if reservation.status != Reservation.ReservationStatus.PENDING:
+            return Response({"error": "Only pending reservations can be accepted"}, status=status.HTTP_400_BAD_REQUEST)
+        reservation.status = Reservation.ReservationStatus.ACCEPTED
+        reservation.save()
+        return Response(
+            {"message": "Reservation accepted successfully"},
+            status=status.HTTP_200_OK
+        )
+
+class RejectReservationView(APIView):
+    def post(self, request, reservation_id):
+        user = request.user
+        if user.user_type != "driver":
+            return Response(
+                {"error": "Only drivers can reject reservations"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        try:
+            reservation = Reservation.objects.get(id=reservation_id)
+        except Reservation.DoesNotExist:
+            return Response({"error": "Reservation not found"}, status=status.HTTP_404_NOT_FOUND)
+        if reservation.ride.driver.user != user:
+            return Response(
+                {"error": "You can only reject reservations for your rides"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        if reservation.status != Reservation.ReservationStatus.PENDING:
+            return Response({"error": "Reservation cannot be cancelled"}, status=status.HTTP_400_BAD_REQUEST)
+        reservation.status = Reservation.ReservationStatus.REJECTED
+        reservation.save()
+        return Response(
+            {"message": "Reservation rejected successfully"},
+            status=status.HTTP_200_OK
+        )
 
 class SearchRides(APIView):
 
@@ -92,7 +192,10 @@ class SearchRides(APIView):
             destination__icontains=destination,
             status=Ride.RideStatus.ACTIVE
         )
-
+        rides = [
+        ride for ride in rides
+        if ride.available_seats > 0
+        ]
         serializer = RideSearchSerializer(rides, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

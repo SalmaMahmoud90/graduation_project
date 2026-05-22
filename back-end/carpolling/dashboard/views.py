@@ -1,4 +1,4 @@
-from users.pagination import CustomerCursorPagination
+from users.pagination import CustomerLimitOffsetPagination
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,7 +12,7 @@ class ViewRidesView(APIView):
             return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
         else:
             rides= Ride.objects.all().order_by('-created_at')
-            paginator = CustomerCursorPagination()
+            paginator = CustomerLimitOffsetPagination()
             paginated_rides = paginator.paginate_queryset(rides, request)
             serializer= ViewRidesSerializer(paginated_rides, many= True)
             return paginator.get_paginated_response(serializer.data)
@@ -41,7 +41,7 @@ class ViewUsersView(APIView):
             return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
         else:
             users= MainUser.objects.all().order_by('-created_at')
-            paginator = CustomerCursorPagination()
+            paginator = CustomerLimitOffsetPagination()
             paginated_users = paginator.paginate_queryset(users, request)
             serializer= ViewUsersSerializer(paginated_users, many= True)
             return paginator.get_paginated_response(serializer.data)
@@ -52,13 +52,19 @@ class ViewUserDetailsView(APIView):
         if admin_user.user_type != "admin":
             return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
         else:
-            user= MainUser.objects.get(id= user_id)
+            try:
+                user = MainUser.objects.get(id=user_id)
+            except MainUser.DoesNotExist:
+                return Response(
+                    {"error": "User not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
             if(user.user_type== "driver"):
                 try:
                     driver= user.driver
                 except AttributeError:
                     return Response({"error": "Driver profile not found"}, status= status.HTTP_404_NOT_FOUND)
-                rides= Ride.objects.filter(driver= driver, status=Ride.RideStatus.ACTIVE).order_by('-id')
+                rides= Ride.objects.filter(driver= driver).order_by('-id')
                 serializer= RideSearchSerializer(rides, many= True)
                 return Response({
                     "user_type": "driver",
@@ -86,7 +92,7 @@ class ViewReservationsView(APIView):
             return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
         else:
             reservations= Reservation.objects.all().order_by('-created_at')
-            paginator = CustomerCursorPagination()
+            paginator = CustomerLimitOffsetPagination()
             paginated_reservations = paginator.paginate_queryset(reservations, request)
             serializer= ViewReservationsSerializer(paginated_reservations, many= True)
             return paginator.get_paginated_response(serializer.data)

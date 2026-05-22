@@ -38,6 +38,7 @@ class Reservation(models.Model):
         PENDING = 'pending', 'Pending'
         ACCEPTED = 'accepted', 'Accepted'
         REJECTED = 'rejected', 'Rejected'
+        CANCELLED = 'cancelled'
 
     class PaymentStatus(models.TextChoices):
         UNPAID = 'unpaid', 'Unpaid'
@@ -47,6 +48,7 @@ class Reservation(models.Model):
     rider = models.ForeignKey(Rider, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=ReservationStatus.choices, default=ReservationStatus.PENDING)
     payment = models.CharField(max_length=20, choices=PaymentStatus.choices, default=PaymentStatus.UNPAID)
+    pickup_location = models.CharField(max_length=255)
     created_at= models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

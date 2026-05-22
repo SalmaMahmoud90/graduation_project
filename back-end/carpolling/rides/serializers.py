@@ -21,7 +21,7 @@ class UpdateRideSerializer(serializers.ModelSerializer):
 class CreateReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = ['id', 'ride', 'rider', 'status', "created_at"]
+        fields = ['id', 'ride', 'rider', 'status', "created_at", "pickup_location"]
         read_only_fields = ['status', 'rider'] 
 
     def validate(self, attrs):
@@ -57,16 +57,5 @@ class ReservationDetailSerializer(serializers.ModelSerializer):
     rider_name= serializers.CharField(source= 'rider.user.name', read_only= True)
     class Meta:
         model= Reservation
-        fields= ['id', 'rider_name', 'status', 'payment', 'ride_location', 'ride_destination', "created_at"]
-
-class UpdateReservationStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Reservation
-        fields = ['status']
-
-    def validate_status(self, value):
-        if value not in ['accepted', 'rejected']:
-            raise serializers.ValidationError("Status must be accepted or rejected.")
-        return value
-    
+        fields= ['id', 'rider_name', 'status', 'payment', 'ride_location', 'ride_destination', "created_at", "pickup_location"]
 
