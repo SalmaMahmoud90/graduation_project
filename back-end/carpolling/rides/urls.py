@@ -11,5 +11,7 @@ urlpatterns = [
     path("reservations/<int:reservation_id>/accept/", AcceptReservationView.as_view(), name="accept-reservation"),
     path("reservations/<int:reservation_id>/reject/", RejectReservationView.as_view(), name="reject-reservation"),
     path("search/", SearchRides.as_view(), name="ride-search"),
-    path("myrides/", MyRidesView.as_view(), name="my-rides"),
+    path("my_rides/", MyRidesView.as_view(), name="my-rides"),
+    path("my_reservations/", MyReservationView.as_view(), name="my-reservations"),
+    path("ride_details/<int:ride_id>/", ViewRideDetails.as_view(), name="ride-details"),
 ]

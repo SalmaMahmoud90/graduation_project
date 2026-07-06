@@ -55,10 +55,9 @@ class Login(APIView):
 
         email=log_serializer.validated_data['email']
         password=log_serializer.validated_data['password']
+        client_id = getattr(settings, 'OAUTH_CLIENT_ID', None)
+        client_secret = getattr(settings, 'OAUTH_CLIENT_SECRET', None)
         token_url = getattr(settings, 'OAUTH_TOKEN_URL', 'http://127.0.0.1:8000/auth/token/')
-        client_id = getattr(settings, 'OAUTH_CLIENT_ID', 'u5MEK0ILdprDvG4m09N3HLTAyDb5YFsUUPoLM0AN')
-        client_secret = getattr(settings, 'OAUTH_CLIENT_SECRET', 'tR08mgYk8fOrMX7CZ3zZkKSr6DJO9MIzz8HSowh9f8g06r4m3hp3CyWOxBXhbb7s404BcGYyvJbsFH1aGaBkAP8t3nhT5pMoWg76jUMRJuT9ZeErE7AQzU6HAwI2Pqsy')
-
         try:
             resp = requests.post(token_url, data={
             'grant_type': 'password',

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import status
 from .models import Ride
 
 class CreateRideAPIView(APIView):
@@ -18,7 +18,7 @@ class CreateRideAPIView(APIView):
         serializer = CreateRideSerializer(data=request.data)
         if serializer.is_valid():
           
-            ride = serializer.save(driver=user.driver, car_image=user.profile_picture)
+            ride = serializer.save(driver=user.driver)
             return Response(CreateRideSerializer(ride).data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -197,10 +197,9 @@ class SearchRides(APIView):
         if ride.available_seats > 0
         ]
         serializer = RideSearchSerializer(rides, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"rides":serializer.data}, status=status.HTTP_200_OK)
 
 class MyRidesView(APIView):
-
     def get(self, request):
         user = request.user
         if user.user_type== 'driver':
@@ -209,22 +208,55 @@ class MyRidesView(APIView):
             except AttributeError:
                 return Response({"error": "Driver profile not found"}, status= status.HTTP_404_NOT_FOUND)
             rides= Ride.objects.filter(driver= driver, status=Ride.RideStatus.ACTIVE).order_by('-id')
-            serializer= RideSearchSerializer(rides, many= True)
+            serializer= MyRidesSerializer(rides, many= True)
             return Response({
-                "user_type": "driver",
                 "rides": serializer.data
             }, status=status.HTTP_200_OK)
-        elif user.user_type== 'rider':
+        return Response({"error": "Only drivers can access this endpoint"},status=status.HTTP_403_FORBIDDEN)
+        
+class MyReservationView(APIView):
+    def get(self, request):
+        user = request.user
+        if user.user_type== 'rider':
             try:
-                rider= user.rider
+              rider= user.rider
             except AttributeError:
                 return Response({"error": "Rider profile not found"}, status= status.HTTP_404_NOT_FOUND)
             reservations= Reservation.objects.filter(rider= rider).order_by('-id')
             serializer= ReservationDetailSerializer(reservations, many= True)
             return Response({
-                "user_type": "rider",
                 "reservations" : serializer.data
             }, status= status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid user type"}, status=status.HTTP_400_BAD_REQUEST)
 
+class ViewRideDetails(APIView):
+    def get(self, request, ride_id):
+        try:
+            ride = Ride.objects.get(
+                id=ride_id,
+                status=Ride.RideStatus.ACTIVE
+            )
+        except Ride.DoesNotExist:
+            return Response(
+                {"error": "Ride not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if (
+            request.user.user_type == "driver"
+            and ride.driver.user == request.user
+        ):
+            return Response(
+                {
+                    "error": "Use My Ride Details endpoint for your own rides"
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = RideDetailsSerializer(ride)
+
+        return Response(
+            {"rides":serializer.data},
+            status=status.HTTP_200_OK
+        )

@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_simplejwt',
     'oauth2_provider',
     'social_django',
     'drf_social_oauth2',
@@ -49,9 +48,12 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'rides.apps.RidesConfig',
     'dashboard.apps.DashboardConfig',
-    'notifications.apps.NotificationsConfig'
+    'notifications.apps.NotificationsConfig',
+    'reports.apps.ReportsConfig',
+    'payments.apps.PaymentsConfig',
 ]
 
+# oauth settings
 AUTHENTICATION_BACKENDS = (
     'oauth2_provider.backends.OAuth2Backend',
     'django.contrib.auth.backends.ModelBackend',

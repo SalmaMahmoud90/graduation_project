@@ -34,8 +34,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             AppAdmin.objects.get_or_create(user=user)
         return user
 
-
-
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
@@ -57,8 +55,7 @@ class DriverProfileSerializer(serializers.ModelSerializer):
             "license_expiry_date",
             "car_number",
             "car_color",
-            "upcoming_trips",
-            "past_trips",
+            "car_image"
         )
 
 class RiderProfileSerializer(serializers.ModelSerializer):
@@ -68,8 +65,7 @@ class RiderProfileSerializer(serializers.ModelSerializer):
         model = Rider
         fields = (
             "user",
-            "upcoming_trips",
-            "past_trips",
+            "current_location"
         )
 
 
@@ -94,6 +90,7 @@ class DriverProfileUpdateSerializer(serializers.ModelSerializer):
             "license_expiry_date",
             "car_number",
             "car_color",
+            "car_image"
         ]
 
     def update(self, instance, validated_data):
@@ -113,11 +110,11 @@ class DriverProfileUpdateSerializer(serializers.ModelSerializer):
 
 
 class RiderProfileUpdateSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(required=False, allow_blank=True)
-    language1 = serializers.CharField(required=False, allow_blank=True)
-    language2 = serializers.CharField(required=False, allow_blank=True)
-    phone = serializers.IntegerField(required=False)
-    email = serializers.EmailField(required=False)
+    name = serializers.CharField(source="user.name", required=False)
+    language1 = serializers.CharField(source="user.language1", required=False)
+    language2 = serializers.CharField(source="user.language2", required=False) 
+    phone = serializers.IntegerField(source="user.phone", required=False)
+    email = serializers.EmailField(source="user.email", required=False)
 
     class Meta:
         model = Rider
@@ -127,6 +124,7 @@ class RiderProfileUpdateSerializer(serializers.ModelSerializer):
             "language2",
             "phone",
             "email",
+            "current_location"
         ]
 
     def update(self, instance, validated_data):

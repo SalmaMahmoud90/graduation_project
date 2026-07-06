@@ -17,6 +17,7 @@ class Migration(migrations.Migration):
             name='past_trips',
             field=models.OneToOneField(default=2, on_delete=django.db.models.deletion.CASCADE, related_name='rider_past_rides', to='rides.ride'),
             preserve_default=False,
+            
         ),
         migrations.AddField(
             model_name='rider',

@@ -11,12 +11,11 @@ class Ride(models.Model):
     arrival_time = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=50)
     destination = models.CharField(max_length=50)
-    driver = models.ForeignKey("users.Driver", on_delete=models.CASCADE, related_name="rides")
+    driver = models.ForeignKey("users.Driver", on_delete=models.CASCADE, related_name="drives")
     cost = models.DecimalField(max_digits=10, decimal_places=2)
     capacity = models.IntegerField()
     status = models.CharField(max_length=20, choices=RideStatus.choices, default=RideStatus.ACTIVE)
     rider = models.ManyToManyField(Rider, through='Reservation', related_name="rides")
-    car_image = models.ImageField(upload_to='car_images/', null=True, blank=True)
     created_at= models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -23,13 +23,13 @@ class MainUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
         
         return self.create_user(email, password, **extra_fields)
+    
 class MainUser(AbstractBaseUser, PermissionsMixin):
     USER_TYPE_CHOICES = [
         ('driver', 'Driver'),
         ('rider', 'Rider'),
         ('admin', 'Admin')
     ]
-    
     name = models.CharField(max_length=15, null=True)
     email = models.EmailField(unique=True)
     profile_picture = models.ImageField(upload_to='profiles/%Y/%m/%d/', null=True, blank=True)
@@ -58,8 +58,6 @@ class MainUser(AbstractBaseUser, PermissionsMixin):
 class Rider(models.Model):
     user = models.OneToOneField(MainUser, on_delete=models.CASCADE)
     current_location = models.CharField(max_length=50,null=True, blank=True)
-    upcoming_trips= models.ForeignKey("rides.Ride", on_delete=models.CASCADE, related_name="rider_upcoming_rides", null=True, blank=True)
-    past_trips= models.ForeignKey("rides.Ride", on_delete=models.CASCADE, related_name="rider_past_rides", null=True, blank=True)
     def __str__(self):
         return f"Rider : {self.user.email}"
 
@@ -69,10 +67,10 @@ class Driver(models.Model):
     car_model = models.CharField(max_length=50, null=True, blank=True)
     license_number = models.CharField(max_length=50, null=True, blank=True)
     license_expiry_date = models.DateField(null=True, blank=True)
-    upcoming_trips= models.ForeignKey("rides.Ride", on_delete=models.CASCADE, related_name="driver_upcoming_rides",null=True, blank=True)
-    past_trips= models.ForeignKey("rides.Ride", on_delete=models.CASCADE, related_name="driver_past_rides", null=True, blank=True)
     car_color= models.CharField(max_length=50, null=True, blank=True)
     car_number= models.CharField(max_length=50, null=True, blank=True)
+    car_image = models.ImageField(upload_to='car_images/', null=True, blank=True)
+
     def __str__(self):
         return f"Driver : {self.user.email}"
 

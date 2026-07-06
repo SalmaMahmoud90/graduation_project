@@ -4,7 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rides.serializers import ReservationDetailSerializer, RideSearchSerializer
-
+from django.db.models import Count
+from payments.models import Wallet, Transaction
+from django.db import transaction
 class ViewRidesView(APIView):
     def get(self, request):
         user = request.user
@@ -33,14 +35,13 @@ class ViewRideDetailsView(APIView):
             serializer= ViewRideDetailSerializer(ride)
             return Response(serializer.data, status= status.HTTP_200_OK)
             
-
 class ViewUsersView(APIView):
     def get(self, request):
         user = request.user
         if user.user_type != "admin":
             return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
         else:
-            users= MainUser.objects.all().order_by('-created_at')
+            users = MainUser.objects.annotate(reports_count=Count('reports_received')).order_by('-created_at')
             paginator = CustomerLimitOffsetPagination()
             paginated_users = paginator.paginate_queryset(users, request)
             serializer= ViewUsersSerializer(paginated_users, many= True)
@@ -97,6 +98,34 @@ class ViewReservationsView(APIView):
             serializer= ViewReservationsSerializer(paginated_reservations, many= True)
             return paginator.get_paginated_response(serializer.data)
 
+class ViewReportsView(APIView):
+    def get(self, request):
+        user = request.user
+        if user.user_type != "admin":
+            return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            reports= Report.objects.all().order_by('-created_at')
+            paginator = CustomerLimitOffsetPagination()
+            paginated_reports = paginator.paginate_queryset(reports, request)
+            serializer= ViewReportsSerializer(paginated_reports, many= True)
+            return paginator.get_paginated_response(serializer.data)
+        
+class ViewReportDetailsView(APIView):
+    def get(self, request, report_id):
+        user= request.user
+        if user.user_type != "admin":
+            return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            try:
+                report = Report.objects.get(id=report_id)
+            except Report.DoesNotExist:
+                return Response(
+                    {"error": "Report not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            serializer= ViewReportsSerializer(report)
+            return Response(serializer.data, status= status.HTTP_200_OK)
+
 class BanUserView(APIView):
     def post(self, request, user_id):
         admin_user = request.user
@@ -141,3 +170,83 @@ class UnBanUserView(APIView):
                 {"error": "User not found"},
                 status=status.HTTP_404_NOT_FOUND
                 )
+            
+class ViewDepositRequestsView(APIView):
+    def get(self, request):
+        admin_user = request.user
+        if admin_user.user_type != "admin":
+            return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
+        deposit_requests= DepositRequest.objects.select_related("user").all().order_by("-created_at")
+        paginator = CustomerLimitOffsetPagination()
+        paginated_requests = paginator.paginate_queryset(deposit_requests, request)
+        serializer= ViewDepositRequestsSerializer(paginated_requests, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    
+class ViewDepositRequestDetailsView(APIView):
+    def get(self, request, deposit_request_id):
+        admin_user = request.user
+        if admin_user.user_type != "admin":
+            return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
+        try:
+            deposit_requests= DepositRequest.objects.select_related("user").get(id=deposit_request_id)
+        except DepositRequest.DoesNotExist:
+            return Response(
+                    {"error": "DepositRequest not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        serializer= ViewDepositRequestsSerializer(deposit_requests)
+        return Response(serializer.data, status= status.HTTP_200_OK)
+
+class AcceptDepositRequestView(APIView):
+    @transaction.atomic
+    def post(self, request, deposit_request_id):
+        admin_user = request.user
+        if admin_user.user_type != "admin":
+            return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
+        try:
+                deposit_request= DepositRequest.objects.select_for_update().get(id= deposit_request_id)
+                if deposit_request.status != DepositRequest.Status.PENDING:
+                    return Response(
+                        {"error": "This request has already been processed."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                deposit_request.status= DepositRequest.Status.APPROVED
+                deposit_request.save()
+                wallet = Wallet.objects.get(user=deposit_request.user)
+                wallet.balance += deposit_request.amount
+                wallet.save()
+                Transaction.objects.create(
+                    wallet=wallet,
+                    deposit_request=deposit_request,
+                    amount=deposit_request.amount,
+                    transaction_type=Transaction.TransactionType.DEPOSIT
+                )
+                return Response({"message": "Deposit request accepted successfully."}, status= status.HTTP_200_OK)
+        except DepositRequest.DoesNotExist:
+            return Response(
+            {"error": "Deposit Request not found"},
+            status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class RejectDepositRequestView(APIView):
+    @transaction.atomic
+    def post(self, request, deposit_request_id):
+        admin_user = request.user
+        if admin_user.user_type != "admin":
+            return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
+        try:
+                deposit_request= DepositRequest.objects.select_for_update().get(id= deposit_request_id)
+                if deposit_request.status != DepositRequest.Status.PENDING:
+                    return Response(
+                        {"error": "This request has already been processed."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                deposit_request.status= DepositRequest.Status.REJECTED
+                deposit_request.save()
+                return Response({"message": "Deposit request rejected successfully."}, status= status.HTTP_200_OK)
+        except DepositRequest.DoesNotExist:
+            return Response(
+            {"error": "Deposit Request not found"},
+            status=status.HTTP_404_NOT_FOUND
+            )
