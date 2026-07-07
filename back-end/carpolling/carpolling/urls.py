@@ -35,6 +35,15 @@ urlpatterns = [
 
     # Rides API Endpoints
     path('api/rides/', include('rides.urls')),
+    
+    # Reports API Endpoints
+    path('api/reports/', include('reports.urls')),
+
+    # Payments API Endpoints
+    path('api/payments/', include('payments.urls')),
+
+    # Notifications API Endpoints
+    # path('api/notifications/', include('notifications.urls')),
 
     # Dashboard API Endpoints
     path('api/dashboard/', include('dashboard.urls')),
