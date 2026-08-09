@@ -10,7 +10,6 @@ class Report(models.Model):
     class ReportStatus(models.TextChoices):
         PENDING= 'pending', 'Pending'
         REVIEWED= 'reviewed', 'Reviewed'
-        RESOLVED = 'resolved', 'Resolved'
 
     reporter= models.ForeignKey("users.MainUser", on_delete=models.CASCADE, related_name= 'reports_made')
     reported_user = models.ForeignKey("users.MainUser",on_delete=models.CASCADE,related_name='reports_received')
@@ -18,5 +17,6 @@ class Report(models.Model):
     type= models.CharField(max_length=20, choices= ReportCategory.choices)
     reason= models.TextField()
     status= models.CharField(max_length=20, choices= ReportStatus.choices, default=ReportStatus.PENDING)
+    admin_note = models.TextField(blank=True, null=True)
     created_at= models.DateTimeField(auto_now_add=True)
     updated_at= models.DateTimeField(auto_now=True)

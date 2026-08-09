@@ -54,13 +54,14 @@ class ViewUserDetailsView(APIView):
             return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
         else:
             try:
-                user = MainUser.objects.get(id=user_id)
+                user = MainUser.objects.select_related("wallet").get(id=user_id)
             except MainUser.DoesNotExist:
                 return Response(
                     {"error": "User not found"},
                     status=status.HTTP_404_NOT_FOUND
                 )
-            if(user.user_type== "driver"):
+            profile = UserProfileSerializer(user).data
+            if user.user_type== "driver":
                 try:
                     driver= user.driver
                 except AttributeError:
@@ -68,7 +69,7 @@ class ViewUserDetailsView(APIView):
                 rides= Ride.objects.filter(driver= driver).order_by('-id')
                 serializer= RideSearchSerializer(rides, many= True)
                 return Response({
-                    "user_type": "driver",
+                    "profile": profile,
                     "rides": serializer.data
                 }, status=status.HTTP_200_OK)
             elif user.user_type== 'rider':
@@ -79,7 +80,7 @@ class ViewUserDetailsView(APIView):
                 reservations= Reservation.objects.filter(rider= rider).order_by('-id')
                 serializer= ReservationDetailSerializer(reservations, many= True)
                 return Response({
-                    "user_type": "rider",
+                    "profile": profile,
                     "reservations" : serializer.data
                 }, status= status.HTTP_200_OK)
             else:
@@ -115,16 +116,45 @@ class ViewReportDetailsView(APIView):
         user= request.user
         if user.user_type != "admin":
             return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
-        else:
-            try:
-                report = Report.objects.get(id=report_id)
-            except Report.DoesNotExist:
-                return Response(
-                    {"error": "Report not found"},
-                    status=status.HTTP_404_NOT_FOUND
+        
+        try:
+            report = Report.objects.get(id=report_id)
+            if report.status == Report.ReportStatus.PENDING:
+                report.status = Report.ReportStatus.REVIEWED
+                report.save(update_fields=["status"])
+        except Report.DoesNotExist:
+            return Response(
+                {"error": "Report not found"},
+                status=status.HTTP_404_NOT_FOUND
                 )
-            serializer= ViewReportsSerializer(report)
-            return Response(serializer.data, status= status.HTTP_200_OK)
+        serializer= ViewReportDetailsSerializer(report)
+        return Response(serializer.data, status= status.HTTP_200_OK)
+
+class SendNote(APIView):
+    def patch(self, request, report_id):
+        admin_user = request.user
+        if admin_user.user_type != "admin":
+            return Response({"error": "Only Admin access this."}, status=status.HTTP_403_FORBIDDEN)
+        try:
+            report = Report.objects.get(id=report_id)
+        except Report.DoesNotExist:
+            return Response(
+                {"error": "Report not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = AdminNoteSerializer(
+            report,
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
+
 
 class BanUserView(APIView):
     def post(self, request, user_id):

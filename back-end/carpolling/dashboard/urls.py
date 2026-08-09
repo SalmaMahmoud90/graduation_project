@@ -9,6 +9,7 @@ urlpatterns = [
     path('view_reservations/', ViewReservationsView.as_view(), name= "view_reservations"),
     path('view_reports/', ViewReportsView.as_view(), name= "view_reports"),
     path('view_report_details/<int:report_id>/', ViewReportDetailsView.as_view(), name= "view_report_details"),
+    path('send_note/<int:report_id>/', SendNote.as_view(), name= 'send_note'),
     path('ban/<int:user_id>/', BanUserView.as_view(), name= "ban"),
     path('unban/<int:user_id>/', UnBanUserView.as_view(), name= "unban"),
     path('view_deposit_requests/', ViewDepositRequestsView.as_view(), name= "view_deposit_requests"),
