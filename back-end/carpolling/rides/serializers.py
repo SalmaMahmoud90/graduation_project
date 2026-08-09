@@ -6,16 +6,38 @@ from .models import  Ride, Reservation
 class CreateRideSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ride
-        fields = ["id", "location", "destination", "departure_time", "arrival_time", "cost", "capacity"]
+        fields = ["id", "location", "destination", "departure_time", "departure_date", "expected_duration", "cost", "capacity"]
 
-    def create(self, validated_data):
-        return Ride.objects.create(**validated_data)
+    def validate(self, attrs):
+
+        if attrs["location"] == attrs["destination"]:
+            raise serializers.ValidationError({
+                "destination": "Destination must be different from location."
+            })
+
+        driver = self.context["driver"]
+
+        exists = Ride.objects.filter(
+            driver=driver,
+            location=attrs["location"],
+            destination=attrs["destination"],
+            departure_date = attrs.get('departure_date'),
+            departure_time=attrs.get("departure_time"),
+        ).exists()
+
+        if exists:
+            raise serializers.ValidationError({
+                "ride": "You already have a ride with the same information and departure time."
+            })
+
+        return attrs
+
 
 
 class UpdateRideSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ride
-        fields = ["id", "location", "destination", "departure_time", "arrival_time", "cost", "capacity", "status"]
+        fields = ["id", "location", "destination", "departure_time", "departure_date", "expected_duration", "cost", "capacity" ]
 
 
 class CreateReservationSerializer(serializers.ModelSerializer):
@@ -68,7 +90,7 @@ class MyRidesSerializer(serializers.ModelSerializer):
     available_seats = serializers.IntegerField(read_only=True)
     class Meta:
         model = Ride
-        fields = ["id", "location", "destination", "departure_time", "arrival_time", "cost", "capacity", "available_seats", "status", "car_image"]
+        fields = ["id", "location", "destination", "departure_time", "departure_date", "expected_duration", "cost", "capacity", "available_seats", "status", "car_image"]
 
 class ReservationDetailSerializer(serializers.ModelSerializer):
     ride_location= serializers.CharField(source= 'ride.location', read_only= True)
@@ -87,7 +109,8 @@ class RideDetailsSerializer(serializers.ModelSerializer):
                    "location", 
                    "destination", 
                    "departure_time", 
-                   "arrival_time", 
+                   "departure_date", 
+                   "expected_duration",
                    "cost",
                    "capacity", 
                    "available_seats", 

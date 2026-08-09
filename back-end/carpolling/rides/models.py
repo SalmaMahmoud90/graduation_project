@@ -7,8 +7,9 @@ class Ride(models.Model):
         COMPLETED = 'completed', 'Completed'
         CANCELLED = 'cancelled', 'Cancelled'
 
-    departure_time = models.DateTimeField(null=True, blank=True)
-    arrival_time = models.DateTimeField(null=True, blank=True)
+    departure_time = models.TimeField(null=True, blank=True)
+    departure_date = models.DateField(null=True, blank=True)
+    expected_duration= models.CharField(max_length=50, null= True, blank= True)
     location = models.CharField(max_length=50)
     destination = models.CharField(max_length=50)
     driver = models.ForeignKey("users.Driver", on_delete=models.CASCADE, related_name="drives")
@@ -23,7 +24,7 @@ class Ride(models.Model):
 
     @property
     def available_seats(self):
-        reserved_count = self.reservation_set.filter(
+        reserved_count = self.reservations.filter(
             status__in=[
                 Reservation.ReservationStatus.PENDING,
                 Reservation.ReservationStatus.ACCEPTED
@@ -43,7 +44,7 @@ class Reservation(models.Model):
         UNPAID = 'unpaid', 'Unpaid'
         PAID = 'paid', 'Paid'
 
-    ride = models.ForeignKey(Ride, on_delete=models.CASCADE)
+    ride = models.ForeignKey(Ride, on_delete=models.CASCADE,related_name="reservations")
     rider = models.ForeignKey(Rider, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=ReservationStatus.choices, default=ReservationStatus.PENDING)
     payment = models.CharField(max_length=20, choices=PaymentStatus.choices, default=PaymentStatus.UNPAID)

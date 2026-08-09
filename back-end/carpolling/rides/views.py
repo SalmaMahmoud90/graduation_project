@@ -5,24 +5,35 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Ride
 
-class CreateRideAPIView(APIView):
-    
+class CreateRideView(APIView):
+
     def post(self, request):
         user = request.user
+
         if user.user_type != "driver":
             return Response(
-                {"error": "Only drivers can create rides"}, 
+                {"error": "Only drivers can create rides"},
                 status=status.HTTP_403_FORBIDDEN
             )
-        
-        serializer = CreateRideSerializer(data=request.data)
-        if serializer.is_valid():
-          
-            ride = serializer.save(driver=user.driver)
-            return Response(CreateRideSerializer(ride).data, status=status.HTTP_201_CREATED)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        serializer = CreateRideSerializer(
+            data=request.data,
+            context={"driver": user.driver}
+        )
+
+        if serializer.is_valid():
+
+            ride = serializer.save(driver=user.driver)
+
+            return Response(
+                CreateRideSerializer(ride).data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 class UpdateRideView(APIView):
 
     def patch(self, request, ride_id):
@@ -33,19 +44,25 @@ class UpdateRideView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
         try:
-            ride = Ride.objects.get(id=ride_id, driver=request.user.driver)
+            ride = Ride.objects.get(id=ride_id, driver= user.driver)
         except Ride.DoesNotExist:
             return Response({"error": "Ride not found"}, status=status.HTTP_404_NOT_FOUND)
-
 
         if ride.status != Ride.RideStatus.ACTIVE:
             return Response({"error": "Only active rides can be updated"}, status=status.HTTP_400_BAD_REQUEST)
 
+        if Reservation.objects.filter(ride=ride).exists():
+            return Response(
+                {"error": "Cannot update a ride that has reservations"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
         serializer = UpdateRideSerializer(ride, data=request.data, partial=True)  
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CancelRideView(APIView):
 
@@ -53,7 +70,7 @@ class CancelRideView(APIView):
         user = request.user
         if user.user_type != "driver":
             return Response(
-                {"error": "Only drivers can delete rides"}, 
+                {"error": "Only drivers can cancel rides"}, 
                 status=status.HTTP_403_FORBIDDEN
             )
         try:
@@ -65,7 +82,7 @@ class CancelRideView(APIView):
             return Response({"error": "Only active rides can be cancelled"}, status=status.HTTP_400_BAD_REQUEST)
 
         ride.status = Ride.RideStatus.CANCELLED
-        ride.save()
+        ride.save(update_fields=["status"])
         Reservation.objects.filter(
         ride=ride,
         status__in=[
@@ -79,7 +96,7 @@ class CancelRideView(APIView):
 
 class CreateReservationView(APIView):
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         if not hasattr(request.user, 'rider'):
             return Response(
                 {"error": "Only riders can create reservations."}, 

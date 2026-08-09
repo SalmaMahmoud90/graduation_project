@@ -3,7 +3,7 @@ from .views import *
 
 
 urlpatterns = [
-    path('create/',CreateRideAPIView.as_view(), name='create_ride'),
+    path('create/',CreateRideView.as_view(), name='create_ride'),
     path('<int:ride_id>/update/',UpdateRideView.as_view(), name='update_ride'),
     path("<int:ride_id>/cancel/", CancelRideView.as_view(), name="cancel-ride"),
     path('reservations/create/', CreateReservationView.as_view(), name='create-reservation'),

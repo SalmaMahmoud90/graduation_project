@@ -4,14 +4,21 @@ from django.conf import settings
 from .models import MainUser, Driver, Rider, AppAdmin
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    confirm_password = serializers.CharField(write_only=True)
     class Meta:
         model = MainUser
-        fields = ('email', 'password', 'user_type')
+        fields = ('name', 'email', 'password', "confirm_password", 'user_type')
         extra_kwargs = {'password': {'write_only': True}}
     def validate(self, attrs):
+        name= attrs.get('name')
         user_type = attrs.get('user_type')
         email= attrs.get('email')
         password= attrs.get('password')
+        confirm_password = attrs.get("confirm_password")
+        if password != confirm_password:
+            raise serializers.ValidationError({
+                "confirm_password": "Passwords do not match."
+            })
         if user_type == 'admin':
             if email != settings.ADMIN_EMAIL or password != settings.ADMIN_PASSWORD:
                 raise serializers.ValidationError(
@@ -19,6 +26,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
                 )
         return attrs
     def create(self, validated_data):
+        validated_data.pop("confirm_password")
         password = validated_data.pop('password', None)
         user = self.Meta.model(**validated_data)
         if password is not None:
@@ -34,14 +42,40 @@ class RegistrationSerializer(serializers.ModelSerializer):
             AppAdmin.objects.get_or_create(user=user)
         return user
 
+class VerifyEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=6)
+
+class ResendVerificationSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class VerifyResetCodeSerializer(serializers.Serializer):
+    reset_token = serializers.CharField()
+    code = serializers.CharField(max_length=6)
+
+class ResetPasswordSerializer(serializers.Serializer):
+    reset_token = serializers.CharField()
+    new_password = serializers.CharField(write_only=True, min_length=8)
+    confirm_password = serializers.CharField(write_only=True, min_length= 8)
+    def validate(self, attrs):
+        if attrs["new_password"] != attrs["confirm_password"]:
+            raise serializers.ValidationError({
+                "confirm_password": "Passwords do not match."
+            })
+
+        return attrs
+
 class MainUserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = MainUser
-        fields = ["name","language1","language2","created_at","phone", "email",]
+        fields = ["name","created_at","phone", "profile_picture"]
         
 class DriverProfileSerializer(serializers.ModelSerializer):
     user = MainUserProfileSerializer(read_only=True)
@@ -51,8 +85,6 @@ class DriverProfileSerializer(serializers.ModelSerializer):
         fields = (
             "user",
             "car_model",
-            "license_number",
-            "license_expiry_date",
             "car_number",
             "car_color",
             "car_image"
@@ -71,23 +103,16 @@ class RiderProfileSerializer(serializers.ModelSerializer):
 
 class DriverProfileUpdateSerializer(serializers.ModelSerializer):
     
-    name = serializers.CharField(source="user.name", required=False)
-    language1 = serializers.CharField(source="user.language1", required=False)
-    language2 = serializers.CharField(source="user.language2", required=False)  
-    phone = serializers.IntegerField(source="user.phone", required=False)
+    name = serializers.CharField(source="user.name", required=False) 
+    phone = serializers.CharField(source="user.phone", required=False)
     email = serializers.EmailField(source="user.email", required=False)
 
     class Meta:
         model = Driver
         fields = [
             "name",
-            "language1",
-            "language2",
             "phone",
             "email",
-            "car_model",
-            "license_number",
-            "license_expiry_date",
             "car_number",
             "car_color",
             "car_image"
@@ -111,17 +136,13 @@ class DriverProfileUpdateSerializer(serializers.ModelSerializer):
 
 class RiderProfileUpdateSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="user.name", required=False)
-    language1 = serializers.CharField(source="user.language1", required=False)
-    language2 = serializers.CharField(source="user.language2", required=False) 
-    phone = serializers.IntegerField(source="user.phone", required=False)
+    phone = serializers.CharField(source="user.phone", required=False)
     email = serializers.EmailField(source="user.email", required=False)
 
     class Meta:
         model = Rider
         fields = [
             "name",
-            "language1",
-            "language2",
             "phone",
             "email",
             "current_location"
