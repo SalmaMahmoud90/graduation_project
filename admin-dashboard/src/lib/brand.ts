@@ -1,6 +1,6 @@
-/** Public URL — file lives in `public/hop-on-logo.png`. */
-export const BRAND_LOGO_SRC = '/hop-on-logo.png'
+/** Public URL — file lives in `public/atareeqak-logo.png`. */
+export const BRAND_LOGO_SRC = '/atareeqak-logo.png'
 
-export const BRAND_NAME = 'Hop On'
+export const BRAND_NAME = 'Atareeqak'
 
-export const SITE_TITLE = 'Hop On Dashboard'
+export const SITE_TITLE = 'Atareeqak Dashboard'

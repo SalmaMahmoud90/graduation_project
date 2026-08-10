@@ -75,9 +75,8 @@ export function SignInPage() {
             <img
               src={BRAND_LOGO_SRC}
               alt={BRAND_NAME}
-              width={80}
-              height={80}
-              className="size-20 shrink-0 rounded-full object-cover ring-2 ring-primary/20"
+              width={150}
+              className="invert dark:filter-none"
             />
             <div className="space-y-1">
               <CardTitle className="text-2xl">{t('auth.signIn.title')}</CardTitle>

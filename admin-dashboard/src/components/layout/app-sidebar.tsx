@@ -48,18 +48,10 @@ export function AppSidebar() {
           <img
             src={BRAND_LOGO_SRC}
             alt={BRAND_NAME}
-            width={40}
-            height={40}
-            className="size-10 shrink-0 rounded-full object-cover ring-1 ring-primary/25"
+            width={80}
+            className="invert dark:filter-none"
           />
-          <div className="flex min-w-0 flex-col gap-0.5 leading-tight group-data-[collapsible=icon]:hidden">
-            <span className="text-sm font-semibold tracking-tight">
-              {t('sidebar.brand')}
-            </span>
-            <span className="text-muted-foreground text-xs">
-              {t('sidebar.subtitle')}
-            </span>
-          </div>
+         
         </div>
       </SidebarHeader>
       <SidebarContent>
