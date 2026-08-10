@@ -1,0 +1,333 @@
+import 'package:a_tareqaak/core/extension/page_builder_extension.dart';
+import 'package:a_tareqaak/core/utils/enums/enum_utils.dart';
+import 'package:a_tareqaak/data/models/report/report_model.dart';
+import 'package:a_tareqaak/data/models/ride/ride_model.dart';
+import 'package:a_tareqaak/presentation/screens/customer_service/customer_service_screen.dart';
+import 'package:a_tareqaak/presentation/screens/driver_rides/delete_ride_screen.dart';
+import 'package:a_tareqaak/presentation/screens/driver_rides/edit_ride_list_screen.dart';
+import 'package:a_tareqaak/presentation/screens/driver_rides/edit_ride_screen.dart';
+import 'package:a_tareqaak/presentation/screens/driver_rides/my_rides_screen.dart';
+import 'package:a_tareqaak/presentation/screens/driver_rides/publish_ride_screen.dart';
+import 'package:a_tareqaak/presentation/screens/driver_rides/ride_details_screen.dart';
+import 'package:a_tareqaak/presentation/screens/driver_rides/select_city_screen.dart';
+import 'package:a_tareqaak/presentation/screens/home/widgets/driver_bottom_nav_bar.dart';
+import 'package:a_tareqaak/presentation/screens/notifications/notifications_screen.dart';
+import 'package:a_tareqaak/presentation/screens/profile/driver_profile_screen.dart';
+import 'package:a_tareqaak/presentation/screens/profile/edit_driver_profile_screen.dart';
+import 'package:a_tareqaak/presentation/screens/profile/report_details_screen.dart';
+import 'package:a_tareqaak/presentation/screens/report/my_reports_screen.dart';
+import 'package:a_tareqaak/presentation/screens/report/send_report_screen.dart';
+import 'package:a_tareqaak/presentation/screens/settings/settings_screen.dart';
+import 'package:a_tareqaak/presentation/screens/splash/splash_screen.dart';
+import 'package:a_tareqaak/presentation/screens/auth/login_screen.dart';
+import 'package:a_tareqaak/presentation/screens/auth/register_screen.dart';
+import 'package:a_tareqaak/presentation/screens/auth/check_code_screen.dart';
+import 'package:a_tareqaak/presentation/screens/home/driver_home_screen.dart';
+import 'package:a_tareqaak/presentation/screens/home/rider_home_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+part 'app_routes.g.dart';
+
+//#region Splash
+@TypedGoRoute<SplashRoute>(path: '/')
+class SplashRoute extends GoRouteData with $SplashRoute {
+  final String? annualAuctionId;
+
+  SplashRoute({this.annualAuctionId});
+
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const SplashScreen().buildPage(pageAnimation: PageAnimation.fade);
+  }
+}
+
+//#region Auth
+@TypedGoRoute<LoginRoute>(path: '/login')
+class LoginRoute extends GoRouteData with $LoginRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const LoginScreen().buildPage(pageAnimation: PageAnimation.fade);
+  }
+}
+
+@TypedGoRoute<RegisterRoute>(path: '/register')
+class RegisterRoute extends GoRouteData with $RegisterRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const RegisterScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<CheckCodeRoute>(path: '/check-code')
+class CheckCodeRoute extends GoRouteData with $CheckCodeRoute {
+  final String? email;
+
+  CheckCodeRoute({this.email});
+
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return CheckCodeScreen(email: email ?? 'example@email.com')
+        .buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+//#endregion
+
+//#region Home
+
+@TypedGoRoute<RiderHomeRoute>(path: '/rider-home')
+class RiderHomeRoute extends GoRouteData with $RiderHomeRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const RiderHomeScreen().buildPage(pageAnimation: PageAnimation.fade);
+  }
+}
+
+@TypedGoRoute<EditRideRoute>(path: '/edit-ride')
+class EditRideRoute extends GoRouteData with $EditRideRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const EditRideScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+
+@TypedGoRoute<PublishRideRoute>(path: '/publish-ride')
+class PublishRideRoute extends GoRouteData with $PublishRideRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const PublishRideScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<SelectCityRoute>(path: '/select-city')
+class SelectCityRoute extends GoRouteData with $SelectCityRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const SelectCityScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<EditRideListRoute>(path: '/edit-ride-list')
+class EditRideListRoute extends GoRouteData with $EditRideListRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const EditRideListScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+
+
+@TypedGoRoute<DeleteRideRoute>(path: '/delete-ride')
+class DeleteRideRoute extends GoRouteData with $DeleteRideRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const DeleteRideScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<RideDetailsRoute>(path: '/ride-details')
+class RideDetailsRoute extends GoRouteData with $RideDetailsRoute {
+  RideDetailsRoute({required this.$extra});
+
+  final RideModel $extra;
+
+  @override
+  CustomTransitionPage buildPage(
+      BuildContext context,
+      GoRouterState state,
+      ) {
+    return RideDetailsScreen(
+      ride: $extra,
+    ).buildPage(
+      pageAnimation: PageAnimation.slide,
+    );
+  }
+}
+
+
+
+
+
+
+
+
+@TypedGoRoute<CustomerServiceRoute>(path: '/customer-service')
+class CustomerServiceRoute extends GoRouteData with $CustomerServiceRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const CustomerServiceScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<DriverProfileRoute>(path: '/driver-profile')
+class DriverProfileRoute extends GoRouteData with $DriverProfileRoute {
+  final bool? isOtherUser;
+
+  DriverProfileRoute({this.isOtherUser});
+
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return DriverProfileScreen(isOtherUser: isOtherUser ?? false)
+        .buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<EditDriverProfileRoute>(path: '/edit-driver-profile')
+class EditDriverProfileRoute extends GoRouteData with $EditDriverProfileRoute {
+  final bool? isMandatory;
+
+  EditDriverProfileRoute({this.isMandatory});
+
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return EditDriverProfileScreen(isMandatory: isMandatory ?? false)
+        .buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+class DriverHomeRoute extends GoRouteData with $DriverHomeRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const DriverHomeScreen();
+  }
+}
+
+class DriverRidesRoute extends GoRouteData with $DriverRidesRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const MyRidesScreen();
+  }
+}
+
+class NotificationsRoute extends GoRouteData with $NotificationsRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const NotificationsScreen();
+  }
+}
+
+class SettingsRoute extends GoRouteData with $SettingsRoute{
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return  SettingsScreen();
+  }
+}
+
+@TypedStatefulShellRoute<DriverShellRoute>(
+  branches: [
+    TypedStatefulShellBranch<DriverHomeBranch>(
+      routes: [
+        TypedGoRoute<DriverHomeRoute>(
+          path: '/driver-home',
+        ),
+      ],
+    ),
+
+    TypedStatefulShellBranch<DriverRidesBranch>(
+      routes: [
+        TypedGoRoute<DriverRidesRoute>(
+          path: '/my-rides',
+        ),
+      ],
+    ),
+
+    TypedStatefulShellBranch<NotificationsBranch>(
+      routes: [
+        TypedGoRoute<NotificationsRoute>(
+          path: '/notifications',
+        ),
+      ],
+    ),
+
+    TypedStatefulShellBranch<SettingsBranch>(
+      routes: [
+        TypedGoRoute<SettingsRoute>(
+          path: '/settings',
+        ),
+      ],
+    ),
+  ],
+)
+class DriverShellRoute extends StatefulShellRouteData {
+  @override
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    StatefulNavigationShell navigationShell,
+  ) {
+    return DriverShellScreen(
+      navigationShell: navigationShell,
+    );
+  }
+}
+
+
+
+class DriverRidesBranch extends StatefulShellBranchData {}
+
+class NotificationsBranch extends StatefulShellBranchData {}
+
+class SettingsBranch extends StatefulShellBranchData {}
+
+class DriverHomeBranch extends StatefulShellBranchData {}
+
+
+//#endregion
+
+
+// Driver shell screen
+class DriverShellScreen extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
+
+  const DriverShellScreen({
+    super.key,
+    required this.navigationShell,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: navigationShell,
+
+      bottomNavigationBar: DriverBottomNavBar(
+        currentIndex: navigationShell.currentIndex,
+        onTap: (index) {
+          navigationShell.goBranch(index);
+        },
+      ),
+    );
+  }
+}
+
+@TypedGoRoute<SendReportRoute>(path: '/send-report')
+class SendReportRoute extends GoRouteData with $SendReportRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const SendReportScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<MyReportsRoute>(path: '/my-reports')
+class MyReportsRoute extends GoRouteData with $MyReportsRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const MyReportsScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<ReportDetailsRoute>(path: '/report-details')
+class ReportDetailsRoute extends GoRouteData with $ReportDetailsRoute {
+  final ReportModel $extra;
+
+  ReportDetailsRoute({required this.$extra});
+
+  @override
+  CustomTransitionPage buildPage(context, state) {
+    return ReportDetailsScreen(
+      report: $extra,
+    ).buildPage(
+      pageAnimation: PageAnimation.slide,
+    );
+  }
+}

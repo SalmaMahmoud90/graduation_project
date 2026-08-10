@@ -377,6 +377,68 @@ class VerifyResetCodeView(APIView):
             status=status.HTTP_200_OK
         )
 
+class ResendResetCodeView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = ResendResetCodeSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        reset_token = serializer.validated_data["reset_token"]
+
+        try:
+            reset = PasswordResetCode.objects.select_related("user").get(
+                reset_token=reset_token
+            )
+        except PasswordResetCode.DoesNotExist:
+            return Response(
+                {"error": "Invalid reset request."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if reset.expires_at < timezone.now():
+            reset.delete()
+            return Response(
+                {"error": "Reset request expired. Please request a new reset code."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = reset.user
+
+        code = str(randint(100000, 999999))
+
+        reset.code = code
+        reset.expires_at = timezone.now() + timedelta(minutes=10)
+        reset.is_verified = False
+        reset.save()
+
+        send_mail(
+            subject="Atareeqak Password Reset",
+            message=f"""
+                Hello {user.name or ''},
+                Your new password reset code is:
+                {code}
+                This code will expire in 10 minutes.
+                If you did not request a password reset, please ignore this email.
+            """,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False
+        )
+
+        return Response(
+            {
+                "message": "A new password reset code has been sent.",
+            },
+            status=status.HTTP_200_OK
+        )
+
+
 class ResetPassword(APIView):
     permission_classes = [permissions.AllowAny]
 

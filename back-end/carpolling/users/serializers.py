@@ -28,10 +28,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop("confirm_password")
         password = validated_data.pop('password', None)
-        user = self.Meta.model(**validated_data)
-        if password is not None:
-            user.set_password(password)
-        user.save()
+        user = MainUser.objects.create_user(
+            password=password,
+            **validated_data
+        )
         if user.user_type == 'driver':
             if not hasattr(user, 'driver'):
                 Driver.objects.create(user=user)
@@ -59,6 +59,9 @@ class ForgotPasswordSerializer(serializers.Serializer):
 class VerifyResetCodeSerializer(serializers.Serializer):
     reset_token = serializers.CharField()
     code = serializers.CharField(max_length=6)
+
+class ResendResetCodeSerializer(serializers.Serializer):
+    reset_token = serializers.CharField()
 
 class ResetPasswordSerializer(serializers.Serializer):
     reset_token = serializers.CharField()

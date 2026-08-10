@@ -10,8 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+
+
 from pathlib import Path
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,15 +26,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-or!#@6p(yp%06goxaywxi=oip)ymkjr#4k!%g54&k#s3$n(nrd'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["*", "127.0.0.1", "10.0.2.2"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-ADMIN_EMAIL= 'admin@hopon.com'
-ADMIN_PASSWORD= '12345'
+
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -132,14 +140,13 @@ WSGI_APPLICATION = 'carpolling.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'carpool_db',
-        'USER': 'root',
-        'PASSWORD': '12345',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': os.getenv("DB_HOST", "localhost"),
+        'PORT': os.getenv("DB_PORT", "3306"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -196,22 +203,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.MainUser'
 
 
-OAUTH_CLIENT_ID = 'u5MEK0ILdprDvG4m09N3HLTAyDb5YFsUUPoLM0AN'
-OAUTH_CLIENT_SECRET = 'tR08mgYk8fOrMX7CZ3zZkKSr6DJO9MIzz8HSowh9f8g06r4m3hp3CyWOxBXhbb7s404BcGYyvJbsFH1aGaBkAP8t3nhT5pMoWg76jUMRJuT9ZeErE7AQzU6HAwI2Pqsy'
-OAUTH_TOKEN_URL = 'http://127.0.0.1:8000/auth/token/'
+OAUTH_CLIENT_ID = os.getenv("OAUTH_CLIENT_ID")
+OAUTH_CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET")
+OAUTH_TOKEN_URL = os.getenv(
+    "OAUTH_TOKEN_URL",
+    "http://127.0.0.1:8000/auth/token/"
+)
 
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
 EMAIL_HOST = "smtp.gmail.com"
-
 EMAIL_PORT = 587
-
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = "smsm95835@gmail.com"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-EMAIL_HOST_PASSWORD = "vwsm vxfn lpmu svyl"
-
-DEFAULT_FROM_EMAIL = "A tareeqak <smsm95835@gmail.com>"
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    EMAIL_HOST_USER
+)
