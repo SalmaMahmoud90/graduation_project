@@ -4,7 +4,7 @@ export type Locale = (typeof locales)[number]
 
 export const translations: Record<Locale, Record<string, string>> = {
   en: {
-    'app.title': 'Hop On Dashboard',
+    'app.title': 'Atareeqak Dashboard',
     'app.toggleTheme': 'Toggle theme',
     'app.toggleLocale': 'Toggle language',
     'app.localeLabel': 'Language',
@@ -14,7 +14,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'auth.signIn.description':
       'Sign in with your supervisor email and password.',
     'auth.signIn.email': 'Email',
-    'auth.signIn.emailPlaceholder': 'admin@carpooling.com',
+    'auth.signIn.emailPlaceholder': 'example@gmail.com',
     'auth.signIn.password': 'Password',
     'auth.signIn.passwordPlaceholder': 'Your password',
     'auth.signIn.submit': 'Sign in',
@@ -27,7 +27,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'userMenu.openMenu': 'Account menu',
     'userMenu.signOut': 'Sign out',
     'breadcrumb.label': 'Where you are',
-    'sidebar.brand': 'Hop On',
+    'sidebar.brand': 'Atareeqak',
     'sidebar.subtitle': 'Dashboard',
     'sidebar.navigate': 'Navigate',
     'sidebar.toggle': 'Show or hide menu',
@@ -252,7 +252,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'deposits.detail.reference': 'Transaction reference',
   },
   ar: {
-    'app.title': 'لوحة تحكم Hop On',
+    'app.title': 'لوحة تحكم ع طريقك',
     'app.toggleTheme': 'تبديل النمط',
     'app.toggleLocale': 'تبديل اللغة',
     'app.localeLabel': 'اللغة',
@@ -262,7 +262,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'auth.signIn.description':
       'سجّل الدخول ببريد المشرف وكلمة المرور.',
     'auth.signIn.email': 'البريد الإلكتروني',
-    'auth.signIn.emailPlaceholder': 'admin@carpooling.com',
+    'auth.signIn.emailPlaceholder': 'example@gmail.com',
     'auth.signIn.password': 'كلمة المرور',
     'auth.signIn.passwordPlaceholder': 'كلمة المرور الخاصة بك',
     'auth.signIn.submit': 'تسجيل الدخول',
@@ -276,7 +276,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'userMenu.openMenu': 'قائمة الحساب',
     'userMenu.signOut': 'تسجيل الخروج',
     'breadcrumb.label': 'مكانك في اللوحة',
-    'sidebar.brand': 'Hop On',
+    'sidebar.brand': 'ع طريقك',
     'sidebar.subtitle': 'لوحة التحكم',
     'sidebar.navigate': 'التنقل',
     'sidebar.toggle': 'إظهار أو إخفاء القائمة',

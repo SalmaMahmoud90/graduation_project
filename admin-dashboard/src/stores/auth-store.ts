@@ -53,7 +53,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'hopon-admin-auth',
+      name: 'atareeqak-admin-auth',
       partialize: (s) => ({
         accessToken: s.accessToken,
         refreshToken: s.refreshToken,
