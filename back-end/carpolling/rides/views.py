@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -34,6 +33,8 @@ class CreateRideView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
 class UpdateRideView(APIView):
 
     def patch(self, request, ride_id):
@@ -128,10 +129,11 @@ class CancelReservationView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
         if reservation.status in [
+
             Reservation.ReservationStatus.REJECTED,
             Reservation.ReservationStatus.CANCELLED
         ]:
-            return Response({"error": "Only pending reservations can be canceled"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "This reservation cannot be canceled"}, status=status.HTTP_400_BAD_REQUEST)
         reservation.status = Reservation.ReservationStatus.CANCELLED
         reservation.save()
         return Response(
@@ -248,32 +250,34 @@ class MyReservationView(APIView):
             return Response({"error": "Invalid user type"}, status=status.HTTP_400_BAD_REQUEST)
 
 class ViewRideDetails(APIView):
+
     def get(self, request, ride_id):
+
         try:
-            ride = Ride.objects.get(
-                id=ride_id,
-                status=Ride.RideStatus.ACTIVE
-            )
+            ride = Ride.objects.get(id=ride_id)
         except Ride.DoesNotExist:
             return Response(
                 {"error": "Ride not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if (
-            request.user.user_type == "driver"
-            and ride.driver.user == request.user
-        ):
+        if request.user.user_type == "driver" and ride.driver.user == request.user:
+            serializer = RideDetailsSerializer(ride)
+
             return Response(
-                {
-                    "error": "Use My Ride Details endpoint for your own rides"
-                },
-                status=status.HTTP_403_FORBIDDEN
+                {"ride": serializer.data},
+                status=status.HTTP_200_OK
+            )
+
+        if ride.status != Ride.RideStatus.ACTIVE:
+            return Response(
+                {"error": "Ride not found"},
+                status=status.HTTP_404_NOT_FOUND
             )
 
         serializer = RideDetailsSerializer(ride)
 
         return Response(
-            {"rides":serializer.data},
+            {"ride": serializer.data},
             status=status.HTTP_200_OK
         )

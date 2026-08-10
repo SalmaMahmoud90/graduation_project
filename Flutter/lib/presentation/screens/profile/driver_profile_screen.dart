@@ -1,0 +1,471 @@
+import 'package:a_tareqaak/core/resources/app_assets.dart';
+import 'package:a_tareqaak/core/routes/app_routes.dart';
+import 'package:a_tareqaak/presentation/cubit/profile/driver_profile_cubit.dart';
+import 'package:a_tareqaak/presentation/cubit/profile/driver_profile_state.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:a_tareqaak/core/extension/localization_extension.dart';
+import 'package:a_tareqaak/core/helper/launch_url_helper.dart';
+import 'package:a_tareqaak/core/resources/app_colors.dart';
+import 'package:a_tareqaak/core/resources/app_fonts.dart';
+import 'package:a_tareqaak/core/resources/app_values.dart';
+import 'package:a_tareqaak/presentation/widgets/custom_elevated_button.dart';
+import 'package:a_tareqaak/presentation/widgets/image_view.dart';
+import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
+import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
+
+class DriverProfileScreen extends StatelessWidget {
+  final bool isOtherUser; // خاصية فحص هل البروفايل لمستخدم آخر لتحديد خيار الإبلاغ
+
+  const DriverProfileScreen({
+    super.key,
+    this.isOtherUser = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return _ProfileContent(isOtherUser: isOtherUser);
+  }
+}
+
+class _ProfileContent extends StatelessWidget {
+  final bool isOtherUser;
+
+  const _ProfileContent({required this.isOtherUser});
+
+  void _showReportDialog(BuildContext context) {
+    final tr = context.loc;
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: SectionTitle(text: tr.report_account),
+        content: BodyTitle(text: tr.report_account_confirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: BodyTitle(text: tr.cancel, color: AppColors.greyText),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogCtx);
+              SendReportRoute().push(context);
+            },
+            child: BodyTitle(text: tr.ok, color: AppColors.red),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tr = context.loc;
+    final bool isRtl = Directionality.of(context) == TextDirection.rtl;
+
+    return Scaffold(
+      backgroundColor: AppColors.backGround,
+      body: SafeArea(
+        child: BlocConsumer<DriverProfileCubit, DriverProfileState>(
+          builder: (context, state) {
+            final cubit = context.read<DriverProfileCubit>();
+
+            return SingleChildScrollView(
+              child: Column(
+                spacing: AppHeight.h16,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // الهيدر الرئيسي مع غلاف السيارة والصورة الشخصية المتداخلة
+                  Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      InkWell(
+                        onTap: () => cubit.pickCarCoverImage(context),
+                        child: ImageView(
+                          imagePath: cubit.carCoverImagePath ?? AppAssets.defult,
+                          height: AppHeight.h220,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        top: AppHeight.h15,
+                        left: isRtl ? null : AppWidth.w15,
+                        right: isRtl ? AppWidth.w15 : null,
+                        child: CircleAvatar(
+                          backgroundColor: AppColors.white,
+                          radius: AppRadius.r18,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () => context.pop(),
+                            icon: FaIcon(
+                              isRtl
+                                  ? FontAwesomeIcons.chevronRight
+                                  : FontAwesomeIcons.chevronLeft,
+                              color: AppColors.blackText,
+                              size: AppSize.s16,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: AppHeight.h15,
+                        left: isRtl ? AppWidth.w15 : null,
+                        right: isRtl ? null : AppWidth.w15,
+                        child: CircleAvatar(
+                          backgroundColor: AppColors.white,
+                          radius: AppRadius.r18,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: isOtherUser
+                                ? () => _showReportDialog(context)
+                                : () {},
+                            icon: FaIcon(
+                              isOtherUser
+                                  ? FontAwesomeIcons.triangleExclamation
+                                  : FontAwesomeIcons.ellipsisVertical,
+                              color: isOtherUser
+                                  ? AppColors.red
+                                  : AppColors.blackText,
+                              size: AppSize.s16,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: -AppHeight.h50,
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(AppPaddingWidth.p4),
+                              decoration: const BoxDecoration(
+                                color: AppColors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: ImageView(
+                                imagePath: cubit.profileImagePath ?? AppAssets.profilePlaceholder,
+                                name: cubit.profileImagePath == null
+                                    ? cubit.driverName
+                                    : null,
+                                height: AppHeight.h90,
+                                width: AppWidth.w90,
+                                radius: BorderRadius.circular(AppRadius.r100),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => cubit.pickProfileImage(context),
+                              child: CircleAvatar(
+                                radius: AppRadius.r14,
+                                backgroundColor: AppColors.primary,
+                                child: FaIcon(
+                                  FontAwesomeIcons.camera,
+                                  size: AppSize.s12,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: AppHeight.h35),
+
+                  // البيانات الأساسية
+                  Column(
+                    spacing: AppHeight.h4,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: AppWidth.w6,
+                        children: [
+                          SectionTitle(
+                            text: cubit.driverName,
+                            fontSize: AppFontSize.s22,
+                            fontWeight: AppFontWeight.bold,
+                          ),
+                          FaIcon(
+                            FontAwesomeIcons.circleCheck,
+                            color: AppColors.primaryLight,
+                            size: AppSize.s18,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: AppWidth.w4,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.solidStar,
+                            color: AppColors.orange,
+                            size: AppSize.s14,
+                          ),
+                          BodyTitle(
+                            text: '4.8 (128)',
+                            fontSize: AppFontSize.s14,
+                            fontWeight: AppFontWeight.bold,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: AppWidth.w6,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.calendarDay,
+                            color: AppColors.greyText,
+                            size: AppSize.s12,
+                          ),
+                          BodyTitle(
+                            text: tr.joined_date,
+                            color: AppColors.greyText,
+                            fontSize: AppFontSize.s12,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // أزرار الإجراءات السريعة (اتصال وإبلاغ)
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: AppPaddingWidth.p20),
+                    child: Row(
+                      spacing: AppWidth.w12,
+                      children: [
+                        Expanded(
+                          child: CustomElevatedButton(
+                            height: AppHeight.h45,
+                            borderRadius: AppRadius.r12,
+                            color: AppColors.backGround,
+                            borderSide:
+                                const BorderSide(color: AppColors.greyDivider),
+                            onPressed: () {
+                              LaunchUrlHelper.call(cubit.phone);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              spacing: AppWidth.w8,
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.phone,
+                                  color: AppColors.primary,
+                                  size: AppSize.s16,
+                                ),
+                                BodyTitle(
+                                  text: tr.call,
+                                  color: AppColors.primary,
+                                  fontWeight: AppFontWeight.bold,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: CustomElevatedButton(
+                            height: AppHeight.h45,
+                            borderRadius: AppRadius.r12,
+                            color: AppColors.white,
+                            borderSide: const BorderSide(color: AppColors.red),
+                            onPressed: () {
+                              SendReportRoute().push(context);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              spacing: AppWidth.w8,
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.flag,
+                                  color: AppColors.red,
+                                  size: AppSize.s16,
+                                ),
+                                BodyTitle(
+                                  text: tr.report,
+                                  color: AppColors.red,
+                                  fontWeight: AppFontWeight.bold,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // معلومات الاتصال
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: AppPaddingWidth.p20),
+                    child: Column(
+                      spacing: AppHeight.h8,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SectionTitle(
+                          text: tr.contact_info_header,
+                          fontSize: AppFontSize.s14,
+                          color: AppColors.primary,
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(AppPaddingWidth.p14),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(AppRadius.r14),
+                            border: Border.all(color: AppColors.lightGreySec),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                spacing: AppWidth.w10,
+                                children: [
+                                  FaIcon(
+                                    FontAwesomeIcons.phone,
+                                    size: AppSize.s16,
+                                    color: AppColors.primary,
+                                  ),
+                                  BodyTitle(text: cubit.phone),
+                                ],
+                              ),
+                              FaIcon(
+                                FontAwesomeIcons.chevronLeft,
+                                size: AppSize.s12,
+                                color: AppColors.greyText,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // معلومات السيارة
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: AppPaddingWidth.p20),
+                    child: Column(
+                      spacing: AppHeight.h8,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SectionTitle(
+                          text: tr.car_info_header,
+                          fontSize: AppFontSize.s14,
+                          color: AppColors.primary,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(AppRadius.r16),
+                            border: Border.all(color: AppColors.lightGreySec),
+                          ),
+                          child: Column(
+                            children: [
+                              _buildCarDetailRow(
+                                icon: FontAwesomeIcons.car,
+                                label: tr.car_type,
+                                value: cubit.carName,
+                              ),
+                              Divider(color: AppColors.lightGreySec, height: 0),
+                              _buildCarDetailRow(
+                                icon: FontAwesomeIcons.palette,
+                                label: tr.car_color,
+                                value: cubit.carColor,
+                              ),
+                              Divider(color: AppColors.lightGreySec, height: 0),
+                              _buildCarDetailRow(
+                                icon: FontAwesomeIcons.calendarDay,
+                                label: tr.plate_number,
+                                value: cubit.carPlate,
+                              ),
+                              Divider(color: AppColors.lightGreySec, height: 0),
+                              _buildCarDetailRow(
+                                icon: FontAwesomeIcons.hashtag,
+                                label: tr.car_id,
+                                value: cubit.carId,
+                              ),
+                              Divider(color: AppColors.lightGreySec, height: 0),
+                              _buildCarDetailRow(
+                                icon: FontAwesomeIcons.calendarCheck,
+                                label: tr.manufacturing_year,
+                                value: cubit.manufacturingYear,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // زر تعديل البروفايل في الأسفل
+                  if (!isOtherUser)
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: AppPaddingWidth.p20,
+                        right: AppPaddingWidth.p20,
+                        bottom: AppPaddingHeight.p20,
+                      ),
+                      child: CustomElevatedButton(
+                        height: AppHeight.h50,
+                        width: double.infinity,
+                        borderRadius: AppRadius.r12,
+                        color: AppColors.primary,
+                        onPressed: () => EditDriverProfileRoute().push(context),
+                        child: BodyTitle(
+                          text: tr.edit_profile_btn,
+                          color: AppColors.white,
+                          fontSize: AppFontSize.s16,
+                          fontWeight: AppFontWeight.bold,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          }, listener: (BuildContext context, DriverProfileState state) {  },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCarDetailRow({
+    required FaIconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Padding(
+      padding: EdgeInsets.all(AppPaddingWidth.p14),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            spacing: AppWidth.w10,
+            children: [
+              FaIcon(icon, size: AppSize.s16, color: AppColors.primary),
+              BodyTitle(text: label, fontSize: AppFontSize.s14),
+            ],
+          ),
+          Row(
+            spacing: AppWidth.w8,
+            children: [
+              BodyTitle(
+                text: value,
+                fontSize: AppFontSize.s14,
+                fontWeight: AppFontWeight.bold,
+              ),
+              FaIcon(
+                FontAwesomeIcons.chevronLeft,
+                size: AppSize.s12,
+                color: AppColors.greyText,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

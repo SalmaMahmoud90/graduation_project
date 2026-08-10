@@ -7,8 +7,8 @@ class Ride(models.Model):
         COMPLETED = 'completed', 'Completed'
         CANCELLED = 'cancelled', 'Cancelled'
 
-    departure_time = models.TimeField(null=True, blank=True)
-    departure_date = models.DateField(null=True, blank=True)
+    departure_time = models.TimeField()
+    departure_date = models.DateField()
     expected_duration= models.CharField(max_length=50, null= True, blank= True)
     location = models.CharField(max_length=50)
     destination = models.CharField(max_length=50)

@@ -2,30 +2,22 @@
 
 ## 1. جدول حقول البيانات والمعاني (Fields Dictionary)
 
-| اسم الحقل (Field)  | نوع البيانات   | إجباري؟                                 | الوصف والشروط                                                                                                                                       |
-| ------------------ | -------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `email`            | String (Email) | **نعم**                                 | البريد الإلكتروني للمستخدم، ويجب أن يكون بصيغة Email صحيحة وفريدًا في النظام.                                                                       |
-| `password`         | String         | **نعم**                                 | كلمة مرور المستخدم. يتم تخزينها باستخدام Django Password Hashing.                                                                                   |
-| `confirm_password` | String         | **نعم**                                 | تأكيد كلمة المرور، ويجب أن تتطابق مع `password` أثناء التسجيل.                                                                                      |
-| `new_password`     | String         | **نعم**                                 | كلمة المرور الجديدة أثناء إعادة تعيين كلمة المرور، والحد الأدنى 8 أحرف.                                                                             |
-| `user_type`        | String (Enum)  | **نعم**                                 | نوع الحساب: `driver` أو `rider` أو `admin`.                                                                                                         |
-| `name`             | String         | نعم                                     | اسم المستخدم، والحد الأقصى 15 حرفًا حسب الـ Model.                                                                                                  |
-| `phone`            | String         | اختياري                                 | رقم هاتف المستخدم، ويجب أن يكون فريدًا عند إدخاله.                                                                                                  |
-| `profile_picture`  | File/Image     | اختياري                                 | صورة الملف الشخصي للمستخدم.                                                                                                                         |
-| `code`             | String         | **نعم** في عمليات التحقق                | رمز تحقق مكوّن من 6 أرقام. يستخدم للتحقق من البريد أو إعادة تعيين كلمة المرور.                                                                      |
-| `reset_token`      | String         | **تلقائي من النظام**                    | Tokenعشوائي مؤقت يتم إنشاؤه بواسطة Backend لربط طلب إعادة تعيين كلمة المرور بالمستخدم، ويُعاد إلى Frontend ليتم إرساله تلقائيًا في الخطوات التالية. |
-| `expires_at`       | DateTime       | تلقائي                                  | وقت انتهاء صلاحية رمز التحقق، ويتم ضبطه تلقائيًا على 10 دقائق.                                                                                      |
-| `is_verified`      | Boolean        | تلقائي                                  | يحدد ما إذا كان رمز إعادة تعيين كلمة المرور قد تم التحقق منه بنجاح.                                                                                 |
-| `is_active`        | Boolean        | تلقائي، ويتم تغييرها من النظام/الإدارة. | يحدد ما إذا كان الحساب فعالًا أو محظورًا.                                                                                                           |
-| `car_model`        | String         | اختياري                                 | موديل سيارة السائق.                                                                                                                                 |
-| `car_color`        | String         | اختياري                                 | لون سيارة السائق.                                                                                                                                   |
-| `car_number`       | String         | اختياري                                 | رقم لوحة السيارة.                                                                                                                                   |
-| `car_image`        | File/Image     | اختياري                                 | صورة سيارة السائق.                                                                                                                                  |
-| `current_location` | String         | اختياري                                 | الموقع الحالي للراكب.                                                                                                                               |
-| `access_token`     | String         | تلقائي                                  | Access Token يتم إصداره بواسطة OAuth عند تسجيل الدخول بنجاح.                                                                                        |
-| `refresh_token`    | String         | تلقائي                                  | Refresh Token المرتبط بجلسة OAuth ويستخدم لتجديد Access Token.                                                                                      |
-| `token_type`       | String         | تلقائي                                  | نوع الـ Token الصادر من OAuth، وعادةً `Bearer`.                                                                                                     |
-| `expires_in`       | Integer        | تلقائي                                  | مدة صلاحية Access Token بالثواني حسب إعدادات OAuth.                                                                                                 |
+| اسم الحقل (Field)  | نوع البيانات   | إجباري؟                  | الوصف والشروط                                                                                                                                       |
+| ------------------ | -------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `email`            | String (Email) | **نعم**                  | البريد الإلكتروني للمستخدم، ويجب أن يكون بصيغة Email صحيحة وفريدًا في النظام.                                                                       |
+| `password`         | String         | **نعم**                  | كلمة مرور المستخدم. يتم تخزينها باستخدام Django Password Hashing.                                                                                   |
+| `confirm_password` | String         | **نعم**                  | تأكيد كلمة المرور، ويجب أن تتطابق مع `password` أثناء التسجيل.                                                                                      |
+| `new_password`     | String         | **نعم**                  | كلمة المرور الجديدة أثناء إعادة تعيين كلمة المرور، والحد الأدنى 8 أحرف.                                                                             |
+| `user_type`        | String (Enum)  | **نعم**                  | نوع الحساب: `driver` أو `rider` أو `admin`.                                                                                                         |
+| `name`             | String         | نعم                      | اسم المستخدم، والحد الأقصى 15 حرفًا حسب الـ Model.                                                                                                  |
+| `code`             | String         | **نعم** في عمليات التحقق | رمز تحقق مكوّن من 6 أرقام. يستخدم للتحقق من البريد أو إعادة تعيين كلمة المرور.                                                                      |
+| `reset_token`      | String         | **تلقائي من النظام**     | Tokenعشوائي مؤقت يتم إنشاؤه بواسطة Backend لربط طلب إعادة تعيين كلمة المرور بالمستخدم، ويُعاد إلى Frontend ليتم إرساله تلقائيًا في الخطوات التالية. |
+| `expires_at`       | DateTime       | تلقائي                   | وقت انتهاء صلاحية رمز التحقق، ويتم ضبطه تلقائيًا على 10 دقائق.                                                                                      |
+| `is_verified`      | Boolean        | تلقائي                   | يحدد ما إذا كان رمز إعادة تعيين كلمة المرور قد تم التحقق منه بنجاح.                                                                                 |
+| `access_token`     | String         | تلقائي                   | Access Token يتم إصداره بواسطة OAuth عند تسجيل الدخول بنجاح.                                                                                        |
+| `refresh_token`    | String         | تلقائي                   | Refresh Token المرتبط بجلسة OAuth ويستخدم لتجديد Access Token.                                                                                      |
+| `token_type`       | String         | تلقائي                   | نوع الـ Token الصادر من OAuth، وعادةً `Bearer`.                                                                                                     |
+| `expires_in`       | Integer        | تلقائي                   | مدة صلاحية Access Token بالثواني حسب إعدادات OAuth.                                                                                                 |
 
 ---
 # 2. القيم الثابتة والتعدادات (Enums & Fixed Values)
@@ -80,28 +72,27 @@ is_active
 
 أما حالة التحقق من البريد  الحساب يعتبر غير موثق إذا كان له سجل في جدول `EmailVerification`، ويتم اعتباره موثقًا بعد حذف سجل التحقق بنجاح.
 
----# 3. جدول مسارات الـ API وطريقة الاستخدام (Endpoints Reference)
+---
+# 3. جدول مسارات الـ API وطريقة الاستخدام (Endpoints Reference)
 
-Base URL:
+### Base URL
 
 ```
 http://127.0.0.1:8000/api/users
 ```
 
-|                           |         |              |                                                    |
-| ------------------------- | ------- | ------------ | -------------------------------------------------- |
-| Endpoint                  | Method  | يتطلب Token؟ | الوصف                                              |
-| `/create/`                | `POST`  | لا           | إنشاء حساب جديد                                    |
-| `/verify_email/`          | `POST`  | لا           | التحقق من البريد الإلكتروني                        |
-| `/resend-verification/`   | `POST`  | لا           | إعادة إرسال رمز التحقق                             |
-| `/login/`                 | `POST`  | لا           | تسجيل الدخول والحصول على OAuth Tokens              |
-| `/forgot_password/`       | `POST`  | لا           | إرسال رمز إعادة تعيين كلمة المرور                  |
-| `/verify_reset_code/`     | `POST`  | لا           | التحقق من رمز إعادة تعيين كلمة المرور              |
-| `/reset_password/`        | `POST`  | لا           | تعيين كلمة مرور جديدة                              |
-| `/view_profile/`          | `GET`   | **نعم**      | عرض الملف الشخصي                                   |
-| `/update_driver_profile/` | `PATCH` | **نعم**      | تعديل ملف السائق                                   |
-| `/update_rider_profile/`  | `PATCH` | **نعم**      | تعديل ملف الراكب                                   |
-| `/logout/`                | `POST`  | **نعم**      | تسجيل خروج المستخدم وإلغاء صلاحية الـ OAuth Token. |
+|                           |         |              |                                               |
+| ------------------------- | ------- | ------------ | --------------------------------------------- |
+| Endpoint                  | Method  | يتطلب Token؟ | الوصف                                         |
+| `/create/`                | `POST`  | لا           | إنشاء حساب جديد                               |
+| `/verify_email/`          | `POST`  | لا           | التحقق من البريد الإلكتروني                   |
+| `/resend-verification/`   | `POST`  | لا           | إعادة إرسال رمز التحقق للبريد                 |
+| `/login/`                 | `POST`  | لا           | تسجيل الدخول والحصول على OAuth Tokens         |
+| `/forgot_password/`       | `POST`  | لا           | إنشاء طلب إعادة تعيين وإرسال رمز التحقق       |
+| `/resend_reset_code/`     | `POST`  | لا           | إعادة إرسال رمز إعادة تعيين كلمة المرور       |
+| `/verify_reset_code/`     | `POST`  | لا           | التحقق من رمز إعادة تعيين كلمة المرور         |
+| `/reset_password/`        | `POST`  | لا           | تعيين كلمة مرور جديدة                         |
+| `/logout/`                | `POST`  | **نعم**      | تسجيل خروج المستخدم وإلغاء صلاحية OAuth Token |
 
 ---
 
@@ -201,6 +192,46 @@ MainUser
    └── AppAdmin
 ```
 
+### ملاحظة — انتقال البريد من Register إلى Verify Email
+
+بعد نجاح إنشاء الحساب باستخدام:
+
+```text
+POST /create/
+```
+
+يعيد الـ API البريد الإلكتروني في الـ response:
+
+```json
+{
+    "message": "Account created successfully. Please check your email for the verification code.",
+    "email": "driver@example.com"
+}
+```
+
+يحتفظ Flutter بهذا البريد الإلكتروني لاستخدامه في خطوة التحقق التالية.
+
+في صفحة **Verify Email**، المستخدم يحتاج إلى إدخال **رمز التحقق فقط**.
+
+عند إرسال رمز التحقق، يقوم Flutter بإرسال البريد الإلكتروني المحفوظ تلقائيًا مع الرمز:
+
+```json
+{
+    "email": "driver@example.com",
+    "code": "123456"
+}
+```
+
+لذلك:
+
+- **المستخدم:** يدخل `code` فقط.
+    
+- **Flutter:** يرسل `email + code`.
+    
+- **Backend:** يستخدم `email` لتحديد المستخدم والتحقق من `code`.
+    
+
+ولا يحتاج المستخدم إلى إعادة كتابة البريد الإلكتروني في صفحة التحقق.
 ---
 
 # 5. التحقق من البريد الإلكتروني
@@ -377,7 +408,7 @@ OAuth Access + Refresh Tokens
 ```
 
 ---
-## OAuth Token Management
+## 8. OAuth Token Management
 
 ### Access Token
 يستخدم للوصول إلى Protected APIs:
@@ -399,7 +430,7 @@ Authorization: Bearer <access_token>
 grant_type=refresh_token
 refresh_token=<REFRESH_TOKEN>
 
-# 8. نسيت كلمة المرور
+# 9. نسيت كلمة المرور
 
 ## `POST /forgot_password/`
 
@@ -466,8 +497,127 @@ reset_token
 ```
 
 ---
+# 10. إعادة إرسال رمز إعادة تعيين كلمة المرور
 
-# 9. التحقق من رمز إعادة تعيين كلمة المرور
+## `POST /resend_reset_code/`
+
+يستخدم هذا الـ endpoint عندما يضغط المستخدم على:
+
+```
+Resend Code
+```
+
+في صفحة التحقق من رمز إعادة تعيين كلمة المرور.
+
+### Request
+
+لا يحتاج المستخدم إلى إدخال البريد الإلكتروني مرة أخرى.
+
+يقوم Flutter بإرسال `reset_token` الذي حصل عليه من:
+
+```
+POST /forgot_password/
+```
+
+أو من طلب إعادة الإرسال السابق.
+
+```
+{
+    "reset_token": "random-secure-reset-token"
+}
+```
+### ماذا يفعل Backend؟
+
+عند استدعاء الـ endpoint:
+
+1. يبحث عن طلب إعادة تعيين كلمة المرور باستخدام `reset_token`.
+2. يتحقق من أن طلب إعادة التعيين لم تنتهِ صلاحيته.
+3. ينشئ **رمز تحقق جديدًا مكونًا من 6 أرقام**.
+4. يمدد صلاحية طلب إعادة التعيين لمدة 10 دقائق.
+5. يعيد `is_verified` إلى `false`.
+6. يحافظ على **نفس** `**reset_token**`.
+7. يرسل رمز التحقق الجديد إلى البريد الإلكتروني المرتبط بطلب إعادة التعيين.
+
+### Response — Success
+
+**200 OK**
+
+```
+{
+    "message": "A new password reset code has been sent successfully."
+}
+```
+
+### مهم جدًا
+
+عند إعادة إرسال الرمز:
+
+```
+Old Code      → Invalid
+New Code → Valid
+
+Reset Token → SAME
+```
+
+أي أن:
+
+> **Resend Reset Code لا ينشئ Reset Token جديدًا.**
+
+الـ `reset_token` يبقى نفسه طوال طلب إعادة تعيين كلمة المرور الحالي.
+
+الذي يتغير فقط هو:
+
+```
+code
+expires_at
+is_verified
+```
+
+بحيث تصبح:
+
+```
+Old Code
+   ↓
+Invalid
+
+New Code
+   ↓
+Valid
+
+Same Reset Token
+   ↓
+Still Valid
+```
+
+لذلك يجب على Flutter الاحتفاظ بنفس `reset_token` وعدم استبداله.
+### إذا كان Reset Token غير صحيح
+
+**404 Not Found**
+
+```
+{
+    "error": "Invalid reset request."
+}
+```
+### ملاحظة مهمة
+
+إذا انتهت صلاحية `reset_token`، يجب على المستخدم العودة إلى:
+
+```
+Forgot Password
+```
+
+وإدخال البريد الإلكتروني من جديد، ثم استدعاء:
+
+```
+POST /forgot_password/
+```
+
+لإنشاء **Reset Token جديد** وطلب Reset جديد.
+
+___
+
+# 11. التحقق من رمز إعادة تعيين كلمة المرور
 
 ## `POST /verify_reset_code/`
 
@@ -542,29 +692,10 @@ is_verified = true
 }
 ```
 
-### Verification Flow
-
-```
-Forgot Password
-      ↓
-Email + Reset Token
-      ↓
-Send Code
-      ↓
-Verify Code Page
-      ↓
-User enters Code only
-      ↓
-Flutter sends Code + Reset Token
-      ↓
-Backend verifies Code
-      ↓
-is_verified = true
-```
 
 ---
 
-# 10. إعادة تعيين كلمة المرور
+# 12. إعادة تعيين كلمة المرور
 
 ## `POST /reset_password/`
 
@@ -650,71 +781,81 @@ Confirm Password
 
 ---
 
-# 11. Password Reset Workflow
+# 13. Password Reset Workflow
 
 الـ Flow الكامل لإعادة تعيين كلمة المرور:
-
-```
-                 Forgot Password
-                       │
-                       ▼
-                 Enter Email
-                       │
-                       ▼
+                  FORGOT PASSWORD
+                        │
+                        ▼
+              Enter Email
+                        │
+                        ▼
           POST /forgot_password/
-                       │
-                       ▼
-              Generate OTP Code
-                       │
-                       ▼
-             Generate Reset Token
-                       │
-                       ▼
-                Send Code Email
-                       │
-                       ▼
+                        │
+                        ▼
+              Generate Code
+                        │
+                        ▼
+          Generate Reset Token
+                        │
+                        ▼
+             Send Code by Email
+                        │
+                        ▼
               Verify Code Page
-                       │
-                       ▼
-              User enters Code
-                       │
-                       ▼
-     Flutter sends Code + Reset Token
-                       │
-                       ▼
-        POST /verify_reset_code/
-                       │
-                       ▼
-             is_verified = true
-                       │
-                       ▼
-             New Password Page
-                       │
-                       ▼
-       POST /reset_password/
-                       │
-                       ▼
-              Set New Password
-                       │
-                       ▼
-              Delete Reset Code
-                       │
-                       ▼
-            Password Reset Done
+                        │
+               ┌────────┴────────┐
+               │                 │
+          Enter Code        Resend Code
+               │                 │
+               │                 ▼
+               │       POST /resend_reset_code/
+               │                 │
+               │          Same Reset Token
+               │                 │
+               │          New Code
+               │                 │
+               │                 ▼
+               │          Send New Code
+               │                 │
+               └────────────► Verify Code
+                                  │
+                                  ▼
+                     POST /verify_reset_code/
+                                  │
+                                  ▼
+                         is_verified = true
+                                  │
+                                  ▼
+                       New Password Page
+                                  │
+                                  ▼
+                     POST /reset_password/
+                                  │
+                                  ▼
+                         Set New Password
+                                  │
+                                  ▼
+                      Delete Reset Record
+                                  │
+                                  ▼
+                       Password Reset Done
+---
+
+# 14. تجربة المستخدم الفعلية
+
+## 1. Forgot Password
+
 ```
-
-### تجربة المستخدم الفعلية
-
-```
-1. Forgot Password
-
 Email:
 [ driver@example.com ]
 
         ↓
+```
 
-2. Verify Code
+## 2. Verify Code
 
+```
 We sent a code to:
 driver@example.com
 
@@ -723,8 +864,30 @@ Code:
 
         ↓
 
-3. Create New Password
+Didn't receive the code?
 
+[ Resend Code ]
+```
+
+عند الضغط على `Resend Code`:
+
+```
+Flutter
+   ↓
+POST /resend_reset_code/
+   ↓
+Backend generates new Code
+   ↓
+Email sent
+   ↓
+Flutter replaces old Reset Token
+```
+
+ثم المستخدم يدخل الـ Code الجديد.
+
+## 3. Create New Password
+
+```
 New Password:
 [ ******** ]
 
@@ -732,157 +895,18 @@ Confirm Password:
 [ ******** ]
 
         ↓
+```
 
+## 4. Success
+
+```
 Password Reset Successfully
 ```
 
----
 
-# 12. عرض الملف الشخصي
 
-## `GET /view_profile/`
 
-### Headers
-
-```
-Authorization: Bearer <access_token>
-```
-
-### Driver Response
-
-**200 OK**
-
-```
-{
-    "user": {
-        "name": "Ahmad",
-        "created_at": "2026-08-07T10:30:00Z",
-        "phone": "0991234567",
-        "profile_picture": "/media/profiles/2026/08/07/profile.jpg"
-    },
-    "car_model": "Toyota Corolla",
-    "car_number": "123456",
-    "car_color": "White",
-    "car_image": "/media/car_images/car.jpg"
-}
-```
-
-### Rider Response
-
-**200 OK**
-
-```
-{
-    "user": {
-        "name": "Sara",
-        "created_at": "2026-08-07T10:30:00Z",
-        "phone": "0991234567",
-        "profile_picture": "/media/profiles/2026/08/07/profile.jpg"
-    },
-    "current_location": "Latakia"
-}
-```
-
----
-
-# 13. تعديل ملف السائق
-
-## `PATCH /update_driver_profile/`
-
-### Headers
-
-```
-Authorization: Bearer <access_token>
-Content-Type: multipart/form-data
-```
-
-### Request
-
-```
-{
-    "name": "Ahmad Ali",
-    "phone": "0991234567",
-    "email": "ahmad@example.com",
-    "car_model": "Toyota Corolla",
-    "car_number": "123456",
-    "car_color": "White"
-}
-```
-
-### Response
-
-**200 OK**
-
-```
-{
-    "user": {
-        "name": "Ahmad Ali",
-        "created_at": "2026-08-07T10:30:00Z",
-        "phone": "0991234567",
-        "profile_picture": null
-    },
-    "car_model": "Toyota Corolla",
-    "car_number": "123456",
-    "car_color": "White",
-    "car_image": null
-}
-```
-
-هذا الـ endpoint متاح فقط للمستخدم الذي:
-
-```
-user_type = driver
-```
-
----
-
-# 14. تعديل ملف الراكب
-
-## `PATCH /update_rider_profile/`
-
-### Headers
-
-```
-Authorization: Bearer <access_token>
-Content-Type: multipart/form-data
-```
-
-### Request
-
-```
-{
-    "name": "Sara Ali",
-    "phone": "0991234567",
-    "email": "sara@example.com",
-    "current_location": "Latakia"
-}
-```
-
-### Response
-
-**200 OK**
-
-```
-{
-    "user": {
-        "name": "Sara Ali",
-        "created_at": "2026-08-07T10:30:00Z",
-        "phone": "0991234567",
-        "profile_picture": null
-    },
-    "current_location": "Latakia"
-}
-```
-
-هذا الـ endpoint متاح فقط للمستخدم الذي:
-
-```
-user_type = rider
-```
-
----
-
-# 15. تسجيل الخروج
+# 18. تسجيل الخروج
 
 ## `POST /logout/`
 
@@ -903,7 +927,7 @@ Authorization: Bearer <access_token>
 ```
 ---
 
-# 16. الهيدرز الشاملة (Headers)
+# 19. الهيدرز الشاملة (Headers)
 
 ## Public APIs
 
@@ -915,6 +939,7 @@ POST /verify_email/
 POST /resend-verification/
 POST /login/
 POST /forgot_password/
+POST /resend_reset_code/
 POST /verify_reset_code/
 POST /reset_password/
 ```
@@ -932,9 +957,7 @@ Content-Type: application/json
 هذه تحتاج OAuth Access Token:
 
 ```
-GET /view_profile/
-PATCH /update_driver_profile/
-PATCH /update_rider_profile/
+
 POST /logout/
 ```
 
@@ -947,25 +970,27 @@ Authorization: Bearer <access_token>
 ومع JSON:
 
 ```
-Content-Type: multipart/form-data
+Content-Type: application/json
 ```
 
 ---
 
-# 17. Authentication Endpoints Summary
 
-|                   |                              |                                                 |
-| ----------------- | ---------------------------- | ----------------------------------------------- |
-| المرحلة           | Endpoint                     | البيانات التي يدخلها المستخدم                   |
-| Register          | `POST /create/`              | Email + Password + Confirm Password + User Type |
-| Verify Email      | `POST /verify_email/`        | Email + Code                                    |
-| Resend Email Code | `POST /resend-verification/` | Email                                           |
-| Login             | `POST /login/`               | Email + Password                                |
-| Forgot Password   | `POST /forgot_password/`     | **Email**                                       |
-| Verify Reset Code | `POST /verify_reset_code/`   | **Code فقط**                                    |
-| Reset Password    | `POST /reset_password/`      | **New Password + Confirm Password**             |
-| Logout            | `POST /logout/`              | لا شيء، Token بالـ Header                       |
 
+# 20. Authentication Endpoints Summary
+
+|                   |                              |                                                              |
+| ----------------- | ---------------------------- | ------------------------------------------------------------ |
+| المرحلة           | Endpoint                     | البيانات التي يدخلها المستخدم                                |
+| Register          | `POST /create/`              | Email + Password + Confirm Password + User Type              |
+| Verify Email      | `POST /verify_email/`        | Email + Code                                                 |
+| Resend Email Code | `POST /resend-verification/` | Email                                                        |
+| Login             | `POST /login/`               | Email + Password                                             |
+| Forgot Password   | `POST /forgot_password/`     | **Email**                                                    |
+| Resend Reset Code | `POST /resend_reset_code/`   | **لا شيء يدخله المستخدم؛ Flutter يرسل Reset Token تلقائيًا** |
+| Verify Reset Code | `POST /verify_reset_code/`   | **Code فقط من المستخدم** + Reset Token تلقائيًا              |
+| Reset Password    | `POST /reset_password/`      | **New Password + Confirm Password** + Reset Token تلقائيًا   |
+| Logout            | `POST /logout/`              | لا شيء، Token بالـ Header                                    |
 ### ملاحظة مهمة على Verify Reset Code
 
 من ناحية **واجهة المستخدم**:
@@ -987,7 +1012,9 @@ Code فقط
 لأن `reset_token` يتم تمريره تلقائيًا من التطبيق وليس من المستخدم.
 
 ---
-# 18. Authentication Workflow الكامل
+# 21. Authentication Workflow الكامل
+
+## Registration & Login
 
 ```
                          REGISTER
@@ -1019,6 +1046,8 @@ Code فقط
          Authenticated
 ```
 
+---
+
 ## Password Reset
 
 ```
@@ -1037,39 +1066,43 @@ Code فقط
              Generate Reset Token
                        │
                        ▼
-               VERIFY CODE
+               VERIFY CODE PAGE
                        │
-                       ▼
-          User enters Code only
-                       │
-                       ▼
-      Flutter sends Code + Reset Token
-                       │
-                       ▼
-          POST /verify_reset_code/
-                       │
-                       ▼
-             is_verified = true
-                       │
-                       ▼
-             RESET PASSWORD
-                       │
-                       ▼
-          POST /reset_password/
-                       │
-                       ▼
-              New Password
-                       │
-                       ▼
-            Password Changed
-                       │
-                       ▼
-             Delete Reset Record
+              ┌────────┴────────┐
+              │                 │
+          Enter Code       Resend Code
+              │                 │
+              │                 ▼
+              │       POST /resend_reset_code/
+              │                 │
+              │        New Code + New Token
+              │                 │
+              └────────────► Verify Code
+                                │
+                                ▼
+                    POST /verify_reset_code/
+                                │
+                                ▼
+                       is_verified=true
+                                │
+                                ▼
+                       RESET PASSWORD
+                                │
+                                ▼
+                    POST /reset_password/
+                                │
+                                ▼
+                       New Password
+                                │
+                                ▼
+                      Password Changed
+                                │
+                                ▼
+                    Delete Reset Record
 ```
-
 ---
 
-# 19. User Profile Structure
+# 22. User Profile Structure
 
 العلاقة بين الـ Models:
 
@@ -1092,11 +1125,8 @@ MainUser
  ├── email
  ├── password
  ├── name
- ├── phone
- ├── profile_picture
  ├── user_type
  ├── is_staff
- ├── is_active
  ├── created_at
  └── updated_at
 ```
@@ -1123,22 +1153,9 @@ PasswordResetCode
 
 ---
 
-# 20. Authentication Data Flow
 
 ```
-MainUser
-   │
-   ├── Email Verification
-   │      └── EmailVerification
-   │             ├── code
-   │             └── expires_at
-   │
-   └── Password Reset
-          └── PasswordResetCode
-                 ├── reset_token
-                 ├── code
-                 ├── expires_at
-                 └── is_verified
-```
 
-بهذا الشكل أصبح توثيق الـ Authentication متطابقًا مع الـ APIs الموجودة حاليًا في المشروع، بما فيها **Register, Email Verification, Login, Forgot Password, Verify Reset Code, Reset Password, Logout, Profile**.
+بهذا الشكل أصبحت وثائق الـ Authentication متوافقة مع الـ APIs الحالية، وتشمل:
+
+**Register, Email Verification, Resend Email Verification, Login, Forgot Password, Resend Reset Code, Verify Reset Code, Reset Password, Logout, Profile**
