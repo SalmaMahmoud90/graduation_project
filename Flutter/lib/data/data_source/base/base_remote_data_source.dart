@@ -1,0 +1,85 @@
+import 'dart:developer';
+import 'package:a_tareqaak/data/models/base/base_model.dart';
+import 'package:dartz/dartz.dart';
+import 'package:a_tareqaak/core/exceptions/app_exception.dart';
+import 'package:a_tareqaak/core/helper/network_helper.dart';
+import 'package:a_tareqaak/core/services/locator/locator.dart';
+
+class BaseRemoteDataSource<T> {
+  final NetworkHelper _networkHelper = locator<NetworkHelper>();
+  final String baseEndpoint;
+
+  BaseRemoteDataSource(this.baseEndpoint);
+
+  // 👈 إضافة <R> لجعل الدالة مرنة مع أي نموذج إرجاع R
+  Future<Either<AppException, BaseModel<R>?>> postData<R>({
+    String endpoint = '',
+    Map<String, dynamic>? data,
+    bool isFormDate = true,
+    List<Map<String, dynamic>>? files,
+    R Function(Object? json)? fromJsonT,
+  }) async {
+    try {
+      final response = await _networkHelper.post(
+        baseEndpoint + endpoint,
+        data: data,
+        files: files,
+        isFormDate: isFormDate,
+      );
+      return response.fold(
+        (e) => Left(e),
+        (r) {
+          if (r.data == null) return const Right(null);
+          if (fromJsonT == null) {
+            return Right(BaseModel<R>(
+              message: r.data?['message'] as String?,
+              error: r.data?['error'] as String?,
+            ));
+          }
+          return Right(BaseModel<R>.fromJson(r.data!, fromJsonT));
+        },
+      );
+    } on AppException catch (e, s) {
+      log("############################# POST APP EXCEPTION ################################");
+      log(e.message);
+      log(s.toString());
+      return Left(e);
+    } catch (e, s) {
+      log("############################# POST EXCEPTION ####################################");
+      log(e.toString());
+      log(s.toString());
+      return Left(UnKnownException(e.toString()));
+    }
+  }
+
+  // 👈 إضافة <R> لجعل الدالة fetchData مرنة مع أي نموذج R
+  Future<Either<AppException, BaseModel<R>?>> fetchData<R>({
+    String endpoint = '',
+    Map<String, dynamic>? queryParams,
+    Map<String, dynamic>? data,
+    required R Function(Object? json) fromJsonT,
+  }) async {
+    try {
+      final response = await _networkHelper.get(
+        baseEndpoint + endpoint,
+        queryParams: queryParams,
+        data: data,
+      );
+      return response.fold(
+        (e) => Left(e),
+        (r) {
+          if (r.data == null) return const Right(null);
+          return Right(BaseModel<R>.fromJson(r.data!, fromJsonT));
+        },
+      );
+    } on AppException catch (e, s) {
+      log(e.message);
+      log(s.toString());
+      return Left(e);
+    } catch (e, s) {
+      log(e.toString());
+      log(s.toString());
+      return Left(UnKnownException(e.toString()));
+    }
+  }
+}

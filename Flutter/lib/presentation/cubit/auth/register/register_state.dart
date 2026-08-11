@@ -1,54 +1,41 @@
-import 'package:flutter/foundation.dart';
-import 'package:a_tareqaak/core/utils/enums/enum_utils.dart';
 
-// الكلاس الأساسي المجرد لحالات إنشاء الحساب
-@immutable
-abstract class RegisterState {}
+// حالة الكيوبيت لنموذج إنشاء الحساب
+import 'package:a_tareqaak/domain/entity/auth/register/register_entity.dart';
+import 'package:equatable/equatable.dart';
 
-// الحالة الأولية للشاشة
-class RegisterInitialState extends RegisterState {}
+class RegisterCubitState extends Equatable {
+  final RegisterEntity? entity;
+  final bool isPasswordObscured;
+  final bool isConfirmPasswordObscured;
+  final bool isTermsAccepted;
 
-// حالة تغيير اختيار الدور (سائق / راكب)
-class RegisterRoleChangedState extends RegisterState {
-  final UserType? selectedRole;
+  const RegisterCubitState({
+    required this.entity,
+    this.isPasswordObscured = true,
+    this.isConfirmPasswordObscured = true,
+    this.isTermsAccepted = false,
+  });
 
-  RegisterRoleChangedState(this.selectedRole);
-}
+  RegisterCubitState copyWith({
+    RegisterEntity? entity,
+    bool? isPasswordObscured,
+    bool? isConfirmPasswordObscured,
+    bool? isTermsAccepted,
+  }) {
+    return RegisterCubitState(
+      entity: entity ?? this.entity,
+      isPasswordObscured: isPasswordObscured ?? this.isPasswordObscured,
+      isConfirmPasswordObscured:
+          isConfirmPasswordObscured ?? this.isConfirmPasswordObscured,
+      isTermsAccepted: isTermsAccepted ?? this.isTermsAccepted,
+    );
+  }
 
-// حالة تغيير إظهار/إخفاء كلمة المرور الرئيسية
-class RegisterPasswordVisibilityChangedState extends RegisterState {
-  final bool isObscured;
-
-  RegisterPasswordVisibilityChangedState(this.isObscured);
-}
-
-// حالة تغيير إظهار/إخفاء تأكيد كلمة المرور
-class RegisterConfirmPasswordVisibilityChangedState extends RegisterState {
-  final bool isObscured;
-
-  RegisterConfirmPasswordVisibilityChangedState(this.isObscured);
-}
-
-// حالة تغيير الموافقة على الشروط والأحكام
-class RegisterTermsChangedState extends RegisterState {
-  final bool isAccepted;
-
-  RegisterTermsChangedState(this.isAccepted);
-}
-
-// حالة تحميل طلب إنشاء الحساب
-class RegisterLoadingState extends RegisterState {}
-
-// حالة نجاح إنشاء الحساب مع إرجاع نوع المستخدم المختار للتوجيه
-class RegisterSuccessState extends RegisterState {
-  final UserType role;
-
-  RegisterSuccessState(this.role);
-}
-
-// حالة حدوث خطأ أثناء إنشاء الحساب
-class RegisterErrorState extends RegisterState {
-  final String message;
-
-  RegisterErrorState(this.message);
+  @override
+  List<Object?> get props => [
+        entity,
+        isPasswordObscured,
+        isConfirmPasswordObscured,
+        isTermsAccepted,
+      ];
 }

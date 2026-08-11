@@ -232,5 +232,11 @@
   "admin_notes": "ملاحظات الإدارة",
   "close_btn": "إغلاق",
   "pick_image": "اختيار صورة",
-  "report_type" : "نوع البلاغ"
+  "report_type" : "نوع البلاغ",
+  "reset_password_title": "إعادة تعيين كلمة المرور",
+  "reset_password_subtitle": "أنشئ كلمة مرور جديدة وقوية لحسابك",
+  "new_password": "كلمة المرور الجديدة",
+  "confirm_new_password": "تأكيد كلمة المرور الجديدة",
+  "save_new_password": "حفظ كلمة المرور الجديدة",
+  "password_reset_success": "تم تغيير كلمة المرور بنجاح، يمكنك تسجيل الدخول الآن"
 }

@@ -1333,6 +1333,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Report Type'**
   String get report_type;
+
+  /// No description provided for @reset_password_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get reset_password_title;
+
+  /// No description provided for @reset_password_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new strong password for your account'**
+  String get reset_password_subtitle;
+
+  /// No description provided for @new_password.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get new_password;
+
+  /// No description provided for @confirm_new_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get confirm_new_password;
+
+  /// No description provided for @save_new_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Save New Password'**
+  String get save_new_password;
+
+  /// No description provided for @password_reset_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully, please login now'**
+  String get password_reset_success;
 }
 
 class _AppLocalizationsDelegate

@@ -285,4 +285,10 @@ class LocalStorageHelper {
   }
 
 
+Future<Either<AppException, Box>> openBox(
+  String boxName,
+) async {
+  return _getBox(boxName);
+}
+
 }

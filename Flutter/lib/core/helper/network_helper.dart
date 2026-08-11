@@ -1,18 +1,15 @@
-/* import 'dart:developer';
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:a_tareqaak/data/data_source/auth/auth_storage_data_source.dart';
+import 'package:a_tareqaak/data/models/base/base_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:a_tareqaak/core/services/locator/locator.dart';
-import 'package:a_tareqaak/data/data_sources/auth/auth_storage_data_source.dart';
-import 'package:a_tareqaak/data/model/base/base_model.dart';
-import 'package:a_tareqaak/data/model/pagination/pagination_model.dart';
-
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
 import '../constants/api_endpoints.dart';
 import '../exceptions/api_exception.dart';
 import '../utils/network_utils.dart';
@@ -169,7 +166,7 @@ class NetworkHelper {
     });
   }
 
-  Future<Either<ApiException, BaseModel<PaginationModel<T>>?>> patchPagination<T>({
+/*   Future<Either<ApiException, BaseModel<PaginationModel<T>>?>> patchPagination<T>({
     required String url,
     Map<String, dynamic>? queryParams,
     Map<String, dynamic>? data,
@@ -200,7 +197,7 @@ class NetworkHelper {
       return Left(ApiException(e.toString(), dio.options.headers["lang"] ?? "ar"));
     }
   }
-
+ */
   /// Executes a DELETE request with optional data.
   Future<Either<ApiException, Response>> delete(
     String url, {
@@ -224,7 +221,7 @@ class NetworkHelper {
     });
   }
 
-  Future<Either<ApiException, BaseModel<PaginationModel<T>>?>> deletePagination<T>({
+/*   Future<Either<ApiException, BaseModel<PaginationModel<T>>?>> deletePagination<T>({
     required String url,
     Map<String, dynamic>? queryParams,
     Map<String, dynamic>? data,
@@ -253,7 +250,7 @@ class NetworkHelper {
       return Left(ApiException(e.toString(), dio.options.headers["lang"] ?? "ar"));
     }
   }
-
+ */
   /// Performs an HTTP request and handles errors.
   Future<Either<ApiException, Response<Map<String, dynamic>>>> _performRequest(
     Future<Response<Map<String, dynamic>>> Function() request,
@@ -420,4 +417,3 @@ class PrettyLoggerInterceptor extends Interceptor {
     return encoder.convert(jsonObj);
   }
 }
- */
