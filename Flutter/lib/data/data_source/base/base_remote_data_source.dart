@@ -36,7 +36,14 @@ class BaseRemoteDataSource<T> {
               error: r.data?['error'] as String?,
             ));
           }
-          return Right(BaseModel<R>.fromJson(r.data!, fromJsonT));
+          // The backend returns flat bodies (no `data` envelope), e.g. forgot
+          // password replies with `{message, email, reset_token}` at the top
+          // level. Wrap such bodies so the model is parsed from the whole
+          // response; already-enveloped responses pass through unchanged.
+          final body = r.data!;
+          final payload =
+              body.containsKey('data') ? body : {...body, 'data': body};
+          return Right(BaseModel<R>.fromJson(payload, fromJsonT));
         },
       );
     } on AppException catch (e, s) {
