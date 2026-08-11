@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:a_tareqaak/core/services/locator/locator.dart';
+import 'package:a_tareqaak/data/models/base/base_model.dart';
+import 'package:a_tareqaak/data/models/rides/ride_data_model.dart';
+import 'package:a_tareqaak/domain/entity/rides/create_ride_entity.dart';
+import 'package:a_tareqaak/domain/usecase/i_use_case.dart';
 import 'publish_ride_state.dart';
 
 // كيوبيت إدارة إنشاء ونشر رحلة جديدة
@@ -24,6 +29,24 @@ class PublishRideCubit extends Cubit<PublishRideState> {
     emit(PublishRideFieldsUpdatedState());
   }
 
+  void setDate(DateTime date) {
+    selectedDate = date;
+    emit(PublishRideFieldsUpdatedState());
+  }
+
+  void setTime(TimeOfDay time) {
+    selectedTime = time;
+    emit(PublishRideFieldsUpdatedState());
+  }
+
+  void setDuration(String value) {
+    expectedDuration = value;
+  }
+
+  void setPrice(String value) {
+    price = value;
+  }
+
   void incrementSeats() {
     availableSeats++;
     emit(PublishRideFieldsUpdatedState());
@@ -36,12 +59,51 @@ class PublishRideCubit extends Cubit<PublishRideState> {
     }
   }
 
-  // نشر الرحلة بعد التحقق
+  String _two(int n) => n.toString().padLeft(2, '0');
+
+  // نشر الرحلة عبر الـ API (create ride)
   Future<void> publishRide() async {
+    if (departureCity == null ||
+        departureCity!.isEmpty ||
+        destinationCity == null ||
+        destinationCity!.isEmpty ||
+        selectedDate == null ||
+        selectedTime == null) {
+      emit(PublishRideErrorState('missing_fields'));
+      return;
+    }
+
     emit(PublishRideLoadingState());
     try {
-      await Future.delayed(const Duration(seconds: 1));
-      emit(PublishRideSuccessState());
+      final date =
+          '${selectedDate!.year}-${_two(selectedDate!.month)}-${_two(selectedDate!.day)}';
+      final time = '${_two(selectedTime!.hour)}:${_two(selectedTime!.minute)}';
+      final cost = price.replaceAll(RegExp(r'[^0-9.]'), '');
+
+      final result = await locator<
+          IUseCase<BaseModel<RideDataModel>?, CreateRideEntity>>(
+        instanceName: 'CreateRideUseCase',
+      )(CreateRideEntity(
+        location: departureCity!,
+        destination: destinationCity!,
+        departureTime: time,
+        departureDate: date,
+        expectedDuration: expectedDuration.isEmpty ? null : expectedDuration,
+        cost: cost.isEmpty ? '0' : cost,
+        capacity: availableSeats,
+      ));
+
+      result.fold(
+        (l) => emit(PublishRideErrorState(l.message)),
+        (r) {
+          final serverError = r?.error;
+          if (serverError != null && serverError.isNotEmpty) {
+            emit(PublishRideErrorState(serverError));
+            return;
+          }
+          emit(PublishRideSuccessState());
+        },
+      );
     } catch (e) {
       emit(PublishRideErrorState(e.toString()));
     }

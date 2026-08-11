@@ -14,12 +14,20 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../../../data/data_source/auth/auth_remote_data_source.dart' as _i319;
 import '../../../data/data_source/auth/auth_storage_data_source.dart' as _i300;
+import '../../../data/data_source/profile/profile_remote_data_source.dart'
+    as _i1017;
+import '../../../data/data_source/rides/rides_remote_data_source.dart' as _i972;
 import '../../../data/models/auth/forgot_password_response/forgot_password_response_model.dart'
     as _i402;
 import '../../../data/models/auth/token/tokens_model.dart' as _i9;
 import '../../../data/models/auth/user/user_model.dart' as _i1011;
 import '../../../data/models/base/base_model.dart' as _i480;
+import '../../../data/models/profile/profile_model.dart' as _i705;
+import '../../../data/models/rides/reservation_data_model.dart' as _i156;
+import '../../../data/models/rides/ride_data_model.dart' as _i277;
 import '../../../data/repository/auth/auth_repository.dart' as _i728;
+import '../../../data/repository/profile/profile_repository.dart' as _i732;
+import '../../../data/repository/rides/rides_repository.dart' as _i459;
 import '../../../domain/entity/auth/forgot_password/forgot_password_entity.dart'
     as _i146;
 import '../../../domain/entity/auth/login/login_entity.dart' as _i27;
@@ -33,7 +41,20 @@ import '../../../domain/entity/auth/verify_email/verify_email_entity.dart'
     as _i592;
 import '../../../domain/entity/auth/verify_reset_code/verify_reset_code_entity.dart'
     as _i31;
+import '../../../domain/entity/profile/update_driver_profile_entity.dart'
+    as _i307;
+import '../../../domain/entity/profile/update_rider_profile_entity.dart'
+    as _i739;
+import '../../../domain/entity/profile/view_profile_entity.dart' as _i937;
+import '../../../domain/entity/rides/create_reservation_entity.dart' as _i88;
+import '../../../domain/entity/rides/create_ride_entity.dart' as _i361;
+import '../../../domain/entity/rides/id_entity.dart' as _i674;
+import '../../../domain/entity/rides/rides_no_params_entity.dart' as _i110;
+import '../../../domain/entity/rides/search_rides_entity.dart' as _i40;
+import '../../../domain/entity/rides/update_ride_entity.dart' as _i1021;
 import '../../../domain/repository/auth/i_auth_repository.dart' as _i154;
+import '../../../domain/repository/profile/i_profile_repository.dart' as _i950;
+import '../../../domain/repository/rides/i_rides_repository.dart' as _i879;
 import '../../../domain/usecase/auth/forgot_password/forgot_password_usecase.dart'
     as _i854;
 import '../../../domain/usecase/auth/login/login_usecase.dart' as _i710;
@@ -48,6 +69,24 @@ import '../../../domain/usecase/auth/verify_email/verify_email_usecase.dart'
 import '../../../domain/usecase/auth/verify_reset_code/verify_reset_code_usecase.dart'
     as _i873;
 import '../../../domain/usecase/i_use_case.dart' as _i759;
+import '../../../domain/usecase/profile/update_driver_profile_usecase.dart'
+    as _i622;
+import '../../../domain/usecase/profile/update_rider_profile_usecase.dart'
+    as _i589;
+import '../../../domain/usecase/profile/view_profile_usecase.dart' as _i688;
+import '../../../domain/usecase/rides/accept_reservation_usecase.dart'
+    as _i1040;
+import '../../../domain/usecase/rides/cancel_reservation_usecase.dart'
+    as _i1035;
+import '../../../domain/usecase/rides/cancel_ride_usecase.dart' as _i790;
+import '../../../domain/usecase/rides/create_reservation_usecase.dart' as _i612;
+import '../../../domain/usecase/rides/create_ride_usecase.dart' as _i1068;
+import '../../../domain/usecase/rides/my_reservations_usecase.dart' as _i735;
+import '../../../domain/usecase/rides/my_rides_usecase.dart' as _i25;
+import '../../../domain/usecase/rides/reject_reservation_usecase.dart' as _i437;
+import '../../../domain/usecase/rides/ride_details_usecase.dart' as _i122;
+import '../../../domain/usecase/rides/search_rides_usecase.dart' as _i505;
+import '../../../domain/usecase/rides/update_ride_usecase.dart' as _i878;
 import '../../helper/local_storage_helper.dart' as _i218;
 import '../../helper/network_helper.dart' as _i779;
 
@@ -63,8 +102,32 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i300.AuthStorageDataSource>(
       () => _i300.AuthStorageDataSource(),
     );
+    gh.factory<_i1017.ProfileRemoteDataSource>(
+      () => _i1017.ProfileRemoteDataSource(),
+    );
+    gh.factory<_i972.RidesRemoteDataSource>(
+      () => _i972.RidesRemoteDataSource(),
+    );
     gh.lazySingleton<_i218.LocalStorageHelper>(
       () => _i218.LocalStorageHelper(),
+    );
+    gh.factory<_i950.IProfileRepository>(
+      () => _i732.ProfileRepository(gh<_i1017.ProfileRemoteDataSource>()),
+    );
+    gh.factory<
+      _i759.IUseCase<_i480.BaseModel<dynamic>?, _i307.UpdateDriverProfileEntity>
+    >(
+      () => _i622.UpdateDriverProfileUseCase(gh<_i950.IProfileRepository>()),
+      instanceName: 'UpdateDriverProfileUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<_i480.BaseModel<dynamic>?, _i739.UpdateRiderProfileEntity>
+    >(
+      () => _i589.UpdateRiderProfileUseCase(gh<_i950.IProfileRepository>()),
+      instanceName: 'UpdateRiderProfileUseCase',
+    );
+    gh.factory<_i879.IRidesRepository>(
+      () => _i459.RidesRepository(gh<_i972.RidesRemoteDataSource>()),
     );
     gh.factory<_i154.IAuthRepository>(
       () => _i728.AuthRepository(gh<_i319.AuthRemoteDataSource>()),
@@ -77,6 +140,91 @@ extension GetItInjectableX on _i174.GetIt {
     >(
       () => _i1040.ResendVerificationUseCase(gh<_i154.IAuthRepository>()),
       instanceName: 'ResendVerificationUseCase',
+    );
+    gh.factory<_i759.IUseCase<_i480.BaseModel<dynamic>?, _i674.IdEntity>>(
+      () => _i1035.CancelReservationUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'CancelReservationUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i277.RideDataModel>?,
+        _i1021.UpdateRideEntity
+      >
+    >(
+      () => _i878.UpdateRideUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'UpdateRideUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i705.ProfileModel>?,
+        _i937.ViewProfileEntity
+      >
+    >(
+      () => _i688.ViewProfileUseCase(gh<_i950.IProfileRepository>()),
+      instanceName: 'ViewProfileUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i277.RidesListModel>?,
+        _i40.SearchRidesEntity
+      >
+    >(
+      () => _i505.SearchRidesUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'SearchRidesUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i156.ReservationsListModel>?,
+        _i110.RidesNoParamsEntity
+      >
+    >(
+      () => _i735.MyReservationsUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'MyReservationsUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i156.ReservationDataModel>?,
+        _i88.CreateReservationEntity
+      >
+    >(
+      () => _i612.CreateReservationUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'CreateReservationUseCase',
+    );
+    gh.factory<_i759.IUseCase<_i480.BaseModel<dynamic>?, _i674.IdEntity>>(
+      () => _i437.RejectReservationUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'RejectReservationUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<_i480.BaseModel<_i277.RideDetailsModel>?, _i674.IdEntity>
+    >(
+      () => _i122.RideDetailsUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'RideDetailsUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i277.RideDataModel>?,
+        _i361.CreateRideEntity
+      >
+    >(
+      () => _i1068.CreateRideUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'CreateRideUseCase',
+    );
+    gh.factory<_i759.IUseCase<_i480.BaseModel<dynamic>?, _i674.IdEntity>>(
+      () => _i790.CancelRideUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'CancelRideUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i277.RidesListModel>?,
+        _i110.RidesNoParamsEntity
+      >
+    >(
+      () => _i25.MyRidesUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'MyRidesUseCase',
+    );
+    gh.factory<_i759.IUseCase<_i480.BaseModel<dynamic>?, _i674.IdEntity>>(
+      () => _i1040.AcceptReservationUseCase(gh<_i879.IRidesRepository>()),
+      instanceName: 'AcceptReservationUseCase',
     );
     gh.factory<
       _i759.IUseCase<_i480.BaseModel<_i9.TokensModel>?, _i27.LoginEntity>

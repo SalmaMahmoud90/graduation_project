@@ -943,10 +943,21 @@ RouteBase get $searchResultsRoute => GoRouteData.$route(
 
 mixin $SearchResultsRoute on GoRouteData {
   static SearchResultsRoute _fromState(GoRouterState state) =>
-      SearchResultsRoute();
+      SearchResultsRoute(
+        fromCity: state.uri.queryParameters['from-city'],
+        toCity: state.uri.queryParameters['to-city'],
+      );
+
+  SearchResultsRoute get _self => this as SearchResultsRoute;
 
   @override
-  String get location => GoRouteData.$location('/search-results');
+  String get location => GoRouteData.$location(
+    '/search-results',
+    queryParams: {
+      if (_self.fromCity != null) 'from-city': _self.fromCity,
+      if (_self.toCity != null) 'to-city': _self.toCity,
+    },
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

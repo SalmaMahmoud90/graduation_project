@@ -3,6 +3,7 @@ class AppStoragePaths {
 
   //#region Auth
   static const String token = 'token';
+  static const String userType = 'userType';
   //#endregion
 
   //#region Ad Comparison

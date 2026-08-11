@@ -5,6 +5,7 @@ import 'package:a_tareqaak/presentation/bloc/auth/login/i_login_event.dart';
 import 'package:a_tareqaak/presentation/bloc/auth/login/i_login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:a_tareqaak/core/services/locator/locator.dart';
+import 'package:a_tareqaak/data/data_source/auth/auth_storage_data_source.dart';
 import 'package:a_tareqaak/data/models/auth/token/tokens_model.dart';
 import 'package:a_tareqaak/data/models/base/base_model.dart';
 import 'package:a_tareqaak/domain/entity/auth/login/login_entity.dart';
@@ -25,9 +26,21 @@ class LoginBloc extends Bloc<ILoginEvent, ILoginState> {
         instanceName: 'LoginUseCase',
       )(event.entity);
 
-      result.fold(
-        (l) => emit(LoginFailed(l.message)),
-        (r) => emit(LoginLoaded(tokensModel: r)),
+      await result.fold(
+        (l) async => emit(LoginFailed(l.message)),
+        (r) async {
+          // حفظ رمز الوصول حتى تعمل الطلبات المحمية (logout والخدمات الأخرى)
+          final token = r?.data?.accessToken;
+          if (token != null && token.isNotEmpty) {
+            await locator<AuthStorageDataSource>().storeToken(token);
+          }
+          // حفظ نوع المستخدم لتوجيه الملف الشخصي للـ API الصحيح
+          final userType = r?.data?.user?.userType;
+          if (userType != null && userType.isNotEmpty) {
+            await locator<AuthStorageDataSource>().storeUserType(userType);
+          }
+          emit(LoginLoaded(tokensModel: r));
+        },
       );
     } catch (e, s) {
       log(e.toString());

@@ -290,6 +290,12 @@ abstract class AppLocalizations {
   /// **'Please enter a valid email'**
   String get enter_valid_email;
 
+  /// No description provided for @enter_valid_phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid Syrian phone number'**
+  String get enter_valid_phone;
+
   /// No description provided for @field_required.
   ///
   /// In en, this message translates to:
@@ -1399,6 +1405,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Available Rides Now'**
   String get available_rides_now;
+
+  /// No description provided for @no_data.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get no_data;
+
+  /// No description provided for @reservation_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Reservation created successfully'**
+  String get reservation_success;
+
+  /// No description provided for @currency_syp.
+  ///
+  /// In en, this message translates to:
+  /// **'SYP'**
+  String get currency_syp;
+
+  /// No description provided for @available_seats_label.
+  ///
+  /// In en, this message translates to:
+  /// **'seats available'**
+  String get available_seats_label;
 
   /// No description provided for @book_btn.
   ///

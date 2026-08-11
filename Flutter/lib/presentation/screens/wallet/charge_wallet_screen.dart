@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
+import 'package:a_tareqaak/core/extension/validation_extension.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
 import 'package:a_tareqaak/presentation/widgets/custom_bottom_sheet.dart';
+import 'package:a_tareqaak/presentation/widgets/custom_snack_bar.dart';
 import 'package:a_tareqaak/presentation/widgets/custom_elevated_button.dart';
 import 'package:a_tareqaak/presentation/widgets/form/custom_input_field.dart';
 import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
@@ -139,7 +143,19 @@ class _ChargeWalletScreenState extends State<ChargeWalletScreen> {
                 width: double.infinity,
                 borderRadius: AppRadius.r12,
                 color: AppColors.primary,
-                onPressed: () => _showSuccessSheet(context),
+                onPressed: () {
+                  final phone = _phoneController.text.trim();
+                  if (!phone.isValidPhone) {
+                    showCustomSnackBar(
+                      context: context,
+                      title: tr.error_title,
+                      message: tr.enter_valid_phone,
+                      contentType: ContentType.failure,
+                    );
+                    return;
+                  }
+                  _showSuccessSheet(context);
+                },
                 child: BodyTitle(
                   text: tr.charge_balance,
                   color: AppColors.white,

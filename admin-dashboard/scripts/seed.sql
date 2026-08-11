@@ -15,6 +15,9 @@
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+SET UNIQUE_CHECKS = 0;
+SET autocommit = 0;
+START TRANSACTION;
 
 -- Drop prior seed snapshot (same logic as seed-rollback.sql)
 DELETE rr
@@ -64,7 +67,7 @@ SET @seed_base := (SELECT IFNULL(MAX(id), 0) FROM users_mainuser);
 INSERT INTO users_mainuser (
   id, password, last_login, is_superuser,
   name, email, profile_picture, user_type,
-  phone, language1, language2,
+  phone,
   is_staff, is_active, created_at, updated_at
 )
 WITH RECURSIVE seq AS (
@@ -106,8 +109,6 @@ SELECT
     ELSE 'rider'
   END,
   CONCAT('+9639', LPAD(@seed_base + s.id, 8, '0')),
-  IF(s.id % 2 = 0, 'ar', 'en'),
-  IF(s.id % 3 = 0, 'fr', NULL),
   IF(s.id = 1, 1, 0),
   1,
   NOW() - INTERVAL s.id DAY,
@@ -126,17 +127,12 @@ VALUES (@seed_base + 1);
 SET @drv_base := (SELECT IFNULL(MAX(id), 0) FROM users_driver);
 
 INSERT INTO users_driver (
-  id, user_id, car_model, license_number, license_expiry_date,
-  upcoming_trips_id, past_trips_id, car_color, car_number
+  id, user_id, car_model, car_color, car_number
 )
 SELECT
   @drv_base + (u.id - (@seed_base + 1)),
   u.id,
   ELT(1 + (u.id % 5), 'Toyota Corolla', 'Honda Civic', 'Hyundai Elantra', 'Kia Rio', 'Nissan Sunny'),
-  CONCAT('LIC-', LPAD(u.id, 6, '0')),
-  DATE_ADD('2026-01-01', INTERVAL (u.id % 36) MONTH),
-  NULL,
-  NULL,
   ELT(1 + (u.id % 7), 'White', 'Black', 'Silver', 'Red', 'Blue', 'Gray', 'Green'),
   CONCAT('SY ', LPAD(u.id - (@seed_base + 1), 5, '0'))
 FROM users_mainuser u
@@ -149,7 +145,7 @@ ORDER BY u.id;
 SET @rdr_base := (SELECT IFNULL(MAX(id), 0) FROM users_rider);
 
 INSERT INTO users_rider (
-  id, user_id, current_location, upcoming_trips_id, past_trips_id
+  id, user_id, current_location
 )
 SELECT
   @rdr_base + (u.id - (@seed_base + 51)),
@@ -159,9 +155,7 @@ SELECT
     'دمشق', 'حلب', 'حمص', 'حماة', 'اللاذقية', 'طرطوس', 'إدلب', 'الرقة', 'دير الزور',
     'درعا', 'السويداء', 'القامشلي', 'منبج', 'دوما', 'جبلة', 'بانياس', 'تدمر', 'الحسكة',
     'داريا', 'معرة النعمان', 'البوكمال', 'الثورة'
-  ),
-  NULL,
-  NULL
+  )
 FROM users_mainuser u
 WHERE u.id BETWEEN @seed_base + 52 AND @seed_base + 201
 ORDER BY u.id;
@@ -172,8 +166,8 @@ ORDER BY u.id;
 SET @ride_base := (SELECT IFNULL(MAX(id), 0) FROM rides_ride);
 
 INSERT INTO rides_ride (
-  id, departure_time, arrival_time, location, destination,
-  driver_id, cost, capacity, status, car_image
+  id, departure_time, departure_date, location, destination,
+  driver_id, cost, capacity, status, created_at
 )
 WITH RECURSIVE seq AS (
   SELECT 1 AS n
@@ -183,7 +177,7 @@ WITH RECURSIVE seq AS (
 SELECT
   @ride_base + n,
   SEC_TO_TIME(25200 + (n % 8) * 2700),
-  SEC_TO_TIME(32400 + (n % 8) * 2700),
+  CURDATE() + INTERVAL (n % 30) DAY,
   ELT(
     1 + (n % 22),
     'دمشق', 'حلب', 'حمص', 'حماة', 'اللاذقية', 'طرطوس', 'إدلب', 'الرقة', 'دير الزور',
@@ -200,13 +194,13 @@ SELECT
   ROUND(8.50 + (n % 40) + (n % 7) * 0.25, 2),
   3 + (n % 4),
   ELT(1 + (n % 9), 'active', 'active', 'active', 'completed', 'completed', 'cancelled', 'active', 'active', 'active'),
-  NULL
+  NOW() - INTERVAL n HOUR
 FROM seq;
 
 -- -----------------------------------------------------------------------------
 -- rides_reservation — 1200 rows
 -- -----------------------------------------------------------------------------
-INSERT INTO rides_reservation (ride_id, rider_id, status, payment, created_at)
+INSERT INTO rides_reservation (ride_id, rider_id, status, payment, pickup_location, created_at)
 WITH RECURSIVE rseq AS (
   SELECT @ride_base + 1 AS ride_id
   UNION ALL
@@ -220,8 +214,18 @@ SELECT
   @rdr_base + 1 + ((r.ride_id * 10 + s.s) % 150),
   ELT(1 + (r.ride_id + s.s) % 3, 'pending', 'accepted', 'rejected'),
   IF((r.ride_id + s.s) % 2 = 0, 'paid', 'unpaid'),
+  ELT(
+    1 + ((r.ride_id + s.s) % 22),
+    'دمشق', 'حلب', 'حمص', 'حماة', 'اللاذقية', 'طرطوس', 'إدلب', 'الرقة', 'دير الزور',
+    'درعا', 'السويداء', 'القامشلي', 'منبج', 'دوما', 'جبلة', 'بانياس', 'تدمر', 'الحسكة',
+    'داريا', 'معرة النعمان', 'البوكمال', 'الثورة'
+  ),
   NOW() - INTERVAL (r.ride_id + s.s) HOUR
 FROM rseq r
 CROSS JOIN slots s;
 
+COMMIT;
+
+SET UNIQUE_CHECKS = 1;
 SET FOREIGN_KEY_CHECKS = 1;
+SET autocommit = 1;

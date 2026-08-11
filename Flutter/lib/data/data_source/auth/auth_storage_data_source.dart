@@ -27,6 +27,20 @@ class AuthStorageDataSource extends BaseStorageDataSource {
     ).then((e) => e.fold((l) => Left(l), (r) => Right(r as String?)));
   }
 
+  // نوع المستخدم (driver/rider) لاستخدامه في توجيه الملف الشخصي
+  Future<Either<AppException, dynamic>> storeUserType(String? userType) {
+    return saveData(
+      key: AppStoragePaths.userType,
+      data: userType,
+    );
+  }
+
+  Future<Either<AppException, String?>> getUserType() {
+    return getData(
+      key: AppStoragePaths.userType,
+    ).then((e) => e.fold((l) => Left(l), (r) => Right(r as String?)));
+  }
+
   Future<Either<AppException, dynamic>> storeRememberMe(bool rememberMe) {
     return saveData(
       key: AppStoragePaths.rememberMe,
