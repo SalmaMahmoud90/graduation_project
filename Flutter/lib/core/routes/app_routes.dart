@@ -92,11 +92,10 @@ class CheckCodeRoute extends GoRouteData with $CheckCodeRoute {
 
 //#region Home
 
-@TypedGoRoute<RiderHomeRoute>(path: '/rider-home')
 class RiderHomeRoute extends GoRouteData with $RiderHomeRoute {
   @override
-  CustomTransitionPage<void> buildPage(context, state) {
-    return const RiderHomeScreen().buildPage(pageAnimation: PageAnimation.fade);
+  Widget build(BuildContext context, GoRouterState state) {
+    return const RiderHomeScreen();
   }
 }
 
@@ -231,6 +230,27 @@ class SettingsRoute extends GoRouteData with $SettingsRoute{
   }
 }
 
+class RiderRidesRoute extends GoRouteData with $RiderRidesRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const MyRidesScreen();
+  }
+}
+
+class RiderNotificationsRoute extends GoRouteData with $RiderNotificationsRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const NotificationsScreen();
+  }
+}
+
+class RiderSettingsRoute extends GoRouteData with $RiderSettingsRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return SettingsScreen();
+  }
+}
+
 @TypedStatefulShellRoute<DriverShellRoute>(
   branches: [
     TypedStatefulShellBranch<DriverHomeBranch>(
@@ -288,6 +308,14 @@ class NotificationsBranch extends StatefulShellBranchData {}
 class SettingsBranch extends StatefulShellBranchData {}
 
 class DriverHomeBranch extends StatefulShellBranchData {}
+
+class RiderHomeBranch extends StatefulShellBranchData {}
+
+class RiderRidesBranch extends StatefulShellBranchData {}
+
+class RiderNotificationsBranch extends StatefulShellBranchData {}
+
+class RiderSettingsBranch extends StatefulShellBranchData {}
 
 
 //#endregion
@@ -371,54 +399,80 @@ class ForgotPasswordRoute extends GoRouteData with $ForgotPasswordRoute {
   }
 }
 
-// إعداد مسارات الراكب وإتاحة شريط التنقل السفلي عبر AppShellRoute / StatefulShellRoute
-final riderShellRoute = StatefulShellRoute.indexedStack(
-  builder: (context, state, navigationShell) {
+// إعداد مسارات الراكب وإتاحة شريط التنقل السفلي عبر StatefulShellRoute (typed)
+@TypedStatefulShellRoute<RiderShellRoute>(
+  branches: [
+    TypedStatefulShellBranch<RiderHomeBranch>(
+      routes: [
+        TypedGoRoute<RiderHomeRoute>(
+          path: '/rider-home',
+        ),
+      ],
+    ),
+
+    TypedStatefulShellBranch<RiderRidesBranch>(
+      routes: [
+        TypedGoRoute<RiderRidesRoute>(
+          path: '/rider-rides',
+        ),
+      ],
+    ),
+
+    TypedStatefulShellBranch<RiderNotificationsBranch>(
+      routes: [
+        TypedGoRoute<RiderNotificationsRoute>(
+          path: '/rider-notifications',
+        ),
+      ],
+    ),
+
+    TypedStatefulShellBranch<RiderSettingsBranch>(
+      routes: [
+        TypedGoRoute<RiderSettingsRoute>(
+          path: '/rider-settings',
+        ),
+      ],
+    ),
+  ],
+)
+class RiderShellRoute extends StatefulShellRouteData {
+  @override
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    StatefulNavigationShell navigationShell,
+  ) {
+    return RiderShellScreen(
+      navigationShell: navigationShell,
+    );
+  }
+}
+
+// Rider shell screen
+class RiderShellScreen extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
+
+  const RiderShellScreen({
+    super.key,
+    required this.navigationShell,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: RiderBottomNavBar(
         currentIndex: navigationShell.currentIndex,
         onTap: (index) {
-          navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex);
+          navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          );
         },
       ),
     );
-  },
-  branches: [
-    StatefulShellBranch(
-      routes: [
-        GoRoute(
-          path: '/rider-home',
-          builder: (context, state) => const RiderHomeScreen(),
-        ),
-      ],
-    ),
-    StatefulShellBranch(
-      routes: [
-        GoRoute(
-          path: '/rider-rides',
-          builder: (context, state) => const MyRidesScreen(),
-        ),
-      ],
-    ),
-    StatefulShellBranch(
-      routes: [
-        GoRoute(
-          path: '/rider-notifications',
-          builder: (context, state) => const NotificationsScreen(),
-        ),
-      ],
-    ),
-    StatefulShellBranch(
-      routes: [
-        GoRoute(
-          path: '/rider-settings',
-          builder: (context, state) =>  SettingsScreen(),
-        ),
-      ],
-    ),
-  ],
-);
+  }
+}
 
 // مسارات المحفظة وبقية الشاشات
 @TypedGoRoute<WalletRoute>(path: '/wallet')
