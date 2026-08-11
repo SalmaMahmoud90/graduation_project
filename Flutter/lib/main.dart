@@ -34,8 +34,17 @@ final GlobalKey<ScaffoldMessengerState>
 // ============================================
 // Main
 // ============================================
+/* Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-Future<void> main() async {
+  runApp(
+    const MyApp(
+      initialLocale: Locale('ar'),
+    ),
+  );
+}
+ */
+ Future<void> main() async {
   // تهيئة Flutter قبل أي await
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -65,7 +74,7 @@ Future<void> main() async {
   );
 }
 
-
+ 
 // ============================================
 // Root Widget
 // ============================================

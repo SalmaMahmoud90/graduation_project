@@ -229,6 +229,12 @@
   "admin_notes": "Admin Notes",
   "close_btn": "Close",
   "pick_image": "Pick Image",
-  "report_type" : "Report Type"
+  "report_type" : "Report Type",
+  "reset_password_title": "Reset Password",
+  "reset_password_subtitle": "Create a new strong password for your account",
+  "new_password": "New Password",
+  "confirm_new_password": "Confirm New Password",
+  "save_new_password": "Save New Password",
+  "password_reset_success": "Password changed successfully, please login now"
   
 }

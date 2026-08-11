@@ -1,28 +1,27 @@
-import 'package:flutter/foundation.dart';
 
-// الكلاس الأساسي المجرد لحالات تسجيل الدخول
-@immutable
-abstract class LoginState {}
+// حالة الكيوبيت الخاصة ببيانات نموذج تسجيل الدخول
+import 'package:a_tareqaak/domain/entity/auth/login/login_entity.dart';
+import 'package:equatable/equatable.dart';
 
-// الحالة الأولية عند فتح الشاشة
-class LoginInitialState extends LoginState {}
+class LoginCubitState extends Equatable {
+  final LoginEntity? entity;
+  final bool isPasswordObscured;
 
-// حالة تغيير إظهار/إخفاء كلمة المرور
-class LoginPasswordVisibilityChangedState extends LoginState {
-  final bool isObscured;
+  const LoginCubitState({
+    required this.entity,
+    this.isPasswordObscured = true,
+  });
 
-  LoginPasswordVisibilityChangedState(this.isObscured);
-}
+  LoginCubitState copyWith({
+    LoginEntity? entity,
+    bool? isPasswordObscured,
+  }) {
+    return LoginCubitState(
+      entity: entity ?? this.entity,
+      isPasswordObscured: isPasswordObscured ?? this.isPasswordObscured,
+    );
+  }
 
-// حالة بدء تحميل طلب تسجيل الدخول
-class LoginLoadingState extends LoginState {}
-
-// حالة نجاح تسجيل الدخول
-class LoginSuccessState extends LoginState {}
-
-// حالة حدوث خطأ أثناء تسجيل الدخول
-class LoginErrorState extends LoginState {
-  final String message;
-
-  LoginErrorState(this.message);
+  @override
+  List<Object?> get props => [entity, isPasswordObscured];
 }

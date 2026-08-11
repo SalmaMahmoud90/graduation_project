@@ -25,6 +25,8 @@ List<RouteBase> get $appRoutes => [
   $sendReportRoute,
   $myReportsRoute,
   $reportDetailsRoute,
+  $resetPasswordRoute,
+  $forgotPasswordRoute,
 ];
 
 RouteBase get $splashRoute => GoRouteData.$route(
@@ -122,15 +124,29 @@ RouteBase get $checkCodeRoute => GoRouteData.$route(
 );
 
 mixin $CheckCodeRoute on GoRouteData {
-  static CheckCodeRoute _fromState(GoRouterState state) =>
-      CheckCodeRoute(email: state.uri.queryParameters['email']);
+  static CheckCodeRoute _fromState(GoRouterState state) => CheckCodeRoute(
+    email: state.uri.queryParameters['email']!,
+    isForgotPassword:
+        _$convertMapValue(
+          'is-forgot-password',
+          state.uri.queryParameters,
+          _$boolConverter,
+        ) ??
+        false,
+    resetToken: state.uri.queryParameters['reset-token'],
+  );
 
   CheckCodeRoute get _self => this as CheckCodeRoute;
 
   @override
   String get location => GoRouteData.$location(
     '/check-code',
-    queryParams: {if (_self.email != null) 'email': _self.email},
+    queryParams: {
+      'email': _self.email,
+      if (_self.isForgotPassword != false)
+        'is-forgot-password': _self.isForgotPassword.toString(),
+      if (_self.resetToken != null) 'reset-token': _self.resetToken,
+    },
   );
 
   @override
@@ -145,6 +161,26 @@ mixin $CheckCodeRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+
+bool _$boolConverter(String value) {
+  switch (value) {
+    case 'true':
+      return true;
+    case 'false':
+      return false;
+    default:
+      throw UnsupportedError('Cannot convert "$value" into a bool.');
+  }
 }
 
 RouteBase get $riderHomeRoute => GoRouteData.$route(
@@ -403,26 +439,6 @@ mixin $DriverProfileRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-T? _$convertMapValue<T>(
-  String key,
-  Map<String, String> map,
-  T? Function(String) converter,
-) {
-  final value = map[key];
-  return value == null ? null : converter(value);
-}
-
-bool _$boolConverter(String value) {
-  switch (value) {
-    case 'true':
-      return true;
-    case 'false':
-      return false;
-    default:
-      throw UnsupportedError('Cannot convert "$value" into a bool.');
-  }
-}
-
 RouteBase get $editDriverProfileRoute => GoRouteData.$route(
   path: '/edit-driver-profile',
   hasOverriddenOnExit: false,
@@ -672,4 +688,63 @@ mixin $ReportDetailsRoute on GoRouteData {
   @override
   void replace(BuildContext context) =>
       context.replace(location, extra: _self.$extra);
+}
+
+RouteBase get $resetPasswordRoute => GoRouteData.$route(
+  path: '/reset-password',
+  hasOverriddenOnExit: false,
+  factory: $ResetPasswordRoute._fromState,
+);
+
+mixin $ResetPasswordRoute on GoRouteData {
+  static ResetPasswordRoute _fromState(GoRouterState state) =>
+      ResetPasswordRoute(resetToken: state.uri.queryParameters['reset-token']!);
+
+  ResetPasswordRoute get _self => this as ResetPasswordRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/reset-password',
+    queryParams: {'reset-token': _self.resetToken},
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $forgotPasswordRoute => GoRouteData.$route(
+  path: '/forgot-password',
+  hasOverriddenOnExit: false,
+  factory: $ForgotPasswordRoute._fromState,
+);
+
+mixin $ForgotPasswordRoute on GoRouteData {
+  static ForgotPasswordRoute _fromState(GoRouterState state) =>
+      ForgotPasswordRoute();
+
+  @override
+  String get location => GoRouteData.$location('/forgot-password');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
 }

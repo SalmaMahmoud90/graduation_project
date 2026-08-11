@@ -2,6 +2,8 @@ import 'package:a_tareqaak/core/extension/page_builder_extension.dart';
 import 'package:a_tareqaak/core/utils/enums/enum_utils.dart';
 import 'package:a_tareqaak/data/models/report/report_model.dart';
 import 'package:a_tareqaak/data/models/ride/ride_model.dart';
+import 'package:a_tareqaak/presentation/screens/auth/forgot_password_screen.dart';
+import 'package:a_tareqaak/presentation/screens/auth/reset_password/reset_password_screen.dart';
 import 'package:a_tareqaak/presentation/screens/customer_service/customer_service_screen.dart';
 import 'package:a_tareqaak/presentation/screens/driver_rides/delete_ride_screen.dart';
 import 'package:a_tareqaak/presentation/screens/driver_rides/edit_ride_list_screen.dart';
@@ -59,16 +61,27 @@ class RegisterRoute extends GoRouteData with $RegisterRoute {
   }
 }
 
-@TypedGoRoute<CheckCodeRoute>(path: '/check-code')
+@TypedGoRoute<CheckCodeRoute>(
+  path: '/check-code',
+)
 class CheckCodeRoute extends GoRouteData with $CheckCodeRoute {
-  final String? email;
+  final String email;
+  final bool isForgotPassword;
+  final String? resetToken;
 
-  CheckCodeRoute({this.email});
+  const CheckCodeRoute({
+    required this.email,
+    this.isForgotPassword = false,
+    this.resetToken,
+  });
 
   @override
-  CustomTransitionPage<void> buildPage(context, state) {
-    return CheckCodeScreen(email: email ?? 'example@email.com')
-        .buildPage(pageAnimation: PageAnimation.slide);
+  Widget build(BuildContext context, GoRouterState state) {
+    return CheckCodeScreen(
+      email: email,
+      isForgotPassword: isForgotPassword,
+      resetToken: resetToken,
+    );
   }
 }
 //#endregion
@@ -329,5 +342,27 @@ class ReportDetailsRoute extends GoRouteData with $ReportDetailsRoute {
     ).buildPage(
       pageAnimation: PageAnimation.slide,
     );
+ 
+ }
+}
+
+@TypedGoRoute<ResetPasswordRoute>(path: '/reset-password')
+class ResetPasswordRoute extends GoRouteData with $ResetPasswordRoute {
+  final String resetToken;
+
+  ResetPasswordRoute({required this.resetToken});
+
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return ResetPasswordScreen(resetToken: resetToken)
+        .buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<ForgotPasswordRoute>(path: '/forgot-password')
+class ForgotPasswordRoute extends GoRouteData with $ForgotPasswordRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const ForgotPasswordScreen().buildPage(pageAnimation: PageAnimation.slide);
   }
 }

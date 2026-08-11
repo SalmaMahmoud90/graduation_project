@@ -5,8 +5,12 @@ class AppStoragePaths {
   static const String token = 'token';
   //#endregion
 
+  //#region Ad Comparison
+  static const String rememberMe = 'rememberMe';
+  static const String profileComplete = 'profileComplete';
+  //#endregion
 
-
+  
   //#region Lang
   static const String lang = 'lang';
   //#endregion

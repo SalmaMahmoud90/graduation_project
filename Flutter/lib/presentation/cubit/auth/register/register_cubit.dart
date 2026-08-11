@@ -1,60 +1,71 @@
+import 'package:a_tareqaak/presentation/cubit/auth/register/register_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:a_tareqaak/core/utils/enums/enum_utils.dart';
-import 'register_state.dart';
+import 'package:a_tareqaak/domain/entity/auth/register/register_entity.dart';
 
-// كيوبيت إدارة عملية إنشاء حساب جديد
-class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit() : super(RegisterInitialState());
 
-  // متغيرات الواجهة المحلية
-  UserType? selectedRole;
-  bool isPasswordObscured = true;
-  bool isConfirmPasswordObscured = true;
-  bool isTermsAccepted = false;
-  bool isLoading = false;
+// كيوبيت إدارة مدخلات نموذج إنشاء الحساب
+class RegisterCubit extends Cubit<RegisterCubitState> {
+  RegisterCubit() : super(const RegisterCubitState(entity: null));
 
-  // اختيار الدور (سائق أم راكب)
-  void selectRole(UserType? role) {
-    selectedRole = role;
-    emit(RegisterRoleChangedState(selectedRole));
+  void nameChanged(String name) {
+    _updateEntity(name: name);
   }
 
-  // تبديل رؤية كلمة المرور
+  void emailChanged(String email) {
+    _updateEntity(email: email);
+  }
+
+  void passwordChanged(String password) {
+    _updateEntity(password: password);
+  }
+
+  void confirmPasswordChanged(String confirmPassword) {
+    _updateEntity(confirmPassword: confirmPassword);
+  }
+
+  void userTypeChanged(String userType) {
+    _updateEntity(userType: userType);
+  }
+
+  void _updateEntity({
+    String? name,
+    String? email,
+    String? password,
+    String? confirmPassword,
+    String? userType,
+  }) {
+    final current = state.entity ??
+        const RegisterEntity(
+          email: '',
+          name: '',
+          password: '',
+          confirmPassword: '',
+          userType: 'driver',
+        );
+
+    emit(
+      state.copyWith(
+        entity: RegisterEntity(
+          email: email ?? current.email,
+          name: name ?? current.name,
+          password: password ?? current.password,
+          confirmPassword: confirmPassword ?? current.confirmPassword,
+          userType: userType ?? current.userType,
+        ),
+      ),
+    );
+  }
+
   void togglePasswordVisibility() {
-    isPasswordObscured = !isPasswordObscured;
-    emit(RegisterPasswordVisibilityChangedState(isPasswordObscured));
+    emit(state.copyWith(isPasswordObscured: !state.isPasswordObscured));
   }
 
-  // تبديل رؤية تأكيد كلمة المرور
   void toggleConfirmPasswordVisibility() {
-    isConfirmPasswordObscured = !isConfirmPasswordObscured;
-    emit(RegisterConfirmPasswordVisibilityChangedState(isConfirmPasswordObscured));
+    emit(state.copyWith(
+        isConfirmPasswordObscured: !state.isConfirmPasswordObscured));
   }
 
-  // تبديل حالة الموافقة على الشروط والأحكام
-  void toggleTerms(bool? value) {
-    isTermsAccepted = value ?? false;
-    emit(RegisterTermsChangedState(isTermsAccepted));
-  }
-
-  // دالة إرسال بيانات الحساب الجديد
-  Future<void> register({
-    required String fullName,
-    required String email,
-    required String password,
-    required UserType role,
-  }) async {
-    isLoading = true;
-    emit(RegisterLoadingState());
-
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-      isLoading = false;
-      // إرسال النجاح مع الدور المحدد لتوجيه المستخدم للهوم المناسب
-      emit(RegisterSuccessState(role));
-    } catch (e) {
-      isLoading = false;
-      emit(RegisterErrorState(e.toString()));
-    }
+  void toggleTerms(bool? accepted) {
+    emit(state.copyWith(isTermsAccepted: accepted ?? false));
   }
 }

@@ -633,4 +633,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get report_type => 'Report Type';
+
+  @override
+  String get reset_password_title => 'Reset Password';
+
+  @override
+  String get reset_password_subtitle =>
+      'Create a new strong password for your account';
+
+  @override
+  String get new_password => 'New Password';
+
+  @override
+  String get confirm_new_password => 'Confirm New Password';
+
+  @override
+  String get save_new_password => 'Save New Password';
+
+  @override
+  String get password_reset_success =>
+      'Password changed successfully, please login now';
 }

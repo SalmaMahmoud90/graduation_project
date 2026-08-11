@@ -631,4 +631,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get report_type => 'نوع البلاغ';
+
+  @override
+  String get reset_password_title => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get reset_password_subtitle => 'أنشئ كلمة مرور جديدة وقوية لحسابك';
+
+  @override
+  String get new_password => 'كلمة المرور الجديدة';
+
+  @override
+  String get confirm_new_password => 'تأكيد كلمة المرور الجديدة';
+
+  @override
+  String get save_new_password => 'حفظ كلمة المرور الجديدة';
+
+  @override
+  String get password_reset_success =>
+      'تم تغيير كلمة المرور بنجاح، يمكنك تسجيل الدخول الآن';
 }
