@@ -19,6 +19,8 @@ import 'package:a_tareqaak/presentation/screens/profile/edit_driver_profile_scre
 import 'package:a_tareqaak/presentation/screens/profile/report_details_screen.dart';
 import 'package:a_tareqaak/presentation/screens/report/my_reports_screen.dart';
 import 'package:a_tareqaak/presentation/screens/report/send_report_screen.dart';
+import 'package:a_tareqaak/presentation/screens/rider_rides/search_results_screen.dart';
+import 'package:a_tareqaak/presentation/screens/rider_rides/widgets/rider_bottom_nav_bar.dart';
 import 'package:a_tareqaak/presentation/screens/settings/settings_screen.dart';
 import 'package:a_tareqaak/presentation/screens/splash/splash_screen.dart';
 import 'package:a_tareqaak/presentation/screens/auth/login_screen.dart';
@@ -26,6 +28,8 @@ import 'package:a_tareqaak/presentation/screens/auth/register_screen.dart';
 import 'package:a_tareqaak/presentation/screens/auth/check_code_screen.dart';
 import 'package:a_tareqaak/presentation/screens/home/driver_home_screen.dart';
 import 'package:a_tareqaak/presentation/screens/home/rider_home_screen.dart';
+import 'package:a_tareqaak/presentation/screens/wallet/charge_wallet_screen.dart';
+import 'package:a_tareqaak/presentation/screens/wallet/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -117,7 +121,7 @@ class PublishRideRoute extends GoRouteData with $PublishRideRoute {
 class SelectCityRoute extends GoRouteData with $SelectCityRoute {
   @override
   CustomTransitionPage<void> buildPage(context, state) {
-    return const SelectCityScreen().buildPage(pageAnimation: PageAnimation.slide);
+    return const SearchRideFormScreen().buildPage(pageAnimation: PageAnimation.slide);
   }
 }
 
@@ -364,5 +368,87 @@ class ForgotPasswordRoute extends GoRouteData with $ForgotPasswordRoute {
   @override
   CustomTransitionPage<void> buildPage(context, state) {
     return const ForgotPasswordScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+// إعداد مسارات الراكب وإتاحة شريط التنقل السفلي عبر AppShellRoute / StatefulShellRoute
+final riderShellRoute = StatefulShellRoute.indexedStack(
+  builder: (context, state, navigationShell) {
+    return Scaffold(
+      body: navigationShell,
+      bottomNavigationBar: RiderBottomNavBar(
+        currentIndex: navigationShell.currentIndex,
+        onTap: (index) {
+          navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex);
+        },
+      ),
+    );
+  },
+  branches: [
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: '/rider-home',
+          builder: (context, state) => const RiderHomeScreen(),
+        ),
+      ],
+    ),
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: '/rider-rides',
+          builder: (context, state) => const MyRidesScreen(),
+        ),
+      ],
+    ),
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: '/rider-notifications',
+          builder: (context, state) => const NotificationsScreen(),
+        ),
+      ],
+    ),
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: '/rider-settings',
+          builder: (context, state) =>  SettingsScreen(),
+        ),
+      ],
+    ),
+  ],
+);
+
+// مسارات المحفظة وبقية الشاشات
+@TypedGoRoute<WalletRoute>(path: '/wallet')
+class WalletRoute extends GoRouteData with $WalletRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const WalletScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<ChargeWalletRoute>(path: '/charge-wallet')
+class ChargeWalletRoute extends GoRouteData with $ChargeWalletRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const ChargeWalletScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<SearchRideFormRoute>(path: '/search-ride-form')
+class SearchRideFormRoute extends GoRouteData with $SearchRideFormRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const SearchRideFormScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<SearchResultsRoute>(path: '/search-results')
+class SearchResultsRoute extends GoRouteData with $SearchResultsRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const SearchResultsScreen().buildPage(pageAnimation: PageAnimation.slide);
   }
 }

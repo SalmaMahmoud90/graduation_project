@@ -27,6 +27,10 @@ List<RouteBase> get $appRoutes => [
   $reportDetailsRoute,
   $resetPasswordRoute,
   $forgotPasswordRoute,
+  $walletRoute,
+  $chargeWalletRoute,
+  $searchRideFormRoute,
+  $searchResultsRoute,
 ];
 
 RouteBase get $splashRoute => GoRouteData.$route(
@@ -734,6 +738,113 @@ mixin $ForgotPasswordRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/forgot-password');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $walletRoute => GoRouteData.$route(
+  path: '/wallet',
+  hasOverriddenOnExit: false,
+  factory: $WalletRoute._fromState,
+);
+
+mixin $WalletRoute on GoRouteData {
+  static WalletRoute _fromState(GoRouterState state) => WalletRoute();
+
+  @override
+  String get location => GoRouteData.$location('/wallet');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $chargeWalletRoute => GoRouteData.$route(
+  path: '/charge-wallet',
+  hasOverriddenOnExit: false,
+  factory: $ChargeWalletRoute._fromState,
+);
+
+mixin $ChargeWalletRoute on GoRouteData {
+  static ChargeWalletRoute _fromState(GoRouterState state) =>
+      ChargeWalletRoute();
+
+  @override
+  String get location => GoRouteData.$location('/charge-wallet');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $searchRideFormRoute => GoRouteData.$route(
+  path: '/search-ride-form',
+  hasOverriddenOnExit: false,
+  factory: $SearchRideFormRoute._fromState,
+);
+
+mixin $SearchRideFormRoute on GoRouteData {
+  static SearchRideFormRoute _fromState(GoRouterState state) =>
+      SearchRideFormRoute();
+
+  @override
+  String get location => GoRouteData.$location('/search-ride-form');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $searchResultsRoute => GoRouteData.$route(
+  path: '/search-results',
+  hasOverriddenOnExit: false,
+  factory: $SearchResultsRoute._fromState,
+);
+
+mixin $SearchResultsRoute on GoRouteData {
+  static SearchResultsRoute _fromState(GoRouterState state) =>
+      SearchResultsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/search-results');
 
   @override
   void go(BuildContext context) => context.go(location);

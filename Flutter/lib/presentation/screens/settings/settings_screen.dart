@@ -1,7 +1,10 @@
 
 import 'package:a_tareqaak/core/routes/app_routes.dart';
+import 'package:a_tareqaak/core/services/locator/locator.dart';
+import 'package:a_tareqaak/presentation/cubit/language/language_cubit.dart';
 import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
@@ -14,23 +17,25 @@ class SettingsScreen extends StatelessWidget {
   SettingsScreen({super.key});
    final List<FaIconData> icons = [
     FontAwesomeIcons.user,
+    FontAwesomeIcons.wallet,
     FontAwesomeIcons.language,
     FontAwesomeIcons.moon,
     FontAwesomeIcons.headset,
     FontAwesomeIcons.circleQuestion,
     FontAwesomeIcons.rightFromBracket];
-   final List<String> titles = [
-    'view_profile',
-    'language_switch',
-    'dark_mode',
-    'customer_service',
-    'my_Reports',
-    'logout'];
+   
     
   @override
   Widget build(BuildContext context) {
     final tr = context.loc;
-
+    List<String> titles = [
+    tr.view_profile,
+    tr.wallet_and_payment,
+    tr.language_switch,
+    tr.dark_mode,
+    tr.customer_service,
+    tr.my_reports,
+    tr.logout];
     return Scaffold(
       backgroundColor: AppColors.backGround,
     
@@ -55,7 +60,7 @@ class SettingsScreen extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: AppPaddingWidth.p20),
                 child: ListView.separated(
-                  itemCount: 6,
+                  itemCount: 7,
                   separatorBuilder: (context, index) => SizedBox(height: AppHeight.h12),
                  itemBuilder:(context, index) => _buildSettingCard(
                       icon: icons[index],
@@ -64,12 +69,14 @@ class SettingsScreen extends StatelessWidget {
                         index == 0
                             ? DriverProfileRoute().push(context)
                             : index == 1 
-                                ?  debugPrint('Language Switch Tapped')
+                            ? WalletRoute().push(context)
                                 : index == 2
-                                  ?   debugPrint('Dark Mode Tapped')
+                                ?  context.read<LanguageCubit>().toggleLanguage()
                                     : index == 3
-                                        ? CustomerServiceRoute().push(context)
+                                  ?   debugPrint('Dark Mode Tapped')
                                         : index == 4
+                                        ? CustomerServiceRoute().push(context)
+                                        : index == 5
                                             ? MyReportsRoute().push(context)
                                             : LoginRoute().push(context);
                       },

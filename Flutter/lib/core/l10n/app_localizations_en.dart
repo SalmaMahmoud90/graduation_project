@@ -653,4 +653,90 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get password_reset_success =>
       'Password changed successfully, please login now';
+
+  @override
+  String get rider_home_title => 'Rider Home';
+
+  @override
+  String get search_ride_banner_title => 'Search for a Ride';
+
+  @override
+  String get search_ride_banner_sub => 'Choose your destination and go easily';
+
+  @override
+  String get search_or_request_ride => 'Search / Request Ride';
+
+  @override
+  String get available_rides_now => 'Available Rides Now';
+
+  @override
+  String get book_btn => 'Book';
+
+  @override
+  String get cancel_booking_btn => 'Cancel Booking';
+
+  @override
+  String get booking_confirmed => 'Booked';
+
+  @override
+  String get booking_pending => 'Pending';
+
+  @override
+  String get booking_cancelled => 'Cancelled';
+
+  @override
+  String get booking_rejected => 'Rejected';
+
+  @override
+  String get search_results_title => 'Search Results';
+
+  @override
+  String get no_matching_rides => 'No Matching Trips';
+
+  @override
+  String get try_changing_time_or_dest =>
+      'Try changing the trip time or destination';
+
+  @override
+  String get modify_search => 'Modify Search';
+
+  @override
+  String get wallet_and_payment => 'Wallet & Payment';
+
+  @override
+  String get wallet_balance => 'Wallet Balance';
+
+  @override
+  String get charge_balance => 'Charge Balance';
+
+  @override
+  String get syriatel_cash => 'Syriatel Cash';
+
+  @override
+  String get sham_cash => 'Sham Cash';
+
+  @override
+  String get transaction_history => 'Transaction History';
+
+  @override
+  String get sender_number => 'Sender Number';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get other_amount => 'Other';
+
+  @override
+  String get charge_request_submitted => 'Recharge Request Submitted';
+
+  @override
+  String get charge_request_sub =>
+      'Please confirm transaction via Syriatel Cash app and balance will be added shortly';
+
+  @override
+  String get waiting_approval => 'Pending Approval';
+
+  @override
+  String get rejected_status => 'Rejected';
 }

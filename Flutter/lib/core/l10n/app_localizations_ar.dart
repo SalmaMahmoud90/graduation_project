@@ -650,4 +650,89 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get password_reset_success =>
       'تم تغيير كلمة المرور بنجاح، يمكنك تسجيل الدخول الآن';
+
+  @override
+  String get rider_home_title => 'الرئيسية (الراكب)';
+
+  @override
+  String get search_ride_banner_title => 'ابحث عن رحلة';
+
+  @override
+  String get search_ride_banner_sub => 'اختر وجهتك وانطلق بسهولة';
+
+  @override
+  String get search_or_request_ride => 'طلب / بحث عن رحلة';
+
+  @override
+  String get available_rides_now => 'رحلات متاحة الآن';
+
+  @override
+  String get book_btn => 'حجز';
+
+  @override
+  String get cancel_booking_btn => 'إلغاء الحجز';
+
+  @override
+  String get booking_confirmed => 'محجوزة';
+
+  @override
+  String get booking_pending => 'معلقة';
+
+  @override
+  String get booking_cancelled => 'ملغية';
+
+  @override
+  String get booking_rejected => 'مرفوضة';
+
+  @override
+  String get search_results_title => 'نتائج البحث';
+
+  @override
+  String get no_matching_rides => 'لا توجد رحلات مطابقة';
+
+  @override
+  String get try_changing_time_or_dest => 'حاول تغيير وقت الرحلة أو الوجهة';
+
+  @override
+  String get modify_search => 'تعديل البحث';
+
+  @override
+  String get wallet_and_payment => 'المحفظة والدفع الإلكتروني';
+
+  @override
+  String get wallet_balance => 'رصيد المحفظة';
+
+  @override
+  String get charge_balance => 'شحن الرصيد';
+
+  @override
+  String get syriatel_cash => 'سيريتل كاش';
+
+  @override
+  String get sham_cash => 'شام كاش';
+
+  @override
+  String get transaction_history => 'سجل المعاملات';
+
+  @override
+  String get sender_number => 'رقم المرسل';
+
+  @override
+  String get amount => 'المبلغ';
+
+  @override
+  String get other_amount => 'أخرى';
+
+  @override
+  String get charge_request_submitted => 'تم طلب الشحن بنجاح';
+
+  @override
+  String get charge_request_sub =>
+      'يرجى تأكيد العملية من تطبيق سيريتل كاش وسيعاد إضافة الرصيد خلال لحظات';
+
+  @override
+  String get waiting_approval => 'قيد الانتظار';
+
+  @override
+  String get rejected_status => 'تم الرفض';
 }

@@ -8,6 +8,8 @@ class AppAssets {
   static String logo = "$imagePath/app_logo.png";
   static String defult = "$imagePath/default.jpeg";
   static String profilePlaceholder = "$imagePath/profile.jpeg";
+  static String sham_cache_logo = "$imagePath/profile.jpeg";
+  static String syriatail_logo = "$imagePath/profile.jpeg";
   static String splashBackground = "$imagePath/splashBackground.jpg";
   //#endregion
 

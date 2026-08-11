@@ -1369,6 +1369,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password changed successfully, please login now'**
   String get password_reset_success;
+
+  /// No description provided for @rider_home_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Rider Home'**
+  String get rider_home_title;
+
+  /// No description provided for @search_ride_banner_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a Ride'**
+  String get search_ride_banner_title;
+
+  /// No description provided for @search_ride_banner_sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your destination and go easily'**
+  String get search_ride_banner_sub;
+
+  /// No description provided for @search_or_request_ride.
+  ///
+  /// In en, this message translates to:
+  /// **'Search / Request Ride'**
+  String get search_or_request_ride;
+
+  /// No description provided for @available_rides_now.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Rides Now'**
+  String get available_rides_now;
+
+  /// No description provided for @book_btn.
+  ///
+  /// In en, this message translates to:
+  /// **'Book'**
+  String get book_btn;
+
+  /// No description provided for @cancel_booking_btn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Booking'**
+  String get cancel_booking_btn;
+
+  /// No description provided for @booking_confirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get booking_confirmed;
+
+  /// No description provided for @booking_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get booking_pending;
+
+  /// No description provided for @booking_cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get booking_cancelled;
+
+  /// No description provided for @booking_rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get booking_rejected;
+
+  /// No description provided for @search_results_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Results'**
+  String get search_results_title;
+
+  /// No description provided for @no_matching_rides.
+  ///
+  /// In en, this message translates to:
+  /// **'No Matching Trips'**
+  String get no_matching_rides;
+
+  /// No description provided for @try_changing_time_or_dest.
+  ///
+  /// In en, this message translates to:
+  /// **'Try changing the trip time or destination'**
+  String get try_changing_time_or_dest;
+
+  /// No description provided for @modify_search.
+  ///
+  /// In en, this message translates to:
+  /// **'Modify Search'**
+  String get modify_search;
+
+  /// No description provided for @wallet_and_payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet & Payment'**
+  String get wallet_and_payment;
+
+  /// No description provided for @wallet_balance.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet Balance'**
+  String get wallet_balance;
+
+  /// No description provided for @charge_balance.
+  ///
+  /// In en, this message translates to:
+  /// **'Charge Balance'**
+  String get charge_balance;
+
+  /// No description provided for @syriatel_cash.
+  ///
+  /// In en, this message translates to:
+  /// **'Syriatel Cash'**
+  String get syriatel_cash;
+
+  /// No description provided for @sham_cash.
+  ///
+  /// In en, this message translates to:
+  /// **'Sham Cash'**
+  String get sham_cash;
+
+  /// No description provided for @transaction_history.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction History'**
+  String get transaction_history;
+
+  /// No description provided for @sender_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Sender Number'**
+  String get sender_number;
+
+  /// No description provided for @amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amount;
+
+  /// No description provided for @other_amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other_amount;
+
+  /// No description provided for @charge_request_submitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge Request Submitted'**
+  String get charge_request_submitted;
+
+  /// No description provided for @charge_request_sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm transaction via Syriatel Cash app and balance will be added shortly'**
+  String get charge_request_sub;
+
+  /// No description provided for @waiting_approval.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Approval'**
+  String get waiting_approval;
+
+  /// No description provided for @rejected_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get rejected_status;
 }
 
 class _AppLocalizationsDelegate
