@@ -72,6 +72,15 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                 contentType: ContentType.success,
               );
               context.pop();
+            } else if (state is PublishRideErrorState) {
+              showCustomSnackBar(
+                context: context,
+                title: tr.error_title,
+                message: state.message == 'missing_fields'
+                    ? tr.field_required
+                    : state.message,
+                contentType: ContentType.failure,
+              );
             }
           },
           child: SingleChildScrollView(
@@ -181,6 +190,11 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                               if (pickedDate != null) {
                                 _dateController.text =
                                     '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
+                                if (context.mounted) {
+                                  context
+                                      .read<PublishRideCubit>()
+                                      .setDate(pickedDate);
+                                }
                               }
                             },
                             prefixIcon: Center(
@@ -206,6 +220,11 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                               );
                               if (pickedTime != null) {
                                 _timeController.text = pickedTime.format(context);
+                                if (context.mounted) {
+                                  context
+                                      .read<PublishRideCubit>()
+                                      .setTime(pickedTime);
+                                }
                               }
                             },
                           ),
@@ -221,6 +240,8 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                   title: tr.expected_duration,
                   hintText: tr.three_hours,
                   isExpanded: true,
+                  onChanged: (v) =>
+                      context.read<PublishRideCubit>().setDuration(v),
                 ),
 
                 // حقل السعر
@@ -230,6 +251,8 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                   hintText: '50,000 ${tr.syrian_pound}',
                   textInputType: TextInputType.number,
                   isExpanded: true,
+                  onChanged: (v) =>
+                      context.read<PublishRideCubit>().setPrice(v),
                   prefixIcon: Center(
                     widthFactor: 1.0,
                     child: FaIcon(

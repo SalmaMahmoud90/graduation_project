@@ -17,7 +17,7 @@ import 'package:a_tareqaak/presentation/widgets/image_view.dart';
 import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
 import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
 
-class DriverProfileScreen extends StatelessWidget {
+class DriverProfileScreen extends StatefulWidget {
   final bool isOtherUser; // خاصية فحص هل البروفايل لمستخدم آخر لتحديد خيار الإبلاغ
 
   const DriverProfileScreen({
@@ -26,8 +26,26 @@ class DriverProfileScreen extends StatelessWidget {
   });
 
   @override
+  State<DriverProfileScreen> createState() => _DriverProfileScreenState();
+}
+
+class _DriverProfileScreenState extends State<DriverProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // تحميل بيانات البروفايل الحقيقية من الخادم للمستخدم الحالي فقط
+    if (!widget.isOtherUser) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<DriverProfileCubit>().loadProfile();
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return _ProfileContent(isOtherUser: isOtherUser);
+    return _ProfileContent(isOtherUser: widget.isOtherUser);
   }
 }
 
@@ -344,62 +362,97 @@ class _ProfileContent extends StatelessWidget {
                     ),
                   ),
 
-                  // معلومات السيارة
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: AppPaddingWidth.p20),
-                    child: Column(
-                      spacing: AppHeight.h8,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SectionTitle(
-                          text: tr.car_info_header,
-                          fontSize: AppFontSize.s14,
-                          color: AppColors.primary,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(AppRadius.r16),
-                            border: Border.all(color: AppColors.lightGreySec),
+                  // معلومات السيارة تظهر للسائق فقط
+                  if (!cubit.isRider)
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: AppPaddingWidth.p20),
+                      child: Column(
+                        spacing: AppHeight.h8,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SectionTitle(
+                            text: tr.car_info_header,
+                            fontSize: AppFontSize.s14,
+                            color: AppColors.primary,
                           ),
-                          child: Column(
-                            children: [
-                              _buildCarDetailRow(
-                                icon: FontAwesomeIcons.car,
-                                label: tr.car_type,
-                                value: cubit.carName,
-                              ),
-                              Divider(color: AppColors.lightGreySec, height: 0),
-                              _buildCarDetailRow(
-                                icon: FontAwesomeIcons.palette,
-                                label: tr.car_color,
-                                value: cubit.carColor,
-                              ),
-                              Divider(color: AppColors.lightGreySec, height: 0),
-                              _buildCarDetailRow(
-                                icon: FontAwesomeIcons.calendarDay,
-                                label: tr.plate_number,
-                                value: cubit.carPlate,
-                              ),
-                              Divider(color: AppColors.lightGreySec, height: 0),
-                              _buildCarDetailRow(
-                                icon: FontAwesomeIcons.hashtag,
-                                label: tr.car_id,
-                                value: cubit.carId,
-                              ),
-                              Divider(color: AppColors.lightGreySec, height: 0),
-                              _buildCarDetailRow(
-                                icon: FontAwesomeIcons.calendarCheck,
-                                label: tr.manufacturing_year,
-                                value: cubit.manufacturingYear,
-                              ),
-                            ],
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(AppRadius.r16),
+                              border: Border.all(color: AppColors.lightGreySec),
+                            ),
+                            child: Column(
+                              children: [
+                                _buildCarDetailRow(
+                                  icon: FontAwesomeIcons.car,
+                                  label: tr.car_type,
+                                  value: cubit.carName,
+                                ),
+                                Divider(
+                                    color: AppColors.lightGreySec, height: 0),
+                                _buildCarDetailRow(
+                                  icon: FontAwesomeIcons.palette,
+                                  label: tr.car_color,
+                                  value: cubit.carColor,
+                                ),
+                                Divider(
+                                    color: AppColors.lightGreySec, height: 0),
+                                _buildCarDetailRow(
+                                  icon: FontAwesomeIcons.calendarDay,
+                                  label: tr.plate_number,
+                                  value: cubit.carPlate,
+                                ),
+                                Divider(
+                                    color: AppColors.lightGreySec, height: 0),
+                                _buildCarDetailRow(
+                                  icon: FontAwesomeIcons.hashtag,
+                                  label: tr.car_id,
+                                  value: cubit.carId,
+                                ),
+                                Divider(
+                                    color: AppColors.lightGreySec, height: 0),
+                                _buildCarDetailRow(
+                                  icon: FontAwesomeIcons.calendarCheck,
+                                  label: tr.manufacturing_year,
+                                  value: cubit.manufacturingYear,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+
+                  // موقع الراكب الحالي يظهر للراكب فقط
+                  if (cubit.isRider && cubit.currentLocation.isNotEmpty)
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: AppPaddingWidth.p20),
+                      child: Column(
+                        spacing: AppHeight.h8,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SectionTitle(
+                            text: tr.current_location,
+                            fontSize: AppFontSize.s14,
+                            color: AppColors.primary,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(AppRadius.r16),
+                              border: Border.all(color: AppColors.lightGreySec),
+                            ),
+                            child: _buildCarDetailRow(
+                              icon: FontAwesomeIcons.locationDot,
+                              label: tr.current_location,
+                              value: cubit.currentLocation,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
                   // زر تعديل البروفايل في الأسفل
                   if (!isOtherUser)

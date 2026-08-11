@@ -501,8 +501,16 @@ class SearchRideFormRoute extends GoRouteData with $SearchRideFormRoute {
 
 @TypedGoRoute<SearchResultsRoute>(path: '/search-results')
 class SearchResultsRoute extends GoRouteData with $SearchResultsRoute {
+  final String? fromCity;
+  final String? toCity;
+
+  SearchResultsRoute({this.fromCity, this.toCity});
+
   @override
   CustomTransitionPage<void> buildPage(context, state) {
-    return const SearchResultsScreen().buildPage(pageAnimation: PageAnimation.slide);
+    return SearchResultsScreen(
+      location: fromCity,
+      destination: toCity,
+    ).buildPage(pageAnimation: PageAnimation.slide);
   }
 }

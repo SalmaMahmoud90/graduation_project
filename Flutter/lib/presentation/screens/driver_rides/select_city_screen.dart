@@ -212,6 +212,7 @@ import 'package:a_tareqaak/core/extension/localization_extension.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
+import 'package:a_tareqaak/core/routes/app_routes.dart';
 import 'package:a_tareqaak/presentation/widgets/custom_elevated_button.dart';
 import 'package:a_tareqaak/presentation/widgets/form/custom_input_field.dart';
 import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
@@ -336,7 +337,10 @@ class _SearchRideFormScreenState extends State<SearchRideFormScreen> {
                 borderRadius: AppRadius.r12,
                 color: AppColors.primary,
                 onPressed: () {
-                  context.push('/search-results');
+                  SearchResultsRoute(
+                    fromCity: _departureController.text.trim(),
+                    toCity: _destinationController.text.trim(),
+                  ).push(context);
                 },
                 child: BodyTitle(
                   text: tr.search,

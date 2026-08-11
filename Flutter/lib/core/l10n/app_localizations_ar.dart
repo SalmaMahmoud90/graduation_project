@@ -105,6 +105,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get enter_valid_email => 'يرجى إدخال بريد إلكتروني صحيح';
 
   @override
+  String get enter_valid_phone => 'يرجى إدخال رقم هاتف سوري صحيح';
+
+  @override
   String get field_required => 'هذا الحقل مطلوب';
 
   @override
@@ -665,6 +668,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get available_rides_now => 'رحلات متاحة الآن';
+
+  @override
+  String get no_data => 'لا توجد بيانات';
+
+  @override
+  String get reservation_success => 'تم إنشاء الحجز بنجاح';
+
+  @override
+  String get currency_syp => 'ل.س';
+
+  @override
+  String get available_seats_label => 'مقاعد متاحة';
 
   @override
   String get book_btn => 'حجز';

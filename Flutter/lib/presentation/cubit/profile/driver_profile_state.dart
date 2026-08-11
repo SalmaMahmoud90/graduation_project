@@ -20,6 +20,8 @@ class DriverProfileImagePickedState extends DriverProfileState {
 
 class DriverProfileSuccessState extends DriverProfileState {}
 
+class DriverProfileLoadedState extends DriverProfileState {}
+
 class DriverProfileErrorState extends DriverProfileState {
   final String message;
 

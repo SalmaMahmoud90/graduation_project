@@ -76,7 +76,97 @@ class BaseRemoteDataSource<T> {
         (e) => Left(e),
         (r) {
           if (r.data == null) return const Right(null);
-          return Right(BaseModel<R>.fromJson(r.data!, fromJsonT));
+          // Wrap flat bodies (no `data` envelope) so fromJsonT receives the
+          // whole response — matches the backend which returns flat / named-key
+          // bodies (e.g. `{rides: [...]}`, `{ride: {...}}`, `{user: {...}}`).
+          final body = r.data!;
+          final payload =
+              body.containsKey('data') ? body : {...body, 'data': body};
+          return Right(BaseModel<R>.fromJson(payload, fromJsonT));
+        },
+      );
+    } on AppException catch (e, s) {
+      log(e.message);
+      log(s.toString());
+      return Left(e);
+    } catch (e, s) {
+      log(e.toString());
+      log(s.toString());
+      return Left(UnKnownException(e.toString()));
+    }
+  }
+
+  // PATCH — used for partial updates (profile, ride update).
+  Future<Either<AppException, BaseModel<R>?>> patchData<R>({
+    String endpoint = '',
+    Map<String, dynamic>? data,
+    bool isFormData = true,
+    Map<String, dynamic>? queryParams,
+    List<Map<String, dynamic>>? files,
+    R Function(Object? json)? fromJsonT,
+  }) async {
+    try {
+      final response = await _networkHelper.patch(
+        baseEndpoint + endpoint,
+        data: data,
+        files: files,
+        queryParams: queryParams,
+        isFormData: isFormData,
+      );
+      return response.fold(
+        (e) => Left(e),
+        (r) {
+          if (r.data == null) return const Right(null);
+          if (fromJsonT == null) {
+            return Right(BaseModel<R>(
+              message: r.data?['message'] as String?,
+              error: r.data?['error'] as String?,
+            ));
+          }
+          final body = r.data!;
+          final payload =
+              body.containsKey('data') ? body : {...body, 'data': body};
+          return Right(BaseModel<R>.fromJson(payload, fromJsonT));
+        },
+      );
+    } on AppException catch (e, s) {
+      log(e.message);
+      log(s.toString());
+      return Left(e);
+    } catch (e, s) {
+      log(e.toString());
+      log(s.toString());
+      return Left(UnKnownException(e.toString()));
+    }
+  }
+
+  // DELETE — used for destructive actions (ride cancel).
+  Future<Either<AppException, BaseModel<R>?>> deleteData<R>({
+    String endpoint = '',
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? queryParams,
+    R Function(Object? json)? fromJsonT,
+  }) async {
+    try {
+      final response = await _networkHelper.delete(
+        baseEndpoint + endpoint,
+        data: data,
+        queryParams: queryParams,
+      );
+      return response.fold(
+        (e) => Left(e),
+        (r) {
+          if (r.data == null) return const Right(null);
+          if (fromJsonT == null) {
+            return Right(BaseModel<R>(
+              message: r.data?['message'] as String?,
+              error: r.data?['error'] as String?,
+            ));
+          }
+          final body = r.data!;
+          final payload =
+              body.containsKey('data') ? body : {...body, 'data': body};
+          return Right(BaseModel<R>.fromJson(payload, fromJsonT));
         },
       );
     } on AppException catch (e, s) {

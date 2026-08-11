@@ -106,6 +106,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enter_valid_email => 'Please enter a valid email';
 
   @override
+  String get enter_valid_phone => 'Please enter a valid Syrian phone number';
+
+  @override
   String get field_required => 'This field is required';
 
   @override
@@ -668,6 +671,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get available_rides_now => 'Available Rides Now';
+
+  @override
+  String get no_data => 'No data available';
+
+  @override
+  String get reservation_success => 'Reservation created successfully';
+
+  @override
+  String get currency_syp => 'SYP';
+
+  @override
+  String get available_seats_label => 'seats available';
 
   @override
   String get book_btn => 'Book';

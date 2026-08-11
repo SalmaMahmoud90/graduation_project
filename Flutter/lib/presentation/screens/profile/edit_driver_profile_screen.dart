@@ -6,7 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
+import 'package:a_tareqaak/core/extension/validation_extension.dart';
+import 'package:a_tareqaak/presentation/widgets/custom_snack_bar.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
@@ -30,6 +34,7 @@ class _EditDriverProfileScreenState extends State<EditDriverProfileScreen> {
   late final TextEditingController _carController;
   late final TextEditingController _colorController;
   late final TextEditingController _plateController;
+  late final TextEditingController _locationController;
 
   @override
   void initState() {
@@ -40,6 +45,11 @@ class _EditDriverProfileScreenState extends State<EditDriverProfileScreen> {
     _carController = TextEditingController(text: cubit.carName);
     _colorController = TextEditingController(text: cubit.carColor);
     _plateController = TextEditingController(text: cubit.carPlate);
+    _locationController = TextEditingController(text: cubit.currentLocation);
+    // ضبط نوع المستخدم لإظهار الحقول المناسبة (سائق/راكب)
+    cubit.ensureUserTypeLoaded().then((_) {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
@@ -49,6 +59,7 @@ class _EditDriverProfileScreenState extends State<EditDriverProfileScreen> {
     _carController.dispose();
     _colorController.dispose();
     _plateController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -134,24 +145,35 @@ class _EditDriverProfileScreenState extends State<EditDriverProfileScreen> {
                     textInputType: TextInputType.phone,
                     isExpanded: true,
                   ),
-                  CustomInputField(
-                    controller: _carController,
-                    title: tr.car_name,
-                    hintText: tr.car_name,
-                    isExpanded: true,
-                  ),
-                  CustomInputField(
-                    controller: _colorController,
-                    title: tr.car_color,
-                    hintText: tr.car_color,
-                    isExpanded: true,
-                  ),
-                  CustomInputField(
-                    controller: _plateController,
-                    title: tr.car_plate,
-                    hintText: tr.car_plate,
-                    isExpanded: true,
-                  ),
+                  // حقول السيارة تظهر للسائق فقط
+                  if (!context.read<DriverProfileCubit>().isRider) ...[
+                    CustomInputField(
+                      controller: _carController,
+                      title: tr.car_name,
+                      hintText: tr.car_name,
+                      isExpanded: true,
+                    ),
+                    CustomInputField(
+                      controller: _colorController,
+                      title: tr.car_color,
+                      hintText: tr.car_color,
+                      isExpanded: true,
+                    ),
+                    CustomInputField(
+                      controller: _plateController,
+                      title: tr.car_plate,
+                      hintText: tr.car_plate,
+                      isExpanded: true,
+                    ),
+                  ],
+                  // حقل الموقع الحالي يظهر للراكب فقط
+                  if (context.read<DriverProfileCubit>().isRider)
+                    CustomInputField(
+                      controller: _locationController,
+                      title: tr.current_location,
+                      hintText: tr.current_location,
+                      isExpanded: true,
+                    ),
 
                   BlocConsumer<DriverProfileCubit, DriverProfileState>(
                     listener: (context, state) {
@@ -165,13 +187,25 @@ class _EditDriverProfileScreenState extends State<EditDriverProfileScreen> {
                         color: AppColors.primary,
                         loading: state is DriverProfileLoadingState,
                         onPressed: () {
-                          // 👈 استدعاء updateProfile بداخل DriverProfileCubit بأسلوب سليم
+                          // التحقق من رقم الهاتف السوري قبل الحفظ
+                          final phone = _phoneController.text.trim();
+                          if (!phone.isValidPhone) {
+                            showCustomSnackBar(
+                              context: context,
+                              title: tr.error_title,
+                              message: tr.enter_valid_phone,
+                              contentType: ContentType.failure,
+                            );
+                            return;
+                          }
+                          // يوجّه الكيوبيت تلقائيًا لـ update_rider أو update_driver
                           context.read<DriverProfileCubit>().updateProfile(
                                 name: _nameController.text.trim(),
                                 phoneNum: _phoneController.text.trim(),
                                 car: _carController.text.trim(),
                                 color: _colorController.text.trim(),
                                 plate: _plateController.text.trim(),
+                                location: _locationController.text.trim(),
                               );
                         },
                         child: BodyTitle(
