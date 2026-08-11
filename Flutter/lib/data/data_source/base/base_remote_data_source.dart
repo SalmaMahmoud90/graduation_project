@@ -40,8 +40,8 @@ class BaseRemoteDataSource<T> {
           // password replies with `{message, email, reset_token}` at the top
           // level. Wrap such bodies so the model is parsed from the whole
           // response; already-enveloped responses pass through unchanged.
-          final body = r.data!;
-          final payload =
+          final Map<String, dynamic> body = r.data!;
+          final Map<String, dynamic> payload =
               body.containsKey('data') ? body : {...body, 'data': body};
           return Right(BaseModel<R>.fromJson(payload, fromJsonT));
         },

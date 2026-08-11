@@ -195,10 +195,9 @@ class _CheckCodeContentState extends State<_CheckCodeContent> {
                     message: tr.success_title,
                     contentType: ContentType.success,
                   );
-                  context.push(
-                    '/reset-password',
-                    extra: widget.resetToken,
-                  );
+                  debugPrint("reset_token before reset password route ${widget.resetToken}");
+                  ResetPasswordRoute(resetToken: widget.resetToken!).pushReplacement(context);
+                  
                 } else if (apiState is VerifyResetCodeFailed) {
                   showCustomSnackBar(
                     context: context,
