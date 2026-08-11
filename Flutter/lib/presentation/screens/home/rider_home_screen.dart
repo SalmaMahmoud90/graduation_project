@@ -33,7 +33,7 @@ class RiderHomeScreen extends StatelessWidget {
             spacing: AppHeight.h16,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // الشعار والأيقونات
+              // الشعار
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -41,27 +41,6 @@ class RiderHomeScreen extends StatelessWidget {
                     imagePath: AppAssets.logo,
                     height: AppHeight.h45,
                     fit: BoxFit.contain,
-                  ),
-                  Row(
-                    spacing: AppWidth.w10,
-                    children: [
-                      IconButton(
-                        onPressed: () => context.push('/notifications'),
-                        icon: FaIcon(
-                          FontAwesomeIcons.bell,
-                          size: AppSize.s20,
-                          color: AppColors.blackText,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => context.push('/settings'),
-                        icon: FaIcon(
-                          FontAwesomeIcons.gear,
-                          size: AppSize.s20,
-                          color: AppColors.blackText,
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),

@@ -11,7 +11,6 @@ List<RouteBase> get $appRoutes => [
   $loginRoute,
   $registerRoute,
   $checkCodeRoute,
-  $riderHomeRoute,
   $editRideRoute,
   $publishRideRoute,
   $selectCityRoute,
@@ -27,6 +26,7 @@ List<RouteBase> get $appRoutes => [
   $reportDetailsRoute,
   $resetPasswordRoute,
   $forgotPasswordRoute,
+  $riderShellRoute,
   $walletRoute,
   $chargeWalletRoute,
   $searchRideFormRoute,
@@ -185,32 +185,6 @@ bool _$boolConverter(String value) {
     default:
       throw UnsupportedError('Cannot convert "$value" into a bool.');
   }
-}
-
-RouteBase get $riderHomeRoute => GoRouteData.$route(
-  path: '/rider-home',
-  hasOverriddenOnExit: false,
-  factory: $RiderHomeRoute._fromState,
-);
-
-mixin $RiderHomeRoute on GoRouteData {
-  static RiderHomeRoute _fromState(GoRouterState state) => RiderHomeRoute();
-
-  @override
-  String get location => GoRouteData.$location('/rider-home');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $editRideRoute => GoRouteData.$route(
@@ -738,6 +712,134 @@ mixin $ForgotPasswordRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/forgot-password');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $riderShellRoute => StatefulShellRouteData.$route(
+  factory: $RiderShellRouteExtension._fromState,
+  branches: [
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/rider-home',
+          hasOverriddenOnExit: false,
+          factory: $RiderHomeRoute._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/rider-rides',
+          hasOverriddenOnExit: false,
+          factory: $RiderRidesRoute._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/rider-notifications',
+          hasOverriddenOnExit: false,
+          factory: $RiderNotificationsRoute._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/rider-settings',
+          hasOverriddenOnExit: false,
+          factory: $RiderSettingsRoute._fromState,
+        ),
+      ],
+    ),
+  ],
+);
+
+extension $RiderShellRouteExtension on RiderShellRoute {
+  static RiderShellRoute _fromState(GoRouterState state) => RiderShellRoute();
+}
+
+mixin $RiderHomeRoute on GoRouteData {
+  static RiderHomeRoute _fromState(GoRouterState state) => RiderHomeRoute();
+
+  @override
+  String get location => GoRouteData.$location('/rider-home');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $RiderRidesRoute on GoRouteData {
+  static RiderRidesRoute _fromState(GoRouterState state) => RiderRidesRoute();
+
+  @override
+  String get location => GoRouteData.$location('/rider-rides');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $RiderNotificationsRoute on GoRouteData {
+  static RiderNotificationsRoute _fromState(GoRouterState state) =>
+      RiderNotificationsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/rider-notifications');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $RiderSettingsRoute on GoRouteData {
+  static RiderSettingsRoute _fromState(GoRouterState state) =>
+      RiderSettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/rider-settings');
 
   @override
   void go(BuildContext context) => context.go(location);

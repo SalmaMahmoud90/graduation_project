@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:a_tareqaak/presentation/cubit/profile/driver_profile_cubit.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
@@ -63,8 +64,19 @@ class _LoginContentState extends State<_LoginContent> {
                 message: tr.login_to_access,
                 contentType: ContentType.success,
               );
-              // التوجيه للرئيسية عند نجاح تسجيل الدخول
-              context.go('/driver-home');
+              // التوجيه حسب نوع المستخدم عند نجاح تسجيل الدخول
+              final userType =
+                  apiState.tokensModel?.data?.user?.userType;
+              if (userType == 'driver') {
+                final profileCubit = context.read<DriverProfileCubit>();
+                if (!profileCubit.isProfileComplete) {
+                  EditDriverProfileRoute(isMandatory: true).go(context);
+                } else {
+                  DriverHomeRoute().go(context);
+                }
+              } else {
+                RiderHomeRoute().go(context);
+              }
             } else if (apiState is LoginFailed) {
               showCustomSnackBar(
                 context: context,

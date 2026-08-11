@@ -166,13 +166,12 @@ class _CheckCodeContentState extends State<_CheckCodeContent> {
                   if (userType == 'driver') {
                     final profileCubit = context.read<DriverProfileCubit>();
                     if (!profileCubit.isProfileComplete) {
-                      EditDriverProfileRoute(isMandatory: true)
-                          .pushReplacement(context);
+                      EditDriverProfileRoute(isMandatory: true).go(context);
                     } else {
-                      DriverHomeRoute().pushReplacement(context);
+                      DriverHomeRoute().go(context);
                     }
                   } else {
-                    RiderHomeRoute().pushReplacement(context);
+                    RiderHomeRoute().go(context);
                   }
                 } else if (apiState is VerifyEmailFailed) {
                   showCustomSnackBar(
