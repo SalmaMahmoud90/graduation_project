@@ -19,7 +19,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"salmamahmoud44026@gmail.com\",\r\n    \"password\": \"12345\",\r\n    \"user_type\" : \"rider\"\r\n}",
+              "raw": "{\r\n    \"name\": \"a\",\r\n    \"email\": \"a@gmail.com\",\r\n    \"password\": \"salma\",\r\n    \"confirm_password\": \"salma\",\r\n    \"user_type\" : \"rider\"\r\n}\r\n\r\n\r\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -27,17 +27,11 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/users/create/",
-              "protocol": "http",
+              "raw": "{{url}}/users/create/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "users",
                 "create",
                 ""
@@ -56,7 +50,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"salmamahmoud44026@gmail.com\",\r\n    \"code\": \"995428\"\r\n}",
+              "raw": "{\r\n    \"email\": \"smsm95835@gmail.com\",\r\n    \"code\": \"244370\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -80,8 +74,28 @@
         {
           "name": "Resend Code",
           "request": {
-            "method": "GET",
-            "header": []
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"smsm95835@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}/users/resend_verification/",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "users",
+                "resend_verification",
+                ""
+              ]
+            }
           },
           "response": []
         },
@@ -113,7 +127,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"admin@hopon.com\",\r\n    \"password\": \"12345\"\r\n}\r\n\r\n",
+              "raw": "{\r\n    \"email\": \"admin@atareeqak.tech\",\r\n    \"password\": \"12345\"\r\n}\r\n\r\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -162,7 +176,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "// {\r\n//     \"email\": \"admin@hopon.com\",\r\n//     \"password\": \"12345\"\r\n// }\r\n\r\n{\r\n    \"email\": \"d01@gmail.com\",\r\n    \"password\": \"12345\"\r\n}",
+              "raw": "{\r\n    \"email\": \"salmamahmoud44026@gmail.com\",\r\n    \"password\": \"123456789\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -193,7 +207,7 @@
                   "const response = pm.response.json();\r",
                   "\r",
                   "pm.environment.set(\r",
-                  "    \"access_token\",\r",
+                  "    \"driver_token\",\r",
                   "    response.access_token\r",
                   ");"
                 ],
@@ -211,7 +225,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "// {\r\n//     \"email\": \"admin@hopon.com\",\r\n//     \"password\": \"12345\"\r\n// }\r\n\r\n{\r\n    \"email\": \"d01@gmail.com\",\r\n    \"password\": \"12345\"\r\n}",
+              "raw": "{\r\n    \"email\": \"smsm95835@gmail.com\",\r\n    \"password\": \"123456789\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -240,7 +254,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{auth_secret_0tam}}",
+                  "value": "{{auth_secret_0gv4}}",
                   "type": "string"
                 }
               ]
@@ -254,17 +268,11 @@
               }
             ],
             "url": {
-              "raw": "http://127.0.0.1:8000/api/users/logout/",
-              "protocol": "http",
+              "raw": "{{url}}/users/logout/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "users",
                 "logout",
                 ""
@@ -280,7 +288,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"salmamahmoud44026@gmail.com\"\r\n}",
+              "raw": "{\r\n    \"email\": \"smsm95835@gmail.com\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -288,17 +296,11 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/users/forgot_password/",
-              "protocol": "http",
+              "raw": "{{url}}/users/forgot_password/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "users",
                 "forgot_password",
                 ""
@@ -308,30 +310,68 @@
           "response": []
         },
         {
+          "name": "Resend Reset Code",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reset_token\": \"Txzg2LlkgqlT2THCcTeHumfbKXKX-fU7Rv4vuE9i-x8\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}/users/resend_reset_code/",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "users",
+                "resend_reset_code",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Verify Reset Code",
           "request": {
-            "method": "GET",
-            "header": []
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reset_token\": \"Txzg2LlkgqlT2THCcTeHumfbKXKX-fU7Rv4vuE9i-x8\",\r\n    \"code\": \"892565\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}/users/verify_reset_code/",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "users",
+                "verify_reset_code",
+                ""
+              ]
+            }
           },
           "response": []
         },
         {
           "name": "Reset Password",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
           "request": {
             "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{auth_secret_04ak}}",
-                  "type": "string"
-                }
-              ]
+              "type": "noauth"
             },
-            "method": "GET",
+            "method": "POST",
             "header": [
               {
                 "key": "Authorization",
@@ -346,20 +386,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": ""
+              "raw": "{\r\n    \"reset_token\": \"Txzg2LlkgqlT2THCcTeHumfbKXKX-fU7Rv4vuE9i-x8\",\r\n    \"new_password\": \"123456789\",\r\n    \"confirm_password\": \"123456789\"\r\n}"
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/users/reset_password/",
-              "protocol": "http",
+              "raw": "{{url}}/users/reset_password/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "users",
                 "reset_password",
                 ""
@@ -462,7 +496,14 @@
           "name": "Update Driver Profile",
           "request": {
             "auth": {
-              "type": "noauth"
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{driver_token}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "PATCH",
             "header": [
@@ -474,7 +515,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\" : \"sasa\",\r\n    \"car_model\" : \"bmw\" ,\r\n    \"language1\" : \"ara\"\r\n\r\n    \r\n}",
+              "raw": "{\r\n    \"name\" : \"sasa\",\r\n    \"car_model\" : \"bmw\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -482,17 +523,11 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/users/update_driver_profile/",
-              "protocol": "http",
+              "raw": "{{url}}/users/update_driver_profile/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "users",
                 "update_driver_profile",
                 ""
@@ -509,7 +544,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{auth_secret_0tam}}",
+                  "value": "{{rider_token}}",
                   "type": "string"
                 }
               ]
@@ -524,7 +559,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\" : \"aha\",\r\n}",
+              "raw": "{\r\n    \"name\" : \"aha\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -532,17 +567,11 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/users/update_rider_profile/",
-              "protocol": "http",
+              "raw": "{{url}}/users/update_rider_profile/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "users",
                 "update_rider_profile",
                 ""
@@ -572,16 +601,6 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
             "header": [
               {
@@ -592,7 +611,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"location\": \"Damascus \",\r\n  \"destination\" : \"Aleppo\",\r\n  \"depature_time\": \"12:33\",\r\n  \"depature_date\": \"2026-08-08\",\r\n  \"expected_duration\": \"2 hours\",\r\n  \"cost\": \"15000.00\",\r\n  \"capacity\": 3\r\n}\r\n",
+              "raw": "{\r\n  \"location\": \"Damascus \",\r\n  \"destination\" : \"Aleppo\",\r\n  \"departure_time\": \"09:00:00\",\r\n  \"departure_date\": \"2026-08-08\",\r\n  \"expected_duration\": \"2 hours\",\r\n  \"cost\": \"15000.00\",\r\n  \"capacity\": 3\r\n}\r\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -616,10 +635,42 @@
         {
           "name": "Update Ride",
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": " {{bearer_token_07q6}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"location\": \"Damascus \",\r\n  \"destination\" : \"Aleppo\",\r\n  \"depature_time\": \"12:33\",\r\n  \"depature_date\": \"2026-08-08\",\r\n  \"expected_duration\": \"2 hours\",\r\n  \"cost\": \"15000.00\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}/rides/1005/update/",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "rides",
+                "1005",
+                "update",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Ride",
+          "request": {
+            "method": "DELETE",
             "header": [
               {
                 "key": "Authorization",
@@ -637,61 +688,11 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/rides/1/update/",
-              "protocol": "http",
+              "raw": "{{url}}/rides/1/cancel/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
-                "rides",
-                "1",
-                "update",
-                ""
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Cancel Ride",
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": " {{bearer_token_07q6}}",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \r\n  \"capacity\": 4\r\n}\r\n",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://127.0.0.1:8000/api/rides/1/cancel/",
-              "protocol": "http",
-              "host": [
-                "127",
-                "0",
-                "0",
-                "1"
-              ],
-              "port": "8000",
-              "path": [
-                "api",
                 "rides",
                 "1",
                 "cancel",
@@ -707,9 +708,6 @@
             "disableBodyPruning": true
           },
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [
               {
@@ -728,17 +726,11 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/rides/my_rides/",
-              "protocol": "http",
+              "raw": "{{url}}/rides/my_rides/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "rides",
                 "my_rides",
                 ""
@@ -753,9 +745,6 @@
             "disableBodyPruning": true
           },
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [
               {
@@ -774,7 +763,7 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/rides/ride_details/2/",
+              "raw": "http://127.0.0.1:8000/api/rides/ride_details/1005/",
               "protocol": "http",
               "host": [
                 "127",
@@ -787,7 +776,7 @@
                 "api",
                 "rides",
                 "ride_details",
-                "2",
+                "1005",
                 ""
               ]
             }
@@ -797,15 +786,13 @@
         {
           "name": "Accept Reservation",
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "POST",
             "header": [
               {
                 "key": "Authorization",
                 "value": "{{bearer_token_0tuu}}",
-                "type": "text"
+                "type": "text",
+                "disabled": true
               }
             ],
             "body": {
@@ -818,21 +805,15 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/rides/reservations/9/reject/",
-              "protocol": "http",
+              "raw": "{{url}}/rides/reservations/7786/accept/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "rides",
                 "reservations",
-                "9",
-                "reject",
+                "7786",
+                "accept",
                 ""
               ]
             }
@@ -842,9 +823,6 @@
         {
           "name": "Reject Reservation",
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "POST",
             "header": [
               {
@@ -863,20 +841,14 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/rides/reservations/9/reject/",
-              "protocol": "http",
+              "raw": "{{url}}/rides/reservations/7785/reject/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "rides",
                 "reservations",
-                "9",
+                "7785",
                 "reject",
                 ""
               ]
@@ -929,9 +901,6 @@
             "disableBodyPruning": true
           },
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [
               {
@@ -950,17 +919,11 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/rides/search/?location=Tartus&destination=Latakia",
-              "protocol": "http",
+              "raw": "{{url}}/rides/search/?location=Damascus&destination=Aleppo",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "rides",
                 "search",
                 ""
@@ -968,11 +931,11 @@
               "query": [
                 {
                   "key": "location",
-                  "value": "Tartus"
+                  "value": "Damascus"
                 },
                 {
                   "key": "destination",
-                  "value": "Latakia"
+                  "value": "Aleppo"
                 }
               ]
             }
@@ -1005,7 +968,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"pickup_location\": \"sasa \",\r\n  \"ride\": 1001\r\n}\r\n",
+              "raw": "{\r\n  \"pickup_location\": \"sasa \",\r\n  \"ride\": 1005\r\n}\r\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1030,9 +993,6 @@
         {
           "name": "Cancel Reservation",
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "POST",
             "header": [
               {
@@ -1051,20 +1011,14 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/rides/reservations/5/cancel/",
-              "protocol": "http",
+              "raw": "{{url}}/rides/reservations/7786/cancel/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "rides",
                 "reservations",
-                "5",
+                "7786",
                 "cancel",
                 ""
               ]
@@ -1078,9 +1032,6 @@
             "disableBodyPruning": true
           },
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [
               {
@@ -1099,17 +1050,11 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/rides/my_reservations/",
-              "protocol": "http",
+              "raw": "{{url}}/rides/my_reservations/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "rides",
                 "my_reservations",
                 ""
@@ -1124,9 +1069,6 @@
             "disableBodyPruning": true
           },
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [
               {
@@ -1145,17 +1087,11 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/rides/ride_details/2/",
-              "protocol": "http",
+              "raw": "{{url}}/rides/ride_details/2/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "rides",
                 "ride_details",
                 "2",
@@ -1208,7 +1144,14 @@
           "name": "Report",
           "request": {
             "auth": {
-              "type": "noauth"
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_19l7}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "POST",
             "header": [
@@ -1220,7 +1163,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"reported_user\": 10,\r\n    \"ride\": 34,\r\n    \"type\": \"spam\",\r\n    \"reason\": \"Driver was sending spam messages\"\r\n}",
+              "raw": "{\r\n    \"type\": \"spam\",\r\n    \"reason\": \"Rider was sending spam messages\",\r\n    \"ride\": 1001\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1228,19 +1171,15 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/reports/report/",
-              "protocol": "http",
+              "raw": "{{url}}/reports/report/user/1009/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "reports",
                 "report",
+                "user",
+                "1009",
                 ""
               ]
             }
@@ -1250,16 +1189,101 @@
         {
           "name": "Shared Rides",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": "{{url}}/reports/shared_rides/1009/",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "reports",
+                "shared_rides",
+                "1009",
+                ""
+              ]
+            }
           },
           "response": []
         },
         {
           "name": "MyReports",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": "{{url}}/reports/my_reports/",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "reports",
+                "my_reports",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "View Report Details",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_19l7}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{bearer_token_18wd}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"type\": \"spam\",\r\n    \"reason\": \"Rider was sending spam messages\",\r\n    \"ride\": 1001\r\n}"
+            },
+            "url": {
+              "raw": "{{url}}/reports/view_report_details/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "reports",
+                "view_report_details",
+                "1"
+              ]
+            }
           },
           "response": []
         }
@@ -1270,11 +1294,37 @@
       "item": [
         {
           "name": "View Balance",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{bearer_token_18wd}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": ""
+              "raw": "{{url}}/payments/view_balance/",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "payments",
+                "view_balance",
+                ""
+              ]
             }
           },
           "response": []
@@ -1284,18 +1334,21 @@
           "request": {
             "method": "POST",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"amount\": 20,\r\n    \"payment_method\": \"syriatel\",\r\n    \"transaction_reference\": 1234\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": "http://127.0.0.1:8000/api/payments/deposite_request/",
-              "protocol": "http",
+              "raw": "{{url}}/payments/deposite_request/",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "{{url}}"
               ],
-              "port": "8000",
               "path": [
-                "api",
                 "payments",
                 "deposite_request",
                 ""
@@ -1306,11 +1359,26 @@
         },
         {
           "name": "View Transactions",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
+            "body": {
+              "mode": "raw",
               "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/payments/view_transactions/",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "payments",
+                "view_transactions",
+                ""
+              ]
             }
           },
           "response": []
@@ -1321,7 +1389,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "{{url}}/payments/view_deposit_requests/",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "payments",
+                "view_deposit_requests",
+                ""
+              ]
             }
           },
           "response": []
@@ -1332,7 +1408,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "{{url}}/payments/pay/",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "payments",
+                "pay",
+                ""
+              ]
             }
           },
           "response": []
@@ -1683,6 +1767,27 @@
                   "response": []
                 }
               ]
+            },
+            {
+              "name": "Statistics",
+              "item": [
+                {
+                  "name": "view statistics",
+                  "request": {
+                    "method": "GET",
+                    "header": []
+                  },
+                  "response": []
+                },
+                {
+                  "name": "New Request",
+                  "request": {
+                    "method": "GET",
+                    "header": []
+                  },
+                  "response": []
+                }
+              ]
             }
           ]
         },
@@ -1893,6 +1998,16 @@
           ""
         ]
       }
+    }
+  ],
+  "variable": [
+    {
+      "key": "auth_secret_0gv4",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_19l7",
+      "secret": true
     }
   ]
 }

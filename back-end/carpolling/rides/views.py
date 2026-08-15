@@ -185,7 +185,7 @@ class RejectReservationView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
         if reservation.status != Reservation.ReservationStatus.PENDING:
-            return Response({"error": "Reservation cannot be cancelled"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Reservation cannot be rejected"}, status=status.HTTP_400_BAD_REQUEST)
         reservation.status = Reservation.ReservationStatus.REJECTED
         reservation.save()
         return Response(

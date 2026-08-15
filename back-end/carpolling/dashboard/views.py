@@ -7,6 +7,8 @@ from rides.serializers import ReservationDetailSerializer, RideSearchSerializer
 from django.db.models import Count
 from payments.models import Wallet, Transaction
 from django.db import transaction
+from django.db import connection
+
 class ViewRidesView(APIView):
     def get(self, request):
         user = request.user
@@ -280,3 +282,70 @@ class RejectDepositRequestView(APIView):
             {"error": "Deposit Request not found"},
             status=status.HTTP_404_NOT_FOUND
             )
+
+
+class DashboardStatisticsAPIView(APIView):
+
+    def execute_view_query(self, query):
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+
+            columns = [column[0] for column in cursor.description]
+
+            return [
+                dict(zip(columns, row))
+                for row in cursor.fetchall()
+            ]
+
+    def get(self, request):
+        driver_trips = self.execute_view_query("""
+                    SELECT *
+                    FROM view_driver_trips_count
+                """)
+
+        active_riders = self.execute_view_query("""
+            SELECT *
+            FROM view_most_active_riders
+        """)
+
+        popular_destinations = self.execute_view_query("""
+            SELECT *
+            FROM view_popular_destinations
+            """)
+
+        popular_pickup_locations = self.execute_view_query("""
+            SELECT *
+            FROM view_popular_pickup_locations
+            """)
+        return Response({
+                "driver_trips": driver_trips,
+                "active_riders": active_riders,
+                "popular_destinations": popular_destinations,
+                "popular_pickup_locations": popular_pickup_locations,
+                })
+
+class DailyPlatformSummaryView(APIView):
+
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    summary_date,
+                    total_rides_created,
+                    total_reservations_made
+                FROM daily_platform_summary
+                ORDER BY summary_date DESC
+            """)
+
+            rows = cursor.fetchall()
+
+        data = [
+            {
+                "summary_date": row[0],
+                "total_rides_created": row[1],
+                "total_reservations_made": row[2],
+            }
+            for row in rows
+        ]
+
+        return Response(data)
