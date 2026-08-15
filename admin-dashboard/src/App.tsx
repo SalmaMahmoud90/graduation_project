@@ -8,6 +8,7 @@ import { ReportsPage } from '@/pages/reports-page'
 import { RideDetailPage } from '@/pages/ride-detail-page'
 import { RidesPage } from '@/pages/rides-page'
 import { SignInPage } from '@/pages/sign-in-page'
+import { StatisticsPage } from '@/pages/statistics-page'
 import { UserDetailPage } from '@/pages/user-detail-page'
 import { UsersPage } from '@/pages/users-page'
 
@@ -29,6 +30,7 @@ export default function App() {
           }
         >
           <Route index element={<DashboardPage />} />
+          <Route path="statistics" element={<StatisticsPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="users/:userId" element={<UserDetailPage />} />
           <Route path="rides" element={<RidesPage />} />
