@@ -1,16 +1,20 @@
-import 'package:a_tareqaak/data/models/ride/ride_model.dart';
-import 'package:a_tareqaak/presentation/cubit/driver_rides/ride_list/edit_ride_list_cubit.dart';
-import 'package:a_tareqaak/presentation/cubit/driver_rides/ride_list/edit_ride_list_state.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
+import 'package:a_tareqaak/data/models/rides/ride_data_model.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/my_rides_driver/i_my_rides_event.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/my_rides_driver/i_my_rides_state.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/my_rides_driver/my_rides_bloc.dart';
+import 'package:a_tareqaak/presentation/widgets/custom_snack_bar.dart';
 import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
 import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 class EditRideListScreen extends StatelessWidget {
   const EditRideListScreen({super.key});
@@ -18,7 +22,7 @@ class EditRideListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => EditRideListCubit()..fetchRides(),
+      create: (_) => MyRidesBloc()..add(const GetMyRidesEvent()),
       child: const _EditRideListContent(),
     );
   }
@@ -32,7 +36,7 @@ class _EditRideListContent extends StatefulWidget {
 }
 
 class _EditRideListContentState extends State<_EditRideListContent> {
-  int selectedTab = 0; // 0: قابلة للتعديل، 1: كل الرحلات
+  int selectedTab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -78,84 +82,27 @@ class _EditRideListContentState extends State<_EditRideListContent> {
                 ],
               ),
             ),
-
-            // التبويب العلوي
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppPaddingWidth.p20),
-              child: Container(
-                padding: EdgeInsets.all(AppPaddingWidth.p4),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(AppRadius.r12),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => setState(() => selectedTab = 0),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            vertical: AppPaddingHeight.p8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: selectedTab == 0
-                                ? AppColors.primary
-                                : AppColors.none,
-                            borderRadius: BorderRadius.circular(AppRadius.r10),
-                          ),
-                          child: BodyTitle(
-                            text: tr.editable_rides,
-                            textAlign: TextAlign.center,
-                            color: selectedTab == 0
-                                ? AppColors.white
-                                : AppColors.greyText,
-                            fontWeight: AppFontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => setState(() => selectedTab = 1),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            vertical: AppPaddingHeight.p8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: selectedTab == 1
-                                ? AppColors.primary
-                                : AppColors.none,
-                            borderRadius: BorderRadius.circular(AppRadius.r10),
-                          ),
-                          child: BodyTitle(
-                            text: tr.all_rides,
-                            textAlign: TextAlign.center,
-                            color: selectedTab == 1
-                                ? AppColors.white
-                                : AppColors.greyText,
-                            fontWeight: AppFontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
             Expanded(
-              child: BlocBuilder<EditRideListCubit, EditRideListState>(
+              child: BlocBuilder<MyRidesBloc, IMyRidesState>(
                 builder: (context, state) {
-                  final cubit = context.read<EditRideListCubit>();
-                  final rides = selectedTab == 0
-                      ? cubit.rides.where((r) => r.isEditable).toList()
-                      : cubit.rides;
+                  if (state is MyRidesLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (state is MyRidesFailed) {
+                     showCustomSnackBar(context: context, title: tr.error_title, message: state.message, contentType:  ContentType.failure);
+                  }
+                  final rides = state is MyRidesLoaded
+                      ? state.response?.data?.rides ?? <RideDataModel>[]
+                      : <RideDataModel>[];
+
+                  if (rides.isEmpty) {
+                    return Center(child: BodyTitle(text: tr.no_data));
+                  }
 
                   return ListView.separated(
                     padding: EdgeInsets.all(AppPaddingWidth.p20),
                     itemCount: rides.length,
-                    separatorBuilder: (_, __) =>
-                        SizedBox(height: AppHeight.h12),
+                    separatorBuilder: (_,_) => SizedBox(height: AppHeight.h12),
                     itemBuilder: (context, index) {
                       final ride = rides[index];
                       return _buildRideItem(context, ride);
@@ -170,7 +117,7 @@ class _EditRideListContentState extends State<_EditRideListContent> {
     );
   }
 
-  Widget _buildRideItem(BuildContext context, RideModel ride) {
+  Widget _buildRideItem(BuildContext context, RideDataModel ride) {
     final tr = context.loc;
 
     return Container(
@@ -187,133 +134,77 @@ class _EditRideListContentState extends State<_EditRideListContent> {
           ),
         ],
       ),
-      child: InkWell(
-        // النقر على البطاقة يفتح شاشة تفاصيل الرحلة بالكامل
-        onTap: () {
-          context.push('/ride-details', extra: ride);
-        },
-        child: Column(
-          spacing: AppHeight.h10,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  spacing: AppWidth.w8,
-                  children: [
-                    SectionTitle(
-                      text: ride.departureCity,
-                      fontSize: AppFontSize.s16,
-                    ),
-                    FaIcon(
-                      FontAwesomeIcons.arrowRightLong,
-                      size: AppSize.s14,
-                      color: AppColors.primary,
-                    ),
-                    SectionTitle(
-                      text: ride.destinationCity,
-                      fontSize: AppFontSize.s16,
-                    ),
-                  ],
-                ),
-                // زر القلم للتعديل واستقبال الرحلة المحدثة للتحديث الفوري
-                IconButton(
-                  onPressed: ride.isEditable
-                      ? () async {
-                          final updatedRide = await context.push<RideModel>(
-                            '/edit-ride',
-                            extra: ride,
-                          );
-                          if (updatedRide != null && context.mounted) {
-                            context
-                                .read<EditRideListCubit>()
-                                .updateRide(updatedRide);
-                          }
-                        }
-                      : null,
-                  icon: CircleAvatar(
-                    radius: AppRadius.r18,
-                    backgroundColor: ride.isEditable
-                        ? AppColors.lightGrey
-                        : AppColors.lightGrey.withOpacity(0.5),
-                    child: FaIcon(
-                      ride.isEditable
-                          ? FontAwesomeIcons.penToSquare
-                          : FontAwesomeIcons.lock,
-                      size: AppSize.s14,
-                      color: ride.isEditable
-                          ? AppColors.blackText
-                          : AppColors.grey,
-                    ),
+      child: Column(
+        spacing: AppHeight.h10,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                spacing: AppWidth.w8,
+                children: [
+                  SectionTitle(
+                    text: ride.location ?? '',
+                    fontSize: AppFontSize.s16,
                   ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                BodyTitle(
-                  text:
-                      '${ride.departureDateTime.day}/${ride.departureDateTime.month}/${ride.departureDateTime.year} - ${ride.departureDateTime.hour}:${ride.departureDateTime.minute.toString().padLeft(2, '0')}',
-                  fontSize: AppFontSize.s13,
-                  color: AppColors.greyText,
-                ),
-                BodyTitle(
-                  text: '${ride.price.toInt()} ${tr.syrian_pound}',
-                  fontSize: AppFontSize.s13,
-                  color: AppColors.blackText,
-                  fontWeight: AppFontWeight.bold,
-                ),
-              ],
-            ),
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: BodyTitle(
-                text: '${ride.availableSeats} ${tr.available_seats_count}',
-                fontSize: AppFontSize.s13,
-                color: AppColors.primary,
+                  FaIcon(
+                    FontAwesomeIcons.arrowRightLong,
+                    size: AppSize.s14,
+                    color: AppColors.primary,
+                  ),
+                  SectionTitle(
+                    text: ride.destination ?? '',
+                    fontSize: AppFontSize.s16,
+                  ),
+                ],
               ),
-            ),
-            if (!ride.isEditable) ...[
-              Divider(color: AppColors.lightGreySec),
-              Container(
-                padding: EdgeInsets.all(AppPaddingWidth.p8),
-                decoration: BoxDecoration(
-                  color: AppColors.lightRed,
-                  borderRadius: BorderRadius.circular(AppRadius.r8),
-                ),
-                child: Column(
-                  spacing: AppHeight.h4,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: AppWidth.w4,
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.lock,
-                          size: AppSize.s12,
-                          color: AppColors.red,
-                        ),
-                        BodyTitle(
-                          text: tr.edit_expired_badge,
-                          color: AppColors.red,
-                          fontWeight: AppFontWeight.bold,
-                          fontSize: AppFontSize.s12,
-                        ),
-                      ],
-                    ),
-                    BodyTitle(
-                      text: tr.edit_expired_warning,
-                      color: AppColors.red,
-                      fontSize: AppFontSize.s11,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+              IconButton(
+                onPressed: () async {
+                  final updated = await context.push<bool>(
+                    '/edit-ride',
+                    extra: ride,
+                  );
+                  if (updated == true && context.mounted) {
+                    context.read<MyRidesBloc>().add(const GetMyRidesEvent());
+                  }
+                },
+                icon: CircleAvatar(
+                  radius: AppRadius.r18,
+                  backgroundColor: AppColors.lightGrey,
+                  child: FaIcon(
+                    FontAwesomeIcons.penToSquare,
+                    size: AppSize.s14,
+                    color: AppColors.blackText,
+                  ),
                 ),
               ),
             ],
-          ],
-        ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              BodyTitle(
+                text: '${ride.departureDate ?? ''} - ${ride.departureTime ?? ''}',
+                fontSize: AppFontSize.s13,
+                color: AppColors.greyText,
+              ),
+              BodyTitle(
+                text: '${ride.cost ?? ''} ${tr.syrian_pound}',
+                fontSize: AppFontSize.s13,
+                color: AppColors.blackText,
+                fontWeight: AppFontWeight.bold,
+              ),
+            ],
+          ),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: BodyTitle(
+              text: '${ride.availableSeats ?? 0} ${tr.available_seats_count}',
+              fontSize: AppFontSize.s13,
+              color: AppColors.primary,
+            ),
+          ),
+        ],
       ),
     );
   }

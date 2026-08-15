@@ -6,6 +6,7 @@ import 'package:a_tareqaak/data/models/base/base_model.dart';
 import 'package:a_tareqaak/domain/entity/auth/forgot_password/forgot_password_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/login/login_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/register/register_entity.dart';
+import 'package:a_tareqaak/domain/entity/auth/resend_reset_password/resend_reset_password.dart';
 import 'package:a_tareqaak/domain/entity/auth/resend_verification/resend_verification_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/reset_password/reset_password_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/verify_email/verify_email_entity.dart';
@@ -57,6 +58,12 @@ class AuthRepository implements IAuthRepository {
   Future<Either<AppException, BaseModel<UserModel>?>> resetPassword(ResetPasswordEntity data) {
     return _remoteDataSource.resetPassword(data);
   }
+
+  @override
+  Future<Either<AppException, BaseModel<UserModel>?>> resendResetPassword(ResendResetPasswordEntity data) {
+    return _remoteDataSource.resendResetPassword(data);
+  }
+
 
   @override
   Future<Either<AppException, BaseModel<UserModel>?>> logout() {

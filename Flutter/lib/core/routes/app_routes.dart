@@ -2,6 +2,7 @@ import 'package:a_tareqaak/core/extension/page_builder_extension.dart';
 import 'package:a_tareqaak/core/utils/enums/enum_utils.dart';
 import 'package:a_tareqaak/data/models/report/report_model.dart';
 import 'package:a_tareqaak/data/models/ride/ride_model.dart';
+import 'package:a_tareqaak/data/models/rides/ride_data_model.dart';
 import 'package:a_tareqaak/presentation/screens/auth/forgot_password_screen.dart';
 import 'package:a_tareqaak/presentation/screens/auth/reset_password/reset_password_screen.dart';
 import 'package:a_tareqaak/presentation/screens/customer_service/customer_service_screen.dart';
@@ -11,6 +12,8 @@ import 'package:a_tareqaak/presentation/screens/driver_rides/edit_ride_screen.da
 import 'package:a_tareqaak/presentation/screens/driver_rides/my_rides_screen.dart';
 import 'package:a_tareqaak/presentation/screens/driver_rides/publish_ride_screen.dart';
 import 'package:a_tareqaak/presentation/screens/driver_rides/ride_details_screen.dart';
+import 'package:a_tareqaak/presentation/screens/driver_rides/driver_reservations_screen.dart';
+import 'package:a_tareqaak/presentation/screens/driver_rides/search_ride_form_screen.dart';
 import 'package:a_tareqaak/presentation/screens/driver_rides/select_city_screen.dart';
 import 'package:a_tareqaak/presentation/screens/home/widgets/driver_bottom_nav_bar.dart';
 import 'package:a_tareqaak/presentation/screens/notifications/notifications_screen.dart';
@@ -101,6 +104,11 @@ class RiderHomeRoute extends GoRouteData with $RiderHomeRoute {
 
 @TypedGoRoute<EditRideRoute>(path: '/edit-ride')
 class EditRideRoute extends GoRouteData with $EditRideRoute {
+  final RideDataModel $extra;
+
+  const EditRideRoute({
+    required this.$extra,
+  });
   @override
   CustomTransitionPage<void> buildPage(context, state) {
     return const EditRideScreen().buildPage(pageAnimation: PageAnimation.slide);
@@ -120,7 +128,7 @@ class PublishRideRoute extends GoRouteData with $PublishRideRoute {
 class SelectCityRoute extends GoRouteData with $SelectCityRoute {
   @override
   CustomTransitionPage<void> buildPage(context, state) {
-    return const SearchRideFormScreen().buildPage(pageAnimation: PageAnimation.slide);
+    return const SelectCityScreen().buildPage(pageAnimation: PageAnimation.slide);
   }
 }
 
@@ -146,15 +154,15 @@ class DeleteRideRoute extends GoRouteData with $DeleteRideRoute {
 class RideDetailsRoute extends GoRouteData with $RideDetailsRoute {
   RideDetailsRoute({required this.$extra});
 
-  final RideModel $extra;
-
+  
+  final RideDataModel $extra;
   @override
   CustomTransitionPage buildPage(
       BuildContext context,
       GoRouterState state,
       ) {
     return RideDetailsScreen(
-      ride: $extra,
+    ride: $extra,
     ).buildPage(
       pageAnimation: PageAnimation.slide,
     );
@@ -512,5 +520,17 @@ class SearchResultsRoute extends GoRouteData with $SearchResultsRoute {
       location: fromCity,
       destination: toCity,
     ).buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<DriverReservationsRoute>(path: '/driver-reservations')
+class DriverReservationsRoute extends GoRouteData with $DriverReservationsRoute {
+ 
+
+  DriverReservationsRoute();
+
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return DriverReservationsScreen().buildPage(pageAnimation: PageAnimation.slide);
   }
 }

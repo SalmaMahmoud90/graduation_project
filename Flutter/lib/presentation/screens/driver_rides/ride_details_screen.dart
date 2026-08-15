@@ -1,31 +1,31 @@
-// lib/presentation/screens/driver_rides/ride_details_screen.dart (أجزاء التحديث الرئيسية)
-import 'package:a_tareqaak/data/models/ride/ride_model.dart';
-import 'package:a_tareqaak/presentation/widgets/current_location_map_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
+
 
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
-import 'package:a_tareqaak/presentation/cubit/driver_rides/ride_details/ride_details_cubit.dart';
-import 'package:a_tareqaak/presentation/cubit/driver_rides/ride_details/ride_details_state.dart';
+import 'package:a_tareqaak/data/models/rides/ride_data_model.dart';
+import 'package:a_tareqaak/domain/entity/rides/id_entity.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/ride_details/i_ride_details_event.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/ride_details/i_ride_details_state.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/ride_details/ride_details_bloc.dart';
 import 'package:a_tareqaak/presentation/widgets/custom_elevated_button.dart';
-import 'package:a_tareqaak/presentation/widgets/map_widget.dart';
 import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
-import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
+import 'package:a_tareqaak/presentation/widgets/text/section_title.dart' show SectionTitle;
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 class RideDetailsScreen extends StatelessWidget {
-  final RideModel ride;
-
+  final RideDataModel ride;
+  
   const RideDetailsScreen({super.key, required this.ride});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => RideDetailsCubit()..loadRideDetails(ride),
+      create: (_) => RideDetailsBloc()..add(GetRideDetailsEvent(IdEntity(ride.id!))),
       child: const _RideDetailsContent(),
     );
   }
@@ -42,10 +42,18 @@ class _RideDetailsContent extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backGround,
       body: SafeArea(
-        child: BlocBuilder<RideDetailsCubit, RideDetailsState>(
+        child: BlocBuilder<RideDetailsBloc, IRideDetailsState>(
           builder: (context, state) {
-            if (state is RideDetailsLoadedState) {
-              final ride = state.ride;
+            if (state is RideDetailsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is RideDetailsFailed) {
+              return Center(child: BodyTitle(text: state.message));
+            }
+            if (state is RideDetailsLoaded) {
+              final ride = state.response?.data?.ride;
+              final driverInfo = ride?.driverInfo;
+
               return SingleChildScrollView(
                 padding: EdgeInsets.symmetric(
                   horizontal: AppPaddingWidth.p20,
@@ -55,7 +63,6 @@ class _RideDetailsContent extends StatelessWidget {
                   spacing: AppHeight.h16,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // الشريط العلوي
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -78,7 +85,6 @@ class _RideDetailsContent extends StatelessWidget {
                       ],
                     ),
 
-                    // مسار الانطلاق والوصول
                     Container(
                       padding: EdgeInsets.all(AppPaddingWidth.p16),
                       decoration: BoxDecoration(
@@ -95,7 +101,7 @@ class _RideDetailsContent extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           SectionTitle(
-                            text: ride.departureCity,
+                            text: ride?.location ?? '',
                             fontSize: AppFontSize.s16,
                             color: AppColors.primary,
                           ),
@@ -105,7 +111,7 @@ class _RideDetailsContent extends StatelessWidget {
                             size: AppSize.s20,
                           ),
                           SectionTitle(
-                            text: ride.destinationCity,
+                            text: ride?.destination ?? '',
                             fontSize: AppFontSize.s16,
                             color: AppColors.primary,
                           ),
@@ -113,7 +119,6 @@ class _RideDetailsContent extends StatelessWidget {
                       ),
                     ),
 
-                    // معلومات السائق والسيارة المضافة حديثاً
                     Container(
                       padding: EdgeInsets.all(AppPaddingWidth.p14),
                       decoration: BoxDecoration(
@@ -124,7 +129,6 @@ class _RideDetailsContent extends StatelessWidget {
                       child: Row(
                         spacing: AppWidth.w12,
                         children: [
-                          // صورة السائق الشخصية
                           CircleAvatar(
                             radius: AppRadius.r25,
                             backgroundColor: AppColors.lightGrey,
@@ -140,11 +144,12 @@ class _RideDetailsContent extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SectionTitle(
-                                  text: 'أحمد علي',
+                                  text: driverInfo?.driverName ?? tr.driver,
                                   fontSize: AppFontSize.s15,
                                 ),
                                 BodyTitle(
-                                  text: 'Kia Rio - أبيض',
+                                  text:
+                                      '${ride?.departureDate ?? ''} | ${ride?.departureTime ?? ''}',
                                   fontSize: AppFontSize.s12,
                                   color: AppColors.greyText,
                                 ),
@@ -155,21 +160,12 @@ class _RideDetailsContent extends StatelessWidget {
                       ),
                     ),
 
-                    // خريطة الانطلاق
-                    CurrentLocationMapWidget(
-                      latitude: (ride.latitude ?? 35.5317),
-                      longitude: (ride.longitude ?? 35.7912),
-                    ),
-
-                    // زر مشاركة الرحلة المضاف حديثاً
                     CustomElevatedButton(
                       height: AppHeight.h50,
                       width: double.infinity,
                       borderRadius: AppRadius.r12,
                       color: AppColors.primary,
-                      onPressed: () {
-                        // مشاركة رابط الرحلة
-                      },
+                      onPressed: () {},
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         spacing: AppWidth.w8,
@@ -192,7 +188,7 @@ class _RideDetailsContent extends StatelessWidget {
                 ),
               );
             }
-            return const Center(child: CircularProgressIndicator());
+            return const SizedBox();
           },
         ),
       ),

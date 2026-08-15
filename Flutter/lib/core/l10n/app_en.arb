@@ -268,6 +268,14 @@
   "charge_request_submitted": "Recharge Request Submitted",
   "charge_request_sub": "Please confirm transaction via Syriatel Cash app and balance will be added shortly",
   "waiting_approval": "Pending Approval",
-  "rejected_status": "Rejected"
+  "rejected_status": "Rejected",
+  "accept_reservation": "Accept Reservation",
+  "reject_reservation": "Reject Reservation",
+  "reservation_accepted_success": "Reservation accepted successfully",
+  "reservation_rejected_success": "Reservation rejected successfully",
+  "pending_reservations_title": "Pending Reservations",
+  "pickup_location_label": "Pickup Location",
+  "no_pending_reservations": "No pending reservation requests",
+  "manage_reservations": "Manage Reservations"
   
 }

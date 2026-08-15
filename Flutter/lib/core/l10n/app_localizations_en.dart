@@ -754,4 +754,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rejected_status => 'Rejected';
+
+  @override
+  String get accept_reservation => 'Accept Reservation';
+
+  @override
+  String get reject_reservation => 'Reject Reservation';
+
+  @override
+  String get reservation_accepted_success =>
+      'Reservation accepted successfully';
+
+  @override
+  String get reservation_rejected_success =>
+      'Reservation rejected successfully';
+
+  @override
+  String get pending_reservations_title => 'Pending Reservations';
+
+  @override
+  String get pickup_location_label => 'Pickup Location';
+
+  @override
+  String get no_pending_reservations => 'No pending reservation requests';
+
+  @override
+  String get manage_reservations => 'Manage Reservations';
 }

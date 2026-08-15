@@ -13,7 +13,6 @@ import 'package:a_tareqaak/core/extension/validation_extension.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
-import 'package:a_tareqaak/domain/entity/auth/register/register_entity.dart';
 import 'package:a_tareqaak/presentation/bloc/auth/register/register_bloc.dart';
 import 'package:a_tareqaak/presentation/cubit/auth/register/register_cubit.dart';
 import 'package:a_tareqaak/presentation/screens/auth/widgets/auth_header_widget.dart';

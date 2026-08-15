@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 
 // كيان البحث عن رحلات
 class SearchRidesEntity extends Equatable {
-  final String location;
-  final String destination;
+  final String? location;
+  final String? destination;
 
   const SearchRidesEntity({
     required this.location,

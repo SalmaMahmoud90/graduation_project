@@ -7,12 +7,14 @@ extension Validation on String {
   /// inputs like `0999 123 456` still validate.
   bool get isValidPhone {
     final String sanitized = replaceAll(RegExp(r'[\s-]'), '');
-    final RegExp phoneRegex = RegExp(r'^(?:00963|\+963|0)?9\d{8}$');
+    final RegExp phoneRegex =
+     RegExp(r'^(?:00963|\+963|0)?9\d{8}$');
     return phoneRegex.hasMatch(sanitized);
   }
 
   bool get isValidEmail {
-    final RegExp emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
+    final RegExp emailRegex =
+     RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
     return emailRegex.hasMatch(this);
   }
 }

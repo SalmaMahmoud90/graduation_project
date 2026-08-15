@@ -750,4 +750,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rejected_status => 'تم الرفض';
+
+  @override
+  String get accept_reservation => 'قبول الحجز';
+
+  @override
+  String get reject_reservation => 'رفض الحجز';
+
+  @override
+  String get reservation_accepted_success => 'تم قبول الحجز بنجاح';
+
+  @override
+  String get reservation_rejected_success => 'تم رفض الحجز بنجاح';
+
+  @override
+  String get pending_reservations_title => 'طلبات الحجز المعلقة';
+
+  @override
+  String get pickup_location_label => 'مكان الالتقاء';
+
+  @override
+  String get no_pending_reservations => 'لا توجد طلبات حجز معلقة حالياً';
+
+  @override
+  String get manage_reservations => 'إدارة طلبات الحجز';
 }

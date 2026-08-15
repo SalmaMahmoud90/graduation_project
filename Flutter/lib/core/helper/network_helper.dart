@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:a_tareqaak/data/data_source/auth/auth_storage_data_source.dart';
-import 'package:a_tareqaak/data/models/base/base_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -108,8 +107,10 @@ class NetworkHelper {
     dynamic data,
     bool isFormDate = true,
     List<Map<String, dynamic>>? files,
+     bool requiresAuth = true,
   }) async {
-    final token = await getToken();
+    final token = requiresAuth ? await getToken() : null;
+
     final version = await getVersion();
 
     final formData = isFormDate ? await _buildFormData(data, files) : data;

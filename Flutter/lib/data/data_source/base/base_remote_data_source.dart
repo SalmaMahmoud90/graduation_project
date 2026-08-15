@@ -18,6 +18,7 @@ class BaseRemoteDataSource<T> {
     bool isFormDate = true,
     List<Map<String, dynamic>>? files,
     R Function(Object? json)? fromJsonT,
+    bool requiresAuth = true,
   }) async {
     try {
       final response = await _networkHelper.post(
@@ -25,6 +26,7 @@ class BaseRemoteDataSource<T> {
         data: data,
         files: files,
         isFormDate: isFormDate,
+        requiresAuth: requiresAuth,
       );
       return response.fold(
         (e) => Left(e),

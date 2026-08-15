@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
 import 'package:a_tareqaak/core/helper/launch_url_helper.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
@@ -169,8 +168,8 @@ class _ProfileContent extends StatelessWidget {
                                 name: cubit.profileImagePath == null
                                     ? cubit.driverName
                                     : null,
-                                height: AppHeight.h90,
-                                width: AppWidth.w90,
+                                height: AppHeight.h120,
+                                width: AppWidth.w120,
                                 radius: BorderRadius.circular(AppRadius.r100),
                                 fit: BoxFit.cover,
                               ),
@@ -178,11 +177,11 @@ class _ProfileContent extends StatelessWidget {
                             InkWell(
                               onTap: () => cubit.pickProfileImage(context),
                               child: CircleAvatar(
-                                radius: AppRadius.r14,
+                                radius: AppRadius.r18,
                                 backgroundColor: AppColors.primary,
                                 child: FaIcon(
                                   FontAwesomeIcons.camera,
-                                  size: AppSize.s12,
+                                  size: AppSize.s14,
                                   color: AppColors.white,
                                 ),
                               ),
@@ -403,20 +402,7 @@ class _ProfileContent extends StatelessWidget {
                                   label: tr.plate_number,
                                   value: cubit.carPlate,
                                 ),
-                                Divider(
-                                    color: AppColors.lightGreySec, height: 0),
-                                _buildCarDetailRow(
-                                  icon: FontAwesomeIcons.hashtag,
-                                  label: tr.car_id,
-                                  value: cubit.carId,
-                                ),
-                                Divider(
-                                    color: AppColors.lightGreySec, height: 0),
-                                _buildCarDetailRow(
-                                  icon: FontAwesomeIcons.calendarCheck,
-                                  label: tr.manufacturing_year,
-                                  value: cubit.manufacturingYear,
-                                ),
+                                
                               ],
                             ),
                           ),

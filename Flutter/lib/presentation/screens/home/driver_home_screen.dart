@@ -2,12 +2,10 @@ import 'package:a_tareqaak/core/routes/app_routes.dart';
 import 'package:a_tareqaak/data/models/ride/ride_model.dart';
 import 'package:a_tareqaak/presentation/cubit/driver_home/driver_home_cubit.dart';
 import 'package:a_tareqaak/presentation/cubit/driver_home/driver_home_state.dart';
-import 'package:a_tareqaak/presentation/screens/home/widgets/driver_bottom_nav_bar.dart';
 import 'package:a_tareqaak/presentation/widgets/current_location_map_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
 import 'package:a_tareqaak/core/resources/app_assets.dart';
@@ -317,7 +315,7 @@ class _DriverHomeContent extends StatelessWidget {
                         '15 آب - 08:30 صباحاً     |     50,000 ${tr.syrian_pound}',
                     seatsText: '4 ${tr.available_seats_count}',
                     onTap: () {
-                      RideDetailsRoute($extra: RideModel(
+                      /* RideDetailsRoute($extra: RideModel(
                           id: '1',
                           departureCity: 'اللاذقية',
                           destinationCity: 'دمشق',
@@ -329,7 +327,7 @@ class _DriverHomeContent extends StatelessWidget {
                       ).push(
                         context,
                         
-                      );
+                      ); */
                      
                     },
                   ),
@@ -340,7 +338,7 @@ class _DriverHomeContent extends StatelessWidget {
                         ' ${tr.syrian_pound}آب - 07:00 صباحاً     |     40,000 16',
                     seatsText: '3 ${tr.available_seats_count}',
                     onTap: () {
-                      RideDetailsRoute($extra: RideModel(
+                      /* RideDetailsRoute($extra: RideModel(
                           id: '2',
                           departureCity: 'طرطوس',
                           destinationCity: 'حلب',
@@ -351,7 +349,7 @@ class _DriverHomeContent extends StatelessWidget {
                         ),
                       ).push(
                         context,
-                      );
+                      ); */
                       
                     },
                   ),

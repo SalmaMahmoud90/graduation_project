@@ -21,8 +21,6 @@ class DriverProfileCubit extends Cubit<DriverProfileState> {
   String carName = 'Kia Rio';
   String carColor = 'أبيض';
   String carPlate = '12-34567';
-  String carId = '123456';
-  String manufacturingYear = '2020';
   String currentLocation = '';
 
   // نوع المستخدم الحالي (driver/rider) لتوجيه استدعاء الـ API الصحيح

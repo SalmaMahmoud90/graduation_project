@@ -1,26 +1,27 @@
-import 'package:a_tareqaak/data/models/ride/ride_model.dart';
-import 'package:a_tareqaak/data/models/rides/ride_data_model.dart';
-import 'package:a_tareqaak/presentation/cubit/rides/my_rides/my_rides_cubit.dart';
-import 'package:a_tareqaak/presentation/cubit/rides/my_rides/my_rides_state.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
-import 'package:a_tareqaak/core/resources/app_colors.dart';
+import 'package:a_tareqaak/core/resources/app_colors.dart' show AppColors;
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
+import 'package:a_tareqaak/core/routes/app_routes.dart';
+import 'package:a_tareqaak/data/models/rides/ride_data_model.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/my_rides_driver/i_my_rides_event.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/my_rides_driver/i_my_rides_state.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/my_rides_driver/my_rides_bloc.dart';
 import 'package:a_tareqaak/presentation/screens/driver_rides/widgets/ride_card_widget.dart';
 import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
 import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-// رحلاتي عند السائق
 class MyRidesScreen extends StatelessWidget {
   const MyRidesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => MyRidesCubit()..load(),
+      create: (_) => MyRidesBloc()..add(const GetMyRidesEvent()),
       child: const _MyRidesContent(),
     );
   }
@@ -34,23 +35,7 @@ class _MyRidesContent extends StatefulWidget {
 }
 
 class _MyRidesContentState extends State<_MyRidesContent> {
-  int currentTab = 0; // 0: غير منجزة، 1: منجزة، 2: محذوفة
-
-  // تحويل نموذج الـ API إلى نموذج الواجهة المستخدم في شاشة التفاصيل
-  RideModel _toUiRide(RideDataModel r) {
-    final parsed = DateTime.tryParse(
-      '${r.departureDate ?? ''} ${r.departureTime ?? ''}'.trim(),
-    );
-    return RideModel(
-      id: (r.id ?? 0).toString(),
-      departureCity: r.location ?? '',
-      destinationCity: r.destination ?? '',
-      departureDateTime: parsed ?? DateTime.now(),
-      duration: r.expectedDuration ?? '',
-      price: double.tryParse(r.cost ?? '') ?? 0,
-      availableSeats: r.availableSeats ?? 0,
-    );
-  }
+  int currentTab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -74,52 +59,31 @@ class _MyRidesContentState extends State<_MyRidesContent> {
                 ),
               ),
             ),
-
-            // التبويبات الثلاثة
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppPaddingWidth.p20),
-              child: Container(
-                padding: EdgeInsets.all(AppPaddingWidth.p4),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(AppRadius.r12),
-                ),
-                child: Row(
-                  children: [
-                    _buildTabItem(0, tr.uncompleted),
-                    _buildTabItem(1, tr.completed),
-                    _buildTabItem(2, tr.deleted),
-                  ],
-                ),
-              ),
-            ),
-
             Expanded(
-              child: BlocBuilder<MyRidesCubit, MyRidesState>(
+              child: BlocBuilder<MyRidesBloc, IMyRidesState>(
                 builder: (context, state) {
-                  if (state is MyRidesLoading || state is MyRidesInitial) {
+                  if (state is MyRidesLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  if (state is MyRidesError) {
-                    return _CenteredMessage(text: state.message);
+                  if (state is MyRidesFailed) {
+                    return Center(child: BodyTitle(text: state.message));
                   }
-                  final rides =
-                      state is MyRidesLoaded ? state.rides : <RideDataModel>[];
+                  final rides = state is MyRidesLoaded
+                      ? state.response?.data?.rides ?? <RideDataModel>[]
+                      : <RideDataModel>[];
 
-                  // الخادم يعيد الرحلات النشطة فقط ضمن my_rides
-                  if (currentTab != 0) {
-                    return _CenteredMessage(text: tr.no_data);
-                  }
                   if (rides.isEmpty) {
-                    return _CenteredMessage(text: tr.no_data);
+                    return Center(child: BodyTitle(text: tr.no_data));
                   }
 
                   return RefreshIndicator(
-                    onRefresh: () => context.read<MyRidesCubit>().load(),
+                    onRefresh: () async {
+                      context.read<MyRidesBloc>().add(const GetMyRidesEvent());
+                    },
                     child: ListView.separated(
                       padding: EdgeInsets.all(AppPaddingWidth.p20),
                       itemCount: rides.length,
-                      separatorBuilder: (_, _) =>
+                      separatorBuilder: (_, __) =>
                           SizedBox(height: AppHeight.h12),
                       itemBuilder: (context, index) {
                         final r = rides[index];
@@ -131,7 +95,8 @@ class _MyRidesContentState extends State<_MyRidesContent> {
                           seatsText:
                               '${r.availableSeats ?? 0} ${tr.available_seats_label}',
                           onTap: () {
-                            context.push('/ride-details', extra: _toUiRide(r));
+                            RideDetailsRoute($extra: r).push(context);
+                            //context.push('/ride-details', extra: r, id: r.id);
                           },
                         );
                       },
@@ -143,50 +108,6 @@ class _MyRidesContentState extends State<_MyRidesContent> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTabItem(int index, String title) {
-    final isSelected = currentTab == index;
-    return Expanded(
-      child: InkWell(
-        onTap: () => setState(() => currentTab = index),
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: AppPaddingHeight.p8),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary : AppColors.none,
-            borderRadius: BorderRadius.circular(AppRadius.r10),
-          ),
-          child: BodyTitle(
-            text: title,
-            textAlign: TextAlign.center,
-            color: isSelected ? AppColors.white : AppColors.greyText,
-            fontWeight: AppFontWeight.bold,
-            fontSize: AppFontSize.s12,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CenteredMessage extends StatelessWidget {
-  final String text;
-  const _CenteredMessage({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        SizedBox(height: AppHeight.h100),
-        Center(
-          child: BodyTitle(
-            text: text,
-            color: AppColors.greyText,
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ],
     );
   }
 }

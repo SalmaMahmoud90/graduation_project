@@ -2,6 +2,7 @@ class AppStoragePaths {
   AppStoragePaths._();
 
   //#region Auth
+  static const String auth = 'auth';
   static const String token = 'token';
   static const String userType = 'userType';
   //#endregion

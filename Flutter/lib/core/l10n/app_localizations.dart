@@ -1567,6 +1567,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rejected'**
   String get rejected_status;
+
+  /// No description provided for @accept_reservation.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept Reservation'**
+  String get accept_reservation;
+
+  /// No description provided for @reject_reservation.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Reservation'**
+  String get reject_reservation;
+
+  /// No description provided for @reservation_accepted_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Reservation accepted successfully'**
+  String get reservation_accepted_success;
+
+  /// No description provided for @reservation_rejected_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Reservation rejected successfully'**
+  String get reservation_rejected_success;
+
+  /// No description provided for @pending_reservations_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Reservations'**
+  String get pending_reservations_title;
+
+  /// No description provided for @pickup_location_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup Location'**
+  String get pickup_location_label;
+
+  /// No description provided for @no_pending_reservations.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending reservation requests'**
+  String get no_pending_reservations;
+
+  /// No description provided for @manage_reservations.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Reservations'**
+  String get manage_reservations;
 }
 
 class _AppLocalizationsDelegate

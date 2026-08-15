@@ -16,6 +16,8 @@ class ApiEndpoints {
   static const String resetPassword = '/reset_password/';
   static const String logout = '/logout/';
 
+//////////////////////////////////////////////////////////////
+
   // Profile (under /users)
   static const String viewProfile = '/view_profile/';
   static const String updateDriverProfile = '/update_driver_profile/';

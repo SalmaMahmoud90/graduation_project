@@ -1,20 +1,21 @@
-import 'package:a_tareqaak/presentation/cubit/publish_ride/publish_ride_cubit.dart';
-import 'package:a_tareqaak/presentation/cubit/publish_ride/publish_ride_state.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
+import 'package:a_tareqaak/domain/entity/rides/create_ride_entity.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/create_ride/create_ride_bloc.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/create_ride/i_create_ride_event.dart';
+import 'package:a_tareqaak/presentation/bloc/rides/create_ride/i_create_ride_state.dart';
 import 'package:a_tareqaak/presentation/widgets/custom_elevated_button.dart';
 import 'package:a_tareqaak/presentation/widgets/custom_snack_bar.dart';
 import 'package:a_tareqaak/presentation/widgets/form/custom_input_field.dart';
 import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
 import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 class PublishRideScreen extends StatelessWidget {
   const PublishRideScreen({super.key});
@@ -22,7 +23,7 @@ class PublishRideScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PublishRideCubit(),
+      create: (_) => CreateRideBloc(),
       child: const _PublishRideContent(),
     );
   }
@@ -38,10 +39,14 @@ class _PublishRideContent extends StatefulWidget {
 class _PublishRideContentState extends State<_PublishRideContent> {
   final TextEditingController _departureController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController(text: '15/08/2026');
-  final TextEditingController _timeController = TextEditingController(text: '08:30 AM');
-  final TextEditingController _durationController = TextEditingController(text: '3 ساعات');
-  final TextEditingController _priceController = TextEditingController(text: '50,000 ل.س');
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _durationController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+
+  int _availableSeats = 4;
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
 
   @override
   void dispose() {
@@ -54,6 +59,42 @@ class _PublishRideContentState extends State<_PublishRideContent> {
     super.dispose();
   }
 
+  void _submitRide(BuildContext context) {
+    final tr = context.loc;
+    if (_departureController.text.trim().isEmpty ||
+        _destinationController.text.trim().isEmpty ||
+        _selectedDate == null ||
+        _selectedTime == null ||
+        _priceController.text.trim().isEmpty) {
+      showCustomSnackBar(
+        context: context,
+        title: tr.error_title,
+        message: tr.field_required,
+        contentType: ContentType.failure,
+      );
+      return;
+    }
+
+    final formattedDate =
+        "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}";
+    final formattedTime =
+        "${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}:00";
+
+    final entity = CreateRideEntity(
+      location: _departureController.text.trim(),
+      destination: _destinationController.text.trim(),
+      departureDate: formattedDate,
+      departureTime: formattedTime,
+      expectedDuration: _durationController.text.trim().isEmpty
+          ? null
+          : _durationController.text.trim(),
+      cost: _priceController.text.trim(),
+      capacity: _availableSeats,
+    );
+
+    context.read<CreateRideBloc>().add(CreateRideEvent(entity));
+  }
+
   @override
   Widget build(BuildContext context) {
     final tr = context.loc;
@@ -62,23 +103,21 @@ class _PublishRideContentState extends State<_PublishRideContent> {
     return Scaffold(
       backgroundColor: AppColors.backGround,
       body: SafeArea(
-        child: BlocListener<PublishRideCubit, PublishRideState>(
+        child: BlocListener<CreateRideBloc, ICreateRideState>(
           listener: (context, state) {
-            if (state is PublishRideSuccessState) {
+            if (state is CreateRideLoaded) {
               showCustomSnackBar(
                 context: context,
                 title: tr.success_title,
                 message: tr.ride_published_success,
                 contentType: ContentType.success,
               );
-              context.pop();
-            } else if (state is PublishRideErrorState) {
+              context.pop(true);
+            } else if (state is CreateRideFailed) {
               showCustomSnackBar(
                 context: context,
                 title: tr.error_title,
-                message: state.message == 'missing_fields'
-                    ? tr.field_required
-                    : state.message,
+                message: state.message,
                 contentType: ContentType.failure,
               );
             }
@@ -121,7 +160,6 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                   ],
                 ),
 
-                // حقل مكان الانطلاق
                 CustomInputField(
                   controller: _departureController,
                   title: tr.departure_location,
@@ -132,7 +170,6 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                     final selectedCity = await context.push<String>('/select-city');
                     if (selectedCity != null) {
                       _departureController.text = selectedCity;
-                      context.read<PublishRideCubit>().setDepartureCity(selectedCity);
                     }
                   },
                   prefixIcon: Center(
@@ -145,7 +182,6 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                   ),
                 ),
 
-                // حقل الوجهة
                 CustomInputField(
                   controller: _destinationController,
                   title: tr.destination,
@@ -156,13 +192,10 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                     final selectedCity = await context.push<String>('/select-city');
                     if (selectedCity != null) {
                       _destinationController.text = selectedCity;
-                      context.read<PublishRideCubit>().setDestinationCity(selectedCity);
                     }
                   },
-                 
                 ),
 
-                // التاريخ والوقت
                 Column(
                   spacing: AppHeight.h6,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +211,7 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                         Expanded(
                           child: CustomInputField(
                             controller: _dateController,
-                            hintText: '15/08/2026',
+                            hintText: 'YYYY-MM-DD',
                             readOnly: true,
                             onTap: () async {
                               final pickedDate = await showDatePicker(
@@ -188,13 +221,9 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                                 lastDate: DateTime(2030),
                               );
                               if (pickedDate != null) {
+                                _selectedDate = pickedDate;
                                 _dateController.text =
-                                    '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
-                                if (context.mounted) {
-                                  context
-                                      .read<PublishRideCubit>()
-                                      .setDate(pickedDate);
-                                }
+                                    "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                               }
                             },
                             prefixIcon: Center(
@@ -210,7 +239,7 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                         Expanded(
                           child: CustomInputField(
                             controller: _timeController,
-                            hintText: '08:30 AM',
+                            hintText: 'HH:MM',
                             readOnly: true,
                             showClock: true,
                             onTap: () async {
@@ -219,12 +248,8 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                                 initialTime: TimeOfDay.now(),
                               );
                               if (pickedTime != null) {
+                                _selectedTime = pickedTime;
                                 _timeController.text = pickedTime.format(context);
-                                if (context.mounted) {
-                                  context
-                                      .read<PublishRideCubit>()
-                                      .setTime(pickedTime);
-                                }
                               }
                             },
                           ),
@@ -234,25 +259,19 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                   ],
                 ),
 
-                // حقل مدة الرحلة المتوقعة (تم حذف أيقونة السهم كما طُلِب)
                 CustomInputField(
                   controller: _durationController,
                   title: tr.expected_duration,
                   hintText: tr.three_hours,
                   isExpanded: true,
-                  onChanged: (v) =>
-                      context.read<PublishRideCubit>().setDuration(v),
                 ),
 
-                // حقل السعر
                 CustomInputField(
                   controller: _priceController,
                   title: tr.price,
-                  hintText: '50,000 ${tr.syrian_pound}',
+                  hintText: '50000',
                   textInputType: TextInputType.number,
                   isExpanded: true,
-                  onChanged: (v) =>
-                      context.read<PublishRideCubit>().setPrice(v),
                   prefixIcon: Center(
                     widthFactor: 1.0,
                     child: FaIcon(
@@ -263,74 +282,73 @@ class _PublishRideContentState extends State<_PublishRideContent> {
                   ),
                 ),
 
-                // عدد المقاعد
-                BlocBuilder<PublishRideCubit, PublishRideState>(
-                  builder: (context, state) {
-                    final cubit = context.read<PublishRideCubit>();
-                    return Column(
-                      spacing: AppHeight.h6,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SectionTitle(
-                          text: tr.available_seats,
-                          fontSize: AppFontSize.s14,
-                          color: AppColors.primary,
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppPaddingWidth.p15,
-                            vertical: AppPaddingHeight.p8,
+                Column(
+                  spacing: AppHeight.h6,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SectionTitle(
+                      text: tr.available_seats,
+                      fontSize: AppFontSize.s14,
+                      color: AppColors.primary,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppPaddingWidth.p15,
+                        vertical: AppPaddingHeight.p8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(AppRadius.r12),
+                        border: Border.all(color: AppColors.greyDivider),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              if (_availableSeats > 1) {
+                                setState(() => _availableSeats--);
+                              }
+                            },
+                            icon: FaIcon(
+                              FontAwesomeIcons.minus,
+                              color: AppColors.blackText,
+                              size: AppSize.s16,
+                            ),
                           ),
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(AppRadius.r12),
-                            border: Border.all(color: AppColors.greyDivider),
+                          SectionTitle(
+                            text: _availableSeats.toString(),
+                            fontSize: AppFontSize.s18,
+                            fontWeight: AppFontWeight.bold,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                onPressed: () => cubit.decrementSeats(),
-                                icon: FaIcon(
-                                  FontAwesomeIcons.minus,
-                                  color: AppColors.blackText,
-                                  size: AppSize.s16,
-                                ),
-                              ),
-                              SectionTitle(
-                                text: cubit.availableSeats.toString(),
-                                fontSize: AppFontSize.s18,
-                                fontWeight: AppFontWeight.bold,
-                              ),
-                              IconButton(
-                                onPressed: () => cubit.incrementSeats(),
-                                icon: FaIcon(
-                                  FontAwesomeIcons.plus,
-                                  color: AppColors.blackText,
-                                  size: AppSize.s16,
-                                ),
-                              ),
-                            ],
+                          IconButton(
+                            onPressed: () {
+                              if (_availableSeats < 8) {
+                                setState(() => _availableSeats++);
+                              }
+                            },
+                            icon: FaIcon(
+                              FontAwesomeIcons.plus,
+                              color: AppColors.blackText,
+                              size: AppSize.s16,
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
 
-                // زر النشر
-                BlocBuilder<PublishRideCubit, PublishRideState>(
+                BlocBuilder<CreateRideBloc, ICreateRideState>(
                   builder: (context, state) {
-                    final cubit = context.read<PublishRideCubit>();
+                    final isLoading = state is CreateRideLoading;
                     return CustomElevatedButton(
                       height: AppHeight.h50,
                       width: double.infinity,
                       borderRadius: AppRadius.r12,
                       color: AppColors.primary,
-                      loading: state is PublishRideLoadingState,
-                      onPressed: () {
-                        cubit.publishRide();
-                      },
+                      loading: isLoading,
+                      onPressed: () => _submitRide(context),
                       child: BodyTitle(
                         text: tr.publish_ride_btn,
                         color: AppColors.white,

@@ -271,5 +271,13 @@
   "charge_request_submitted": "تم طلب الشحن بنجاح",
   "charge_request_sub": "يرجى تأكيد العملية من تطبيق سيريتل كاش وسيعاد إضافة الرصيد خلال لحظات",
   "waiting_approval": "قيد الانتظار",
-  "rejected_status": "تم الرفض"
+  "rejected_status": "تم الرفض",
+  "accept_reservation": "قبول الحجز",
+  "reject_reservation": "رفض الحجز",
+  "reservation_accepted_success": "تم قبول الحجز بنجاح",
+  "reservation_rejected_success": "تم رفض الحجز بنجاح",
+  "pending_reservations_title": "طلبات الحجز المعلقة",
+  "pickup_location_label": "مكان الالتقاء",
+  "no_pending_reservations": "لا توجد طلبات حجز معلقة حالياً",
+  "manage_reservations": "إدارة طلبات الحجز"
 }

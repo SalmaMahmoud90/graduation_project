@@ -31,6 +31,7 @@ class LoginBloc extends Bloc<ILoginEvent, ILoginState> {
         (r) async {
           // حفظ رمز الوصول حتى تعمل الطلبات المحمية (logout والخدمات الأخرى)
           final token = r?.data?.accessToken;
+      
           if (token != null && token.isNotEmpty) {
             await locator<AuthStorageDataSource>().storeToken(token);
           }

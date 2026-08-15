@@ -7,6 +7,7 @@ import 'package:a_tareqaak/data/models/base/base_model.dart';
 import 'package:a_tareqaak/domain/entity/auth/forgot_password/forgot_password_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/login/login_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/register/register_entity.dart';
+import 'package:a_tareqaak/domain/entity/auth/resend_reset_password/resend_reset_password.dart';
 import 'package:a_tareqaak/domain/entity/auth/resend_verification/resend_verification_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/reset_password/reset_password_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/verify_email/verify_email_entity.dart';
@@ -30,6 +31,7 @@ class AuthRemoteDataSource extends BaseRemoteDataSource<dynamic> {
       isFormDate: false,
       fromJsonT: (json) =>
           UserModel.fromJson(json as Map<String, dynamic>),
+      requiresAuth: false,
     );
   }
 
@@ -44,6 +46,7 @@ class AuthRemoteDataSource extends BaseRemoteDataSource<dynamic> {
       endpoint: ApiEndpoints.verifyEmail,
       data: data.toJson(),
       isFormDate: false,
+      requiresAuth: false,
     );
   }
 
@@ -55,6 +58,7 @@ class AuthRemoteDataSource extends BaseRemoteDataSource<dynamic> {
       endpoint: ApiEndpoints.resendVerification,
       data: data.toJson(),
       isFormDate: false,
+      requiresAuth: false,
     );
   }
 
@@ -68,6 +72,7 @@ class AuthRemoteDataSource extends BaseRemoteDataSource<dynamic> {
       isFormDate: false,
       fromJsonT: (json) =>
           TokensModel.fromJson(json as Map<String, dynamic>),
+      requiresAuth: false,
     );
   }
 
@@ -84,6 +89,7 @@ class AuthRemoteDataSource extends BaseRemoteDataSource<dynamic> {
           ForgotPasswordResponseModel.fromJson(
             json as Map<String, dynamic>,
           ),
+      requiresAuth: false,
     );
   }
 
@@ -98,6 +104,7 @@ class AuthRemoteDataSource extends BaseRemoteDataSource<dynamic> {
       endpoint: ApiEndpoints.verifyResetCode,
       data: data.toJson(),
       isFormDate: false,
+      requiresAuth: false,
     );
   }
 
@@ -117,6 +124,17 @@ class AuthRemoteDataSource extends BaseRemoteDataSource<dynamic> {
     return postData<UserModel>(
       endpoint: ApiEndpoints.logout,
       isFormDate: false,
+    );
+  }
+  // إعادة إرسال رمز التحقق
+  Future<Either<AppException, BaseModel<UserModel>?>> resendResetPassword(
+    ResendResetPasswordEntity data,
+  ) {
+    return postData<UserModel>(
+      endpoint: ApiEndpoints.resendVerification,
+      data: data.toJson(),
+      isFormDate: false,
+      requiresAuth: false,
     );
   }
 }

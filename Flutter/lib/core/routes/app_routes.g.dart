@@ -31,6 +31,7 @@ List<RouteBase> get $appRoutes => [
   $chargeWalletRoute,
   $searchRideFormRoute,
   $searchResultsRoute,
+  $driverReservationsRoute,
 ];
 
 RouteBase get $splashRoute => GoRouteData.$route(
@@ -194,23 +195,28 @@ RouteBase get $editRideRoute => GoRouteData.$route(
 );
 
 mixin $EditRideRoute on GoRouteData {
-  static EditRideRoute _fromState(GoRouterState state) => EditRideRoute();
+  static EditRideRoute _fromState(GoRouterState state) =>
+      EditRideRoute($extra: state.extra as RideDataModel);
+
+  EditRideRoute get _self => this as EditRideRoute;
 
   @override
   String get location => GoRouteData.$location('/edit-ride');
 
   @override
-  void go(BuildContext context) => context.go(location);
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
   @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
 
   @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+      context.pushReplacement(location, extra: _self.$extra);
 
   @override
-  void replace(BuildContext context) => context.replace(location);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }
 
 RouteBase get $publishRideRoute => GoRouteData.$route(
@@ -326,7 +332,7 @@ RouteBase get $rideDetailsRoute => GoRouteData.$route(
 
 mixin $RideDetailsRoute on GoRouteData {
   static RideDetailsRoute _fromState(GoRouterState state) =>
-      RideDetailsRoute($extra: state.extra as RideModel);
+      RideDetailsRoute($extra: state.extra as RideDataModel);
 
   RideDetailsRoute get _self => this as RideDetailsRoute;
 
@@ -958,6 +964,33 @@ mixin $SearchResultsRoute on GoRouteData {
       if (_self.toCity != null) 'to-city': _self.toCity,
     },
   );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $driverReservationsRoute => GoRouteData.$route(
+  path: '/driver-reservations',
+  hasOverriddenOnExit: false,
+  factory: $DriverReservationsRoute._fromState,
+);
+
+mixin $DriverReservationsRoute on GoRouteData {
+  static DriverReservationsRoute _fromState(GoRouterState state) =>
+      DriverReservationsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/driver-reservations');
 
   @override
   void go(BuildContext context) => context.go(location);

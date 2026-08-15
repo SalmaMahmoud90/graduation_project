@@ -7,7 +7,7 @@ class UpdateDriverProfileEntity extends Equatable {
   final String? email;
   final String? carNumber;
   final String? carColor;
-
+  
   const UpdateDriverProfileEntity({
     this.name,
     this.phone,

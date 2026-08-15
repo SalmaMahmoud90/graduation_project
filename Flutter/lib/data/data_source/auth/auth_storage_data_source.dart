@@ -6,7 +6,7 @@ import '../base/base_storage_data_source.dart';
 
 @Injectable()
 class AuthStorageDataSource extends BaseStorageDataSource {
-  AuthStorageDataSource() : super(AppStoragePaths.token);
+  AuthStorageDataSource() : super(AppStoragePaths.auth);
 
   Future<Either<AppException, void>> logout() {
     return deleteData(
