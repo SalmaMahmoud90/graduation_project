@@ -46,7 +46,7 @@ class ViewRideDetailSerializer(serializers.ModelSerializer):
             "destination",
             "departure_time",
             "departure_date",
-            "expected_duration"
+            "expected_duration", 
             "cost",
             "capacity",
             "available_seats",

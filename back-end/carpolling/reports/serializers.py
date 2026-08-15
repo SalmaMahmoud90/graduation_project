@@ -3,7 +3,6 @@ from .models import Report
 from rides.models import *
 from users.models import MainUser
 
-
 def get_shared_rides(user, target_user):
     if user.user_type == "driver":
         user_rides = Ride.objects.filter(
@@ -30,8 +29,6 @@ def get_shared_rides(user, target_user):
     return user_rides.filter(
         id__in=target_rides.values("id")
     ).distinct()
-
-
 
 class CreateReportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -62,8 +59,6 @@ class CreateReportSerializer(serializers.ModelSerializer):
                 })
 
         return attrs
-
-
         
 class SharedRideSerializer(serializers.ModelSerializer):
     available_seats = serializers.IntegerField(read_only=True)
@@ -81,6 +76,19 @@ class SharedRideSerializer(serializers.ModelSerializer):
         ]
 
 class MyReportsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = [
+            "id",
+            "reported_user",
+            "type",
+            "reason",
+            "status",
+            "created_at",
+            "updated_at",
+        ]
+
+class ViewReportDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
         fields = [

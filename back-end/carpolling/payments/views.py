@@ -42,13 +42,11 @@ class ViewDepositRequestView(APIView):
 class ViewTransactionsView(APIView):
     def get(self, request):
         user= request.user
-        if user.user_type== 'rider':
-            transactions= Transaction.objects.filter(wallet__user=user)
-            serializer= ViewTransactionsSerializer(transactions, many=True)
-            return Response({
-                "transactions": serializer.data
-            }, status= status.HTTP_200_OK)
-        return Response({"error": "Invalid user type"}, status=status.HTTP_400_BAD_REQUEST)
+        transactions= Transaction.objects.filter(wallet__user=user)
+        serializer= ViewTransactionsSerializer(transactions, many=True)
+        return Response({
+            "transactions": serializer.data
+        }, status= status.HTTP_200_OK)
     
 class PayView(APIView):
     @transaction.atomic
