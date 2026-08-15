@@ -2,6 +2,7 @@ from payments.models import *
 from django.db.models import F
 from rest_framework import serializers
 from rides.models import Reservation
+
 class ViewBalanceSerializer(serializers.ModelSerializer):
     class Meta:
         model= Wallet
@@ -16,6 +17,7 @@ class CreateDepositRequestSerializer(serializers.ModelSerializer):
         if value <= 0:
             raise serializers.ValidationError("Amount must be greater than zero.")
         return value
+    
 class ViewDepositRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model= DepositRequest

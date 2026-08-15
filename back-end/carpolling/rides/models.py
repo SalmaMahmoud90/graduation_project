@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import  Rider
+from users.models import  Rider, MainUser
 
 class Ride(models.Model):
     class RideStatus(models.TextChoices):
@@ -55,3 +55,5 @@ class Reservation(models.Model):
         return f"{self.rider.user.name} -> {self.ride}"
     class Meta:
         unique_together = ['ride', 'rider']
+
+

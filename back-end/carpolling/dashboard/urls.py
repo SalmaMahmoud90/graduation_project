@@ -16,4 +16,6 @@ urlpatterns = [
     path('view_deposit_requests/<int:deposit_request_id>/', ViewDepositRequestDetailsView.as_view(), name= "view_deposit_details"),
     path('accept/<int:deposit_request_id>/', AcceptDepositRequestView.as_view(), name= "accept_deposit_request"),
     path('reject/<int:deposit_request_id>/', RejectDepositRequestView.as_view(), name= "reject_deposit_request"),
+    path("statistics/", DashboardStatisticsAPIView.as_view(), name="dashboard_statistics"),
+    path("daily_summary/", DailyPlatformSummaryView.as_view(), name="daily_platform_summary"),
 ]

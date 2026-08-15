@@ -40,6 +40,8 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,6 +54,7 @@ INSTALLED_APPS = [
     'drf_social_oauth2',
     'corsheaders',
     'drf_spectacular',
+    "channels",
     # local apps
     'users.apps.UsersConfig',
     'rides.apps.RidesConfig',
@@ -59,6 +62,7 @@ INSTALLED_APPS = [
     'notifications.apps.NotificationsConfig',
     'reports.apps.ReportsConfig',
     'payments.apps.PaymentsConfig',
+    'locations.apps.LocationsConfig',
 ]
 
 # oauth settings
@@ -130,7 +134,7 @@ TEMPLATES = [
 
 ROOT_URLCONF = 'carpolling.urls'
 
-
+ASGI_APPLICATION = "carpolling.asgi.application"
 WSGI_APPLICATION = 'carpolling.wsgi.application'
 
 
@@ -224,3 +228,10 @@ DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     EMAIL_HOST_USER
 )
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}

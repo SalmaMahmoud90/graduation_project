@@ -82,3 +82,23 @@ class MyReportsView(APIView):
             serializer.data,
             status=status.HTTP_200_OK
         )
+    
+class ViewReportDetailsView(APIView):
+    def get(self, request, report_id):
+
+            try:
+                report = Report.objects.get(
+                    id=report_id,
+                    reporter=request.user
+                )
+            except Report.DoesNotExist:
+                return Response(
+                    {"error": "Report not found."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            serializer = ViewReportDetailsSerializer(report)
+    
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK
+            )

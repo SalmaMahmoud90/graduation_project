@@ -1,17 +1,17 @@
 ## 1. جدول حقول البيانات والمعاني (Fields Dictionary)
 
-| الحقل           | نوع البيانات         | إجباري؟                  | الوصف والشروط                                                                                                 |
-| --------------- | -------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `id`            | Integer              | تلقائي                   | المعرّف الفريد للبلاغ، يتم إنشاؤه تلقائيًا.                                                                   |
-| `reporter`      | User / ForeignKey    | تلقائي                   | المستخدم الذي قام بإنشاء البلاغ، ويتم تحديده من `request.user`.                                               |
-| `reported_user` | User / ForeignKey    | تلقائي                   | المستخدم الذي تم الإبلاغ عنه، ويتم تحديده من `user_id` الموجود في الـ URL.                                    |
-| `ride`          | Integer / ForeignKey | اختياري                  | الرحلة التي بسببها تم تقديم البلاغ. يجب أن تكون رحلة مشتركة بين المبلّغ والمستخدم المُبلّغ عنه.               |
-| `type`          | String (Enum)        | **نعم**                  | نوع البلاغ.                                                                                                   |
-| `reason`        | String / Text        | **نعم**                  | السبب أو التفاصيل التي يكتبها المستخدم حول البلاغ.                                                            |
-| `status`        | String (Enum)        | تلقائي                   | حالة البلاغ، وتبدأ افتراضيًا بـ `pending`.                                                                    |
-| `admin_note`    | String / Text        | اختياري  الحالي بإرسالها | ملاحظة يضيفها الـ Adminملاحظة يضيفها الـ Admin أثناء معالجة البلاغ. تكون `null` إلى أن يضيف الـ Admin ملاحظة. |
-| `created_at`    | DateTime             | تلقائي                   | تاريخ ووقت إنشاء البلاغ.                                                                                      |
-| `updated_at`    | DateTime             | تلقائي                   | تاريخ ووقت آخر تعديل على البلاغ.                                                                              |
+| الحقل           | نوع البيانات         | إجباري؟                  | الوصف والشروط                                                                                                    |
+| --------------- | -------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `id`            | Integer              | تلقائي                   | المعرّف الفريد للبلاغ، يتم إنشاؤه تلقائيًا.                                                                      |
+| `reporter`      | User / ForeignKey    | تلقائي                   | المستخدم الذي قام بإنشاء البلاغ، ويتم تحديده من `request.user`.                                                  |
+| `reported_user` | User / ForeignKey    | تلقائي                   | المستخدم الذي تم الإبلاغ عنه، ويتم تحديده من `user_id` الموجود في الـ URL.                                       |
+| `ride`          | Integer / ForeignKey | اختياري                  | الرحلة التي بسببها تم تقديم البلاغ، ويتم التحقق من أن الرحلة مشتركة بين `reporter` و`reported_user` عند إرسالها. |
+| `type`          | String (Enum)        | **نعم**                  | نوع البلاغ.                                                                                                      |
+| `reason`        | String / Text        | **نعم**                  | السبب أو التفاصيل التي يكتبها المستخدم حول البلاغ.                                                               |
+| `status`        | String (Enum)        | تلقائي                   | حالة البلاغ، وتبدأ افتراضيًا بـ `pending`.                                                                       |
+| `admin_note`    | String / Text        | اختياري  الحالي بإرسالها | ملاحظة يضيفها الـ Adminملاحظة يضيفها الـ Admin أثناء معالجة البلاغ. تكون `null` إلى أن يضيف الـ Admin ملاحظة.    |
+| `created_at`    | DateTime             | تلقائي                   | تاريخ ووقت إنشاء البلاغ.                                                                                         |
+| `updated_at`    | DateTime             | تلقائي                   | تاريخ ووقت آخر تعديل على البلاغ.                                                                                 |
 ### ملاحظة حول `ride`
 
 حقل `ride` **اختياري**.
@@ -234,44 +234,59 @@ Authorization: Bearer <access_token>
     {
         "id": 5,
         "reported_user": 12,
-        "ride": 12,
         "type": "dangerous",
         "reason": "The driver was driving dangerously.",
         "status": "pending",
-        "admin_note": null,
         "created_at": "2026-08-09T10:30:00Z",
         "updated_at": "2026-08-09T10:30:00Z"
     },
     {
         "id": 3,
         "reported_user": 8,
-        "ride": null,
         "type": "harassment",
         "reason": "The user behaved inappropriately.",
         "status": "reviewed",
-        "admin_note": "The report was reviewed and appropriate action was taken.",
         "created_at": "2026-08-08T15:20:00Z",
         "updated_at": "2026-08-09T12:00:00Z"
     }
 ]
 ```
 
-### حالة `admin_note`
+___
 
-عند إنشاء البلاغ:
+# 9.  عرض تفاصيل بلاغ
+### `GET /view_report_details/<report_id>/`
 
-```
-"admin_note": null
-```
-
-لأن الـ Admin لم يضف ملاحظة بعد.
-
-بعد أن يقوم الـ Admin بإضافة ملاحظة:
+يستخدم هذا الـ endpoint لعرض تفاصيل البلاغ الذي قام المستخدم الحالي بإرساله .
+### Headers
 
 ```
-"admin_note": "The report was reviewed and appropriate action was taken."
+Authorization: Bearer <access_token>
 ```
-# 9. البيانات التي يدخلها المستخدم
+
+### Response — Success
+
+**200 OK**
+
+مثال:
+
+```
+    {
+        "id": 5,
+        "reported_user": 12,
+        "type": "dangerous",
+        "reason": "The driver was driving dangerously.",
+        "ride": 1,
+        "status": "pending",
+        "admin_note": "The report was reviewed and appropriate action was taken.",
+        "created_at": "2026-08-09T10:30:00Z",
+        "updated_at": "2026-08-09T10:30:00Z"
+    }
+
+```
+
+
+# 10. البيانات التي يدخلها المستخدم
 
 من ناحية **واجهة المستخدم**:
 
@@ -302,7 +317,7 @@ Report User
 
 ---
 
-# 10. البيانات التي يحددها النظام تلقائيًا
+# 11. البيانات التي يحددها النظام تلقائيًا
 
 المستخدم **لا يرسل**:
 
@@ -342,7 +357,7 @@ pending
 
 ---
 
-# 11. Response — نجاح إنشاء البلاغ
+# 12. Response — نجاح إنشاء البلاغ
 
 **201 Created**
 
@@ -372,7 +387,7 @@ pending
 
 ---
 
-# 12. Report Workflow
+# 13. Report Workflow
 
                  User Profile
                       │
@@ -416,13 +431,14 @@ pending
               GET /my_reports/
                       │
                       ▼
+            GET /view_report_details/{report_id}/
+                      │
+                      ▼
           View status + admin_note
 
 ---
-
-# 13
-## الخلاصة
+### الخلاصة
 
 المنطق النهائي عندك هو:
 
-المستخدم يدخل بروفايل شخص → يضغط Report → التطبيق يجيب الرحلات المشتركة معه → يختار رحلة إذا أراد → يحدد نوع البلاغ → يكتب السبب → Backend يتحقق من الرحلة → ينشئ Report بحالة `pending` → الـ Admin يراجع البلاغ → يمكن للـ Admin إضافة `admin_note` → تصبح حالة البلاغ `reviewed` → يستطيع المستخدم عرض بلاغاته ومشاهدة حالة البلاغ وملاحظة الـ Admin من خلال `GET /my_reports/`.
+المستخدم يدخل بروفايل شخص → يضغط Report → التطبيق يجيب الرحلات المشتركة معه → يختار رحلة إذا أراد → يحدد نوع البلاغ → يكتب السبب → Backend يتحقق من الرحلة → ينشئ Report بحالة `pending` → الـ Admin يراجع البلاغ → يمكن للـ Admin إضافة `admin_note` → تصبح حالة البلاغ `reviewed` → يستطيع المستخدم عرض بلاغاته وعرض تفاصيل مل بلاغ لمشاهدة حالة البلاغ وملاحظة الـ Admin من خلال `/GET/my_reports/` من ثم` GET /view_report_details/`

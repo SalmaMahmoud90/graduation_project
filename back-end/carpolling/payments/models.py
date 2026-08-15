@@ -1,15 +1,14 @@
 from django.db import models
 
-# Create your models here.
 class Wallet(models.Model):
     user = models.OneToOneField('users.MainUser', on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
 
 class Transaction(models.Model):
     class TransactionType(models.TextChoices):
         DEPOSIT = "deposit", "Deposit"
         PAYMENT = "payment", "Payment"
+        EARNING = "earning", "Earning"
 
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
     reservation = models.ForeignKey('rides.Reservation', on_delete=models.SET_NULL, null=True, blank=True)
@@ -18,11 +17,9 @@ class Transaction(models.Model):
     transaction_type = models.CharField(max_length=20, choices=TransactionType.choices)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
 class DepositRequest(models.Model):
     class PaymentMethod(models.TextChoices):
         SYRIATEL_CASH = "syriatel_cash", "Syriatel Cash"
-        MTN_CASH = "mtn_cash", "MTN Cash"
         SHAM_CASH= 'sham_cash', 'Sham Cash'
     class Status(models.TextChoices):
         PENDING = "pending"
