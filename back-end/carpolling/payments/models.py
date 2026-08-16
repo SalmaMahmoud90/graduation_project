@@ -9,6 +9,7 @@ class Transaction(models.Model):
         DEPOSIT = "deposit", "Deposit"
         PAYMENT = "payment", "Payment"
         EARNING = "earning", "Earning"
+        REFUND = "refund", "Refund"
 
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
     reservation = models.ForeignKey('rides.Reservation', on_delete=models.SET_NULL, null=True, blank=True)
@@ -25,7 +26,6 @@ class DepositRequest(models.Model):
         PENDING = "pending"
         APPROVED = "approved"
         REJECTED = "rejected"
-
     user = models.ForeignKey('users.MainUser', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=PaymentMethod.choices)

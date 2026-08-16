@@ -28,7 +28,7 @@ class ViewRideDetailSerializer(serializers.ModelSerializer):
     available_seats = serializers.IntegerField(read_only=True)
 
     reservations = ViewReservationsSerializer(
-        source='reservation_set',
+        'reservations',
         many=True,
         read_only=True
     )
