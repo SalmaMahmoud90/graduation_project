@@ -108,6 +108,51 @@ export type ApiUserDetail = {
   reservations?: ApiUserDetailReservationRow[]
 }
 
+/** Row from view_driver_trips_count (statistics/). */
+export type ApiDriverTripCount = {
+  driver_id: number
+  driver_email: string
+  total_rides: number
+}
+
+/** Row from view_most_active_riders (statistics/). */
+export type ApiActiveRider = {
+  rider_id: number
+  rider_email: string
+  total_reservations: number
+}
+
+/** Row from view_popular_destinations (statistics/). */
+export type ApiPopularDestination = {
+  destination_city: string
+  total_trips_to_destination: number
+}
+
+/** Row from view_popular_pickup_locations (statistics/). */
+export type ApiPopularPickupLocation = {
+  student_pickup_point: string
+  total_requests: number
+}
+
+/** Response shape of GET /api/dashboard/statistics/. */
+export type ApiDashboardStatistics = {
+  driver_trips: ApiDriverTripCount[]
+  active_riders: ApiActiveRider[]
+  popular_destinations: ApiPopularDestination[]
+  popular_pickup_locations: ApiPopularPickupLocation[]
+}
+
+/**
+ * Row from the daily_platform_summary table (daily_summary/), populated once a
+ * day by the `daily_summary_job` MySQL event. `total_revenue` exists in the
+ * table but is not exposed by the endpoint.
+ */
+export type ApiDailySummaryRow = {
+  summary_date: string
+  total_rides_created: number
+  total_reservations_made: number
+}
+
 export type LoginResponse = {
   access_token: string
   token_type?: string

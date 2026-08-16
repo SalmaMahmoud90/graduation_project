@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
+  BarChart3,
   Users,
   Car,
   ClipboardList,
@@ -24,6 +25,7 @@ import { BRAND_LOGO_SRC, BRAND_NAME } from '@/lib/brand'
 
 const nav = [
   { to: '/', key: 'nav.overview', icon: LayoutDashboard, end: true },
+  { to: '/statistics', key: 'nav.statistics', icon: BarChart3 },
   { to: '/users', key: 'nav.users', icon: Users },
   { to: '/rides', key: 'nav.rides', icon: Car },
   { to: '/bookings', key: 'nav.bookings', icon: ClipboardList },

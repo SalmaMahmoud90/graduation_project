@@ -7,6 +7,7 @@ import {
 import {
   acceptDepositRequest,
   banUser,
+  fetchDailySummary,
   fetchDashboardDepositRequestDetail,
   fetchDashboardDepositRequests,
   fetchDashboardDepositRequestsPage,
@@ -15,6 +16,7 @@ import {
   fetchDashboardReportsPage,
   fetchDashboardReservations,
   fetchDashboardReservationsPage,
+  fetchDashboardStatistics,
   fetchDashboardRideDetail,
   fetchDashboardRides,
   fetchDashboardRidesPage,
@@ -80,6 +82,26 @@ async function loadStats(): Promise<DashboardStats> {
 
 export function useDashboardStats() {
   return useQuery({ queryKey: qk.stats, queryFn: loadStats })
+}
+
+// Server-side analytics (statistics/ + daily_summary/). These are backed by DB
+// views and a once-a-day summary job, so they change slowly — cache generously.
+const STATISTICS_STALE_TIME = 5 * 60 * 1000
+
+export function useDashboardStatistics() {
+  return useQuery({
+    queryKey: qk.statistics,
+    queryFn: fetchDashboardStatistics,
+    staleTime: STATISTICS_STALE_TIME,
+  })
+}
+
+export function useDailySummary() {
+  return useQuery({
+    queryKey: qk.dailySummary,
+    queryFn: fetchDailySummary,
+    staleTime: STATISTICS_STALE_TIME,
+  })
 }
 
 // Full-list lookups used to enrich paginated tables with names/labels.

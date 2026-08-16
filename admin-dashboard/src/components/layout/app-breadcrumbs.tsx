@@ -4,9 +4,11 @@ import { useI18n } from '@/contexts/i18n'
 
 const pathToNavKey: Record<string, string> = {
   '/': 'nav.overview',
+  '/statistics': 'nav.statistics',
   '/users': 'nav.users',
   '/rides': 'nav.rides',
   '/bookings': 'nav.bookings',
+  '/deposit-requests': 'nav.deposits',
   '/reports': 'nav.reports',
 }
 

@@ -1,5 +1,7 @@
 export const qk = {
   stats: ['stats'] as const,
+  statistics: ['statistics'] as const,
+  dailySummary: ['dailySummary'] as const,
   users: ['users'] as const,
   userDetail: (id: string) => ['users', 'detail', id] as const,
   rides: ['rides'] as const,
