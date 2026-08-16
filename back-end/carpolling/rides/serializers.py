@@ -43,22 +43,33 @@ class UpdateRideSerializer(serializers.ModelSerializer):
 class CreateReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = ['id', 'ride', 'rider', 'status', "created_at", "pickup_location"]
+        fields = ['id', 'ride', 'status', "created_at", "pickup_location"]
         read_only_fields = ['status', 'rider'] 
-
     def validate(self, attrs):
-        ride = attrs.get('ride')
-        rider = self.context['request'].user.rider 
+            ride = attrs.get('ride')
+            rider = self.context['request'].user.rider
 
-        if ride.available_seats <= 0: 
-            raise serializers.ValidationError("No available seats left on this ride.")
+            if ride.available_seats <= 0:
+                raise serializers.ValidationError(
+                    "No available seats left on this ride."
+                )
 
-        if Reservation.objects.filter(ride=ride, rider=rider).exists():
-            raise serializers.ValidationError("You have already reserved a seat on this ride.")
-            
-        if ride.driver.user == self.context['request'].user:
-            raise serializers.ValidationError("You cannot reserve your own ride.")
-        return attrs
+            existing_reservation = Reservation.objects.filter(
+                ride=ride,
+                rider=rider
+            ).first()
+
+            if existing_reservation and existing_reservation.status != Reservation.ReservationStatus.CANCELLED:
+                raise serializers.ValidationError(
+                    "You have already reserved a seat on this ride."
+                )
+
+            if ride.driver.user == self.context['request'].user:
+                raise serializers.ValidationError(
+                    "You cannot reserve your own ride."
+                )
+
+            return attrs
 
     def create(self, validated_data):
         reservation = Reservation.objects.create(**validated_data)

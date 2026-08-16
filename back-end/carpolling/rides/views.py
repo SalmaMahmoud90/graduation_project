@@ -1,3 +1,8 @@
+from django.db import transaction
+from django.db.models import F, Sum
+
+from payments.models import Transaction, Wallet
+
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -168,26 +173,61 @@ class AcceptReservationView(APIView):
         )
 
 class RejectReservationView(APIView):
+    @transaction.atomic
     def post(self, request, reservation_id):
         user = request.user
+
         if user.user_type != "driver":
             return Response(
-                {"error": "Only drivers can reject reservations"}, 
+                {"error": "Only drivers can reject reservations"},
                 status=status.HTTP_403_FORBIDDEN
             )
+
         try:
-            reservation = Reservation.objects.get(id=reservation_id)
+            reservation = Reservation.objects.select_related(
+                "ride",
+                "ride__driver",
+                "rider__user"
+            ).get(id=reservation_id)
+
         except Reservation.DoesNotExist:
-            return Response({"error": "Reservation not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Reservation not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         if reservation.ride.driver.user != user:
             return Response(
                 {"error": "You can only reject reservations for your rides"},
                 status=status.HTTP_403_FORBIDDEN
             )
+
         if reservation.status != Reservation.ReservationStatus.PENDING:
-            return Response({"error": "Reservation cannot be rejected"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Reservation cannot be rejected"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if reservation.payment == Reservation.PaymentStatus.PAID:
+
+            wallet = Wallet.objects.select_for_update().get(
+                user=reservation.rider.user
+            )
+
+            wallet.balance = F("balance") + reservation.ride.cost
+            wallet.save()
+            wallet.refresh_from_db()
+
+            Transaction.objects.create(
+                wallet=wallet,
+                reservation=reservation,
+                amount=reservation.ride.cost,
+                transaction_type=Transaction.TransactionType.REFUND
+            )
+
         reservation.status = Reservation.ReservationStatus.REJECTED
         reservation.save()
+
         return Response(
             {"message": "Reservation rejected successfully"},
             status=status.HTTP_200_OK
@@ -279,5 +319,75 @@ class ViewRideDetails(APIView):
 
         return Response(
             {"ride": serializer.data},
+            status=status.HTTP_200_OK
+        )
+
+class CompleteRideView(APIView):
+    @transaction.atomic
+    def post(self, request, ride_id):
+
+        try:
+            ride = Ride.objects.select_related(
+                "driver",
+                "driver__user"
+            ).get(id=ride_id)
+
+        except Ride.DoesNotExist:
+            return Response(
+                {"error": "Ride not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if request.user.user_type != "driver":
+            return Response(
+                {"error": "Only drivers can complete rides"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        if ride.driver.user != request.user:
+            return Response(
+                {"error": "You are not the driver of this ride"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        if ride.status != Ride.RideStatus.ACTIVE:
+            return Response(
+                {"error": "Only active rides can be completed"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        paid_reservations = Reservation.objects.filter(
+            ride=ride,
+            payment=Reservation.PaymentStatus.PAID
+        )
+
+        total_earnings = paid_reservations.aggregate(
+            total=Sum("ride__cost")
+        )["total"] or 0
+
+        wallet = Wallet.objects.select_for_update().get(
+            user=request.user
+        )
+
+        wallet.balance = F("balance") + total_earnings
+        wallet.save()
+        wallet.refresh_from_db()
+
+        if total_earnings > 0:
+            Transaction.objects.create(
+                wallet=wallet,
+                amount=total_earnings,
+                transaction_type=Transaction.TransactionType.EARNING
+            )
+
+        ride.status = Ride.RideStatus.COMPLETED
+        ride.save()
+
+        return Response(
+            {
+                "message": "Ride completed successfully",
+                "total_earnings": total_earnings,
+                "driver_balance": wallet.balance
+            },
             status=status.HTTP_200_OK
         )
