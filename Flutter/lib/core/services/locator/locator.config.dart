@@ -33,8 +33,8 @@ import '../../../domain/entity/auth/forgot_password/forgot_password_entity.dart'
 import '../../../domain/entity/auth/login/login_entity.dart' as _i27;
 import '../../../domain/entity/auth/logout/logout_entity.dart' as _i385;
 import '../../../domain/entity/auth/register/register_entity.dart' as _i811;
-import '../../../domain/entity/auth/resend_reset_password/resend_reset_password.dart'
-    as _i847;
+import '../../../domain/entity/auth/resend_reset_code/resend_reset_code.dart'
+    as _i1008;
 import '../../../domain/entity/auth/resend_verification/resend_verification_entity.dart'
     as _i1012;
 import '../../../domain/entity/auth/reset_password/reset_password_entity.dart'
@@ -62,8 +62,8 @@ import '../../../domain/usecase/auth/forgot_password/forgot_password_usecase.dar
 import '../../../domain/usecase/auth/login/login_usecase.dart' as _i710;
 import '../../../domain/usecase/auth/logout/logout_usecase.dart' as _i638;
 import '../../../domain/usecase/auth/register/register_usecase.dart' as _i523;
-import '../../../domain/usecase/auth/resend_reset_password/resend_reset_password_usecase.dart'
-    as _i412;
+import '../../../domain/usecase/auth/resend_reset_code/resend_reset_code_usecase.dart'
+    as _i707;
 import '../../../domain/usecase/auth/resend_verification/resend_verification_usecase.dart'
     as _i1040;
 import '../../../domain/usecase/auth/reset_password/reset_password_usecase.dart'
@@ -247,15 +247,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<
       _i759.IUseCase<
-        _i480.BaseModel<_i1011.UserModel>?,
-        _i847.ResendResetPasswordEntity
-      >
-    >(
-      () => _i412.ResendResetPasswordUseCase(gh<_i154.IAuthRepository>()),
-      instanceName: 'ResendResetPasswordUseCase',
-    );
-    gh.factory<
-      _i759.IUseCase<
         _i480.BaseModel<_i402.ForgotPasswordResponseModel>?,
         _i146.ForgotPasswordEntity
       >
@@ -292,6 +283,15 @@ extension GetItInjectableX on _i174.GetIt {
     >(
       () => _i873.VerifyResetCodeUseCase(gh<_i154.IAuthRepository>()),
       instanceName: 'VerifyResetCodeUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i1011.UserModel>?,
+        _i1008.ResendResetCodeEntity
+      >
+    >(
+      () => _i707.ResendResetCodeUseCase(gh<_i154.IAuthRepository>()),
+      instanceName: 'ResendResetCodeUseCase',
     );
     return this;
   }

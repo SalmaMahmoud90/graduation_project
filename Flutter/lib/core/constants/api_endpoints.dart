@@ -13,6 +13,7 @@ class ApiEndpoints {
   static const String login = '/login/';
   static const String forgotPassword = '/forgot_password/';
   static const String verifyResetCode = '/verify_reset_code/';
+  static const String resendResetCode= '/resend_reset_code/';
   static const String resetPassword = '/reset_password/';
   static const String logout = '/logout/';
 

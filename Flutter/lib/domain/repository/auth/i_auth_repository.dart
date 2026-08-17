@@ -5,7 +5,7 @@ import 'package:a_tareqaak/data/models/base/base_model.dart';
 import 'package:a_tareqaak/domain/entity/auth/forgot_password/forgot_password_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/login/login_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/register/register_entity.dart';
-import 'package:a_tareqaak/domain/entity/auth/resend_reset_password/resend_reset_password.dart';
+import 'package:a_tareqaak/domain/entity/auth/resend_reset_code/resend_reset_code.dart';
 import 'package:a_tareqaak/domain/entity/auth/resend_verification/resend_verification_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/reset_password/reset_password_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/verify_email/verify_email_entity.dart';
@@ -22,6 +22,6 @@ abstract interface class IAuthRepository {
   Future<Either<AppException, BaseModel<ForgotPasswordResponseModel>?>> forgotPassword(ForgotPasswordEntity data);
   Future<Either<AppException, BaseModel<UserModel>?>> verifyResetCode(VerifyResetCodeEntity data);
   Future<Either<AppException, BaseModel<UserModel>?>> resetPassword(ResetPasswordEntity data);
-  Future<Either<AppException, BaseModel<UserModel>?>> resendResetPassword(ResendResetPasswordEntity data);
+  Future<Either<AppException, BaseModel<UserModel>?>> resendResetCode(ResendResetCodeEntity data);
   Future<Either<AppException, BaseModel<UserModel>?>> logout();
 }

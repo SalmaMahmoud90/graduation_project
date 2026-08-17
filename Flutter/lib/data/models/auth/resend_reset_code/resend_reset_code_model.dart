@@ -1,23 +1,23 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'resend_reset_password_model.g.dart';
+part 'resend_reset_code_model.g.dart';
 
 // مودل استجابة نسيت كلمة المرور
 @JsonSerializable(createToJson: false)
-class ResendResetPasswordModel extends Equatable {
+class ResendResetCodeModel extends Equatable {
   
   @JsonKey(name: 'reset_token')
   final String? resetToken;
 
-  const ResendResetPasswordModel({
+  const ResendResetCodeModel({
     
     this.resetToken,
   });
 
-  factory ResendResetPasswordModel.fromJson(Map<String, dynamic> json) {
+  factory ResendResetCodeModel.fromJson(Map<String, dynamic> json) {
     
-    return _$ResendResetPasswordModelFromJson(json);
+    return _$ResendResetCodeModelFromJson(json);
   }
 
   @override
