@@ -1,6 +1,6 @@
 import 'package:a_tareqaak/core/extension/page_builder_extension.dart';
 import 'package:a_tareqaak/core/utils/enums/enum_utils.dart';
-import 'package:a_tareqaak/data/models/report/report_model.dart';
+import 'package:a_tareqaak/data/models/report/report_data_model.dart';
 import 'package:a_tareqaak/data/models/rides/ride_data_model.dart';
 import 'package:a_tareqaak/presentation/screens/auth/forgot_password_screen.dart';
 import 'package:a_tareqaak/presentation/screens/auth/reset_password/reset_password_screen.dart';
@@ -31,6 +31,8 @@ import 'package:a_tareqaak/presentation/screens/auth/check_code_screen.dart';
 import 'package:a_tareqaak/presentation/screens/home/driver_home_screen.dart';
 import 'package:a_tareqaak/presentation/screens/home/rider_home_screen.dart';
 import 'package:a_tareqaak/presentation/screens/wallet/charge_wallet_screen.dart';
+import 'package:a_tareqaak/presentation/screens/wallet/deposit_requests_screen.dart';
+import 'package:a_tareqaak/presentation/screens/wallet/transaction_history_screen.dart';
 import 'package:a_tareqaak/presentation/screens/wallet/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -370,7 +372,7 @@ class MyReportsRoute extends GoRouteData with $MyReportsRoute {
 
 @TypedGoRoute<ReportDetailsRoute>(path: '/report-details')
 class ReportDetailsRoute extends GoRouteData with $ReportDetailsRoute {
-  final ReportModel $extra;
+  final ReportDataModel $extra;
 
   ReportDetailsRoute({required this.$extra});
 
@@ -492,9 +494,33 @@ class WalletRoute extends GoRouteData with $WalletRoute {
 
 @TypedGoRoute<ChargeWalletRoute>(path: '/charge-wallet')
 class ChargeWalletRoute extends GoRouteData with $ChargeWalletRoute {
+  final String? method; // syriatel_cash / sham_cash
+
+  ChargeWalletRoute({this.method});
+
   @override
   CustomTransitionPage<void> buildPage(context, state) {
-    return const ChargeWalletScreen().buildPage(pageAnimation: PageAnimation.slide);
+    return ChargeWalletScreen(method: method)
+        .buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<TransactionHistoryRoute>(path: '/transaction-history')
+class TransactionHistoryRoute extends GoRouteData
+    with $TransactionHistoryRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const TransactionHistoryScreen()
+        .buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<DepositRequestsRoute>(path: '/deposit-requests')
+class DepositRequestsRoute extends GoRouteData with $DepositRequestsRoute {
+  @override
+  CustomTransitionPage<void> buildPage(context, state) {
+    return const DepositRequestsScreen()
+        .buildPage(pageAnimation: PageAnimation.slide);
   }
 }
 

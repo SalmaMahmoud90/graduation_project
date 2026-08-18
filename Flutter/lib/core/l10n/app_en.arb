@@ -276,6 +276,15 @@
   "pending_reservations_title": "Pending Reservations",
   "pickup_location_label": "Pickup Location",
   "no_pending_reservations": "No pending reservation requests",
-  "manage_reservations": "Manage Reservations"
-  
+  "manage_reservations": "Manage Reservations",
+  "deposit_requests_title": "Deposit Requests",
+  "no_deposit_requests": "No deposit requests yet",
+  "no_transactions": "No transactions yet",
+  "charge_request_failed": "Failed to submit the recharge request",
+  "approved_status": "Approved",
+  "trx_deposit": "Deposit",
+  "trx_payment": "Payment",
+  "trx_earning": "Earning",
+  "trx_refund": "Refund",
+  "wallet_history_only": "You can review your transaction history here."
 }

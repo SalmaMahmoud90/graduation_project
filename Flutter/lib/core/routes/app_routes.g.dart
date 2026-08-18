@@ -29,6 +29,8 @@ List<RouteBase> get $appRoutes => [
   $riderShellRoute,
   $walletRoute,
   $chargeWalletRoute,
+  $transactionHistoryRoute,
+  $depositRequestsRoute,
   $searchRideFormRoute,
   $searchResultsRoute,
   $driverReservationsRoute,
@@ -651,7 +653,7 @@ RouteBase get $reportDetailsRoute => GoRouteData.$route(
 
 mixin $ReportDetailsRoute on GoRouteData {
   static ReportDetailsRoute _fromState(GoRouterState state) =>
-      ReportDetailsRoute($extra: state.extra as ReportModel);
+      ReportDetailsRoute($extra: state.extra as ReportDataModel);
 
   ReportDetailsRoute get _self => this as ReportDetailsRoute;
 
@@ -895,10 +897,69 @@ RouteBase get $chargeWalletRoute => GoRouteData.$route(
 
 mixin $ChargeWalletRoute on GoRouteData {
   static ChargeWalletRoute _fromState(GoRouterState state) =>
-      ChargeWalletRoute();
+      ChargeWalletRoute(method: state.uri.queryParameters['method']);
+
+  ChargeWalletRoute get _self => this as ChargeWalletRoute;
 
   @override
-  String get location => GoRouteData.$location('/charge-wallet');
+  String get location => GoRouteData.$location(
+    '/charge-wallet',
+    queryParams: {if (_self.method != null) 'method': _self.method},
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $transactionHistoryRoute => GoRouteData.$route(
+  path: '/transaction-history',
+  hasOverriddenOnExit: false,
+  factory: $TransactionHistoryRoute._fromState,
+);
+
+mixin $TransactionHistoryRoute on GoRouteData {
+  static TransactionHistoryRoute _fromState(GoRouterState state) =>
+      TransactionHistoryRoute();
+
+  @override
+  String get location => GoRouteData.$location('/transaction-history');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $depositRequestsRoute => GoRouteData.$route(
+  path: '/deposit-requests',
+  hasOverriddenOnExit: false,
+  factory: $DepositRequestsRoute._fromState,
+);
+
+mixin $DepositRequestsRoute on GoRouteData {
+  static DepositRequestsRoute _fromState(GoRouterState state) =>
+      DepositRequestsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/deposit-requests');
 
   @override
   void go(BuildContext context) => context.go(location);

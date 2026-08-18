@@ -780,4 +780,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get manage_reservations => 'Manage Reservations';
+
+  @override
+  String get deposit_requests_title => 'Deposit Requests';
+
+  @override
+  String get no_deposit_requests => 'No deposit requests yet';
+
+  @override
+  String get no_transactions => 'No transactions yet';
+
+  @override
+  String get charge_request_failed => 'Failed to submit the recharge request';
+
+  @override
+  String get approved_status => 'Approved';
+
+  @override
+  String get trx_deposit => 'Deposit';
+
+  @override
+  String get trx_payment => 'Payment';
+
+  @override
+  String get trx_earning => 'Earning';
+
+  @override
+  String get trx_refund => 'Refund';
+
+  @override
+  String get wallet_history_only =>
+      'You can review your transaction history here.';
 }

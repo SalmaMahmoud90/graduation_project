@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +10,10 @@ import 'package:a_tareqaak/core/extension/validation_extension.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
+import 'package:a_tareqaak/domain/entity/payment/payment_entity.dart';
+import 'package:a_tareqaak/presentation/bloc/payment/create_deposit_request/create_deposit_request_bloc.dart';
+import 'package:a_tareqaak/presentation/bloc/payment/create_deposit_request/i_create_deposit_request_event.dart';
+import 'package:a_tareqaak/presentation/bloc/payment/create_deposit_request/i_create_deposit_request_state.dart';
 import 'package:a_tareqaak/presentation/widgets/custom_bottom_sheet.dart';
 import 'package:a_tareqaak/presentation/widgets/custom_snack_bar.dart';
 import 'package:a_tareqaak/presentation/widgets/custom_elevated_button.dart';
@@ -16,16 +21,43 @@ import 'package:a_tareqaak/presentation/widgets/form/custom_input_field.dart';
 import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
 import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
 
-class ChargeWalletScreen extends StatefulWidget {
-  const ChargeWalletScreen({super.key});
+class ChargeWalletScreen extends StatelessWidget {
+  final String? method; // syriatel_cash / sham_cash
+
+  const ChargeWalletScreen({super.key, this.method});
 
   @override
-  State<ChargeWalletScreen> createState() => _ChargeWalletScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => CreateDepositRequestBloc(),
+      child: _ChargeWalletContent(method: method ?? 'syriatel_cash'),
+    );
+  }
 }
 
-class _ChargeWalletScreenState extends State<ChargeWalletScreen> {
+class _ChargeWalletContent extends StatefulWidget {
+  final String method;
+
+  const _ChargeWalletContent({required this.method});
+
+  @override
+  State<_ChargeWalletContent> createState() => _ChargeWalletContentState();
+}
+
+class _ChargeWalletContentState extends State<_ChargeWalletContent> {
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _amountController = TextEditingController(text: '50,000');
+  final TextEditingController _amountController =
+      TextEditingController(text: '50000');
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  String get _methodLabel =>
+      widget.method == 'sham_cash' ? context.loc.sham_cash : context.loc.syriatel_cash;
 
   void _showSuccessSheet(BuildContext context) {
     final tr = context.loc;
@@ -55,8 +87,8 @@ class _ChargeWalletScreenState extends State<ChargeWalletScreen> {
             borderRadius: AppRadius.r12,
             color: AppColors.primary,
             onPressed: () {
-              context.pop();
-              context.pop();
+              context.pop(); // إغلاق الـ bottom sheet
+              context.pop(); // العودة لشاشة المحفظة
             },
             child: BodyTitle(
               text: tr.ok,
@@ -69,6 +101,41 @@ class _ChargeWalletScreenState extends State<ChargeWalletScreen> {
     );
   }
 
+  void _submit(BuildContext context) {
+    final tr = context.loc;
+    final phone = _phoneController.text.trim();
+    final amount = _amountController.text.trim().replaceAll(',', '');
+
+    if (!phone.isValidPhone) {
+      showCustomSnackBar(
+        context: context,
+        title: tr.error_title,
+        message: tr.enter_valid_phone,
+        contentType: ContentType.failure,
+      );
+      return;
+    }
+    if (amount.isEmpty || (double.tryParse(amount) ?? 0) <= 0) {
+      showCustomSnackBar(
+        context: context,
+        title: tr.error_title,
+        message: tr.amount,
+        contentType: ContentType.failure,
+      );
+      return;
+    }
+
+    context.read<CreateDepositRequestBloc>().add(
+          CreateDepositRequestEvent(
+            CreateDepositRequestEntity(
+              amount: amount,
+              paymentMethod: widget.method,
+              transactionReference: phone,
+            ),
+          ),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     final tr = context.loc;
@@ -77,92 +144,102 @@ class _ChargeWalletScreenState extends State<ChargeWalletScreen> {
     return Scaffold(
       backgroundColor: AppColors.backGround,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppPaddingWidth.p20,
-            vertical: AppPaddingHeight.p15,
-          ),
-          child: Column(
-            spacing: AppHeight.h16,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () => context.pop(),
-                    icon: FaIcon(
-                      isRtl
-                          ? FontAwesomeIcons.chevronRight
-                          : FontAwesomeIcons.chevronLeft,
-                      color: AppColors.blackText,
-                      size: AppSize.s20,
+        child: BlocListener<CreateDepositRequestBloc,
+            ICreateDepositRequestState>(
+          listener: (context, state) {
+            if (state is CreateDepositRequestLoaded) {
+              _showSuccessSheet(context);
+            } else if (state is CreateDepositRequestFailed) {
+              showCustomSnackBar(
+                context: context,
+                title: tr.error_title,
+                message: state.message.isNotEmpty
+                    ? state.message
+                    : tr.charge_request_failed,
+                contentType: ContentType.failure,
+              );
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppPaddingWidth.p20,
+              vertical: AppPaddingHeight.p15,
+            ),
+            child: Column(
+              spacing: AppHeight.h16,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () => context.pop(),
+                      icon: FaIcon(
+                        isRtl
+                            ? FontAwesomeIcons.chevronRight
+                            : FontAwesomeIcons.chevronLeft,
+                        color: AppColors.blackText,
+                        size: AppSize.s20,
+                      ),
                     ),
-                  ),
-                  SectionTitle(
-                    text: '${tr.charge_balance} - ${tr.syriatel_cash}',
-                    fontSize: AppFontSize.s18,
-                    fontWeight: AppFontWeight.bold,
-                  ),
-                  SizedBox(width: AppWidth.w40),
-                ],
-              ),
-
-              CustomInputField(
-                controller: _phoneController,
-                title: tr.sender_number,
-                hintText: '09XXXXXXXX',
-                textInputType: TextInputType.phone,
-                isExpanded: true,
-              ),
-
-              CustomInputField(
-                controller: _amountController,
-                title: tr.amount,
-                hintText: '50,000',
-                textInputType: TextInputType.number,
-                isExpanded: true,
-              ),
-
-              // خيارات خيارات المبالغ المتاحة (25,000 / 50,000 / 100,000)
-              Row(
-                spacing: AppWidth.w8,
-                children: [
-                  _buildAmountChip('25,000'),
-                  _buildAmountChip('50,000'),
-                  _buildAmountChip('100,000'),
-                  _buildAmountChip(tr.other_amount),
-                ],
-              ),
-
-              const Spacer(),
-
-              CustomElevatedButton(
-                height: AppHeight.h50,
-                width: double.infinity,
-                borderRadius: AppRadius.r12,
-                color: AppColors.primary,
-                onPressed: () {
-                  final phone = _phoneController.text.trim();
-                  if (!phone.isValidPhone) {
-                    showCustomSnackBar(
-                      context: context,
-                      title: tr.error_title,
-                      message: tr.enter_valid_phone,
-                      contentType: ContentType.failure,
-                    );
-                    return;
-                  }
-                  _showSuccessSheet(context);
-                },
-                child: BodyTitle(
-                  text: tr.charge_balance,
-                  color: AppColors.white,
-                  fontSize: AppFontSize.s16,
-                  fontWeight: AppFontWeight.bold,
+                    SectionTitle(
+                      text: '${tr.charge_balance} - $_methodLabel',
+                      fontSize: AppFontSize.s18,
+                      fontWeight: AppFontWeight.bold,
+                    ),
+                    SizedBox(width: AppWidth.w40),
+                  ],
                 ),
-              ),
-            ],
+
+                CustomInputField(
+                  controller: _phoneController,
+                  title: tr.sender_number,
+                  hintText: '09XXXXXXXX',
+                  textInputType: TextInputType.phone,
+                  isExpanded: true,
+                ),
+
+                CustomInputField(
+                  controller: _amountController,
+                  title: tr.amount,
+                  hintText: '50000',
+                  textInputType: TextInputType.number,
+                  isExpanded: true,
+                ),
+
+                // خيارات المبالغ السريعة
+                Row(
+                  spacing: AppWidth.w8,
+                  children: [
+                    _buildAmountChip('25000'),
+                    _buildAmountChip('50000'),
+                    _buildAmountChip('100000'),
+                  ],
+                ),
+
+                const Spacer(),
+
+                BlocBuilder<CreateDepositRequestBloc,
+                    ICreateDepositRequestState>(
+                  builder: (context, state) {
+                    return CustomElevatedButton(
+                      height: AppHeight.h50,
+                      width: double.infinity,
+                      borderRadius: AppRadius.r12,
+                      color: AppColors.primary,
+                      loading: state is CreateDepositRequestLoading,
+                      onPressed: () => _submit(context),
+                      child: BodyTitle(
+                        text: tr.charge_balance,
+                        color: AppColors.white,
+                        fontSize: AppFontSize.s16,
+                        fontWeight: AppFontWeight.bold,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -172,11 +249,7 @@ class _ChargeWalletScreenState extends State<ChargeWalletScreen> {
   Widget _buildAmountChip(String label) {
     return Expanded(
       child: InkWell(
-        onTap: () {
-          if (label != context.loc.other_amount) {
-            _amountController.text = label;
-          }
-        },
+        onTap: () => _amountController.text = label,
         child: Container(
           padding: EdgeInsets.symmetric(vertical: AppPaddingHeight.p8),
           decoration: BoxDecoration(
