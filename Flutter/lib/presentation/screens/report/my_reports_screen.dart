@@ -52,7 +52,7 @@ class _MyReportsContent extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    onPressed: () => context.pop(),
+                    onPressed: () { context.pop();},
                     icon: FaIcon(
                       isRtl
                           ? FontAwesomeIcons.chevronRight

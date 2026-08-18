@@ -1,7 +1,8 @@
 import 'package:a_tareqaak/core/l10n/app_localizations.dart';
 import 'package:a_tareqaak/core/routes/app_routes.dart';
-import 'package:a_tareqaak/presentation/cubit/report/reports_cubit.dart';
-import 'package:a_tareqaak/presentation/cubit/report/reports_state.dart';
+import 'package:a_tareqaak/presentation/bloc/report/create_report/create_report_bloc.dart';
+import 'package:a_tareqaak/presentation/bloc/report/create_report/i_create_report_state.dart';
+import 'package:a_tareqaak/presentation/cubit/report/create_report_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,8 +22,11 @@ class SendReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ReportsCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_)=> CreateReportBloc()),
+        BlocProvider(create: (_)=> CreateReportCubit()), 
+      ],
       child: const _SendReportContent(),
     );
   }
@@ -80,15 +84,15 @@ class _SendReportContentState extends State<_SendReportContent> {
     return Scaffold(
       backgroundColor: AppColors.backGround,
       body: SafeArea(
-        child: BlocListener<ReportsCubit, ReportsState>(
+        child: BlocConsumer<CreateReportBloc, ICreateReportState>(
           listener: (context, state) {
-            if (state is SendReportSuccessState) {
+            if (state is CreateReportLoaded) {
               // عند إرسال البلاغ الانتقال المباشر لشاشة بلاغاتي
               MyReportsRoute().go(context);
              
             }
           },
-          child: SingleChildScrollView(
+          builder: (context, state) => SingleChildScrollView(
             padding: EdgeInsets.symmetric(
               horizontal: AppPaddingWidth.p20,
               vertical: AppPaddingHeight.p15,
@@ -254,21 +258,17 @@ class _SendReportContentState extends State<_SendReportContent> {
                 ),
 
                 // زر إرسال البلاغ الرئيسي
-                BlocBuilder<ReportsCubit, ReportsState>(
-                  builder: (context, state) {
-                    return CustomElevatedButton(
+                
+                CustomElevatedButton(
                       height: AppHeight.h50,
                       width: double.infinity,
                       borderRadius: AppRadius.r12,
                       color: AppColors.primary,
-                      loading: state is ReportsLoadingState,
+                      loading: state is CreateReportLoading,
                       onPressed: () {
-                        context.read<ReportsCubit>().sendReport(
-                              type: _getTranslatedTitle(
-                                  tr,
-                                  reportTypes[selectedTypeIndex]['titleKey']),
-                              description: _detailsController.text,
-                            );
+                        context.read<CreateReportCubit>().updateReport(
+                         
+                          );
                       },
                       child: BodyTitle(
                         text: tr.send_report_btn,
@@ -277,8 +277,8 @@ class _SendReportContentState extends State<_SendReportContent> {
                         fontWeight: AppFontWeight.bold,
                       ),
                     );
-                  },
-                ),
+                 
+                 
               ],
             ),
           ),
