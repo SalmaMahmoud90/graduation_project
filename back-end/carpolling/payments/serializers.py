@@ -75,7 +75,7 @@ class PaySerializer(serializers.ModelSerializer):
 
         reservation.payment = Reservation.PaymentStatus.PAID
         reservation.save()
-
+        
         return Transaction.objects.create(
             wallet=wallet,
             reservation=reservation,
