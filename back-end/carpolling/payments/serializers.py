@@ -29,56 +29,56 @@ class ViewTransactionsSerializer(serializers.ModelSerializer):
         fields= ['id', 'transaction_type', 'created_at']
 
 
-class PaySerializer(serializers.ModelSerializer):
+# class PaySerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Transaction
-        fields = ["reservation"]
+#     class Meta:
+#         model = Transaction
+#         fields = ["reservation"]
 
-    def validate(self, attrs):
-        user = self.context["request"].user
-        reservation = attrs["reservation"]
+#     def validate(self, attrs):
+#         user = self.context["request"].user
+#         reservation = attrs["reservation"]
 
-        if reservation.rider.user != user:
-            raise serializers.ValidationError(
-                "This isn't your reservation."
-            )
+#         if reservation.rider.user != user:
+#             raise serializers.ValidationError(
+#                 "This isn't your reservation."
+#             )
 
-        if reservation.status != Reservation.ReservationStatus.PENDING:
-            raise serializers.ValidationError(
-                "Only pending reservations can be paid."
-            )
+#         if reservation.status != Reservation.ReservationStatus.PENDING:
+#             raise serializers.ValidationError(
+#                 "Only pending reservations can be paid."
+#             )
 
-        if reservation.payment != Reservation.PaymentStatus.UNPAID:
-            raise serializers.ValidationError(
-                "This reservation has already been paid."
-            )
+#         if reservation.payment != Reservation.PaymentStatus.UNPAID:
+#             raise serializers.ValidationError(
+#                 "This reservation has already been paid."
+#             )
 
-        wallet = Wallet.objects.select_for_update().get(user=user)
+#         wallet = Wallet.objects.select_for_update().get(user=user)
 
-        if wallet.balance < reservation.ride.cost:
-            raise serializers.ValidationError(
-                "Insufficient balance."
-            )
+#         if wallet.balance < reservation.ride.cost:
+#             raise serializers.ValidationError(
+#                 "Insufficient balance."
+#             )
 
-        return attrs
+#         return attrs
 
-    def create(self, validated_data):
-        user = self.context["request"].user
+#     def create(self, validated_data):
+#         user = self.context["request"].user
 
-        wallet = Wallet.objects.select_for_update().get(user=user)
-        reservation = validated_data["reservation"]
+#         wallet = Wallet.objects.select_for_update().get(user=user)
+#         reservation = validated_data["reservation"]
 
-        wallet.balance = F("balance") - reservation.ride.cost
-        wallet.save()
-        wallet.refresh_from_db()
+#         wallet.balance = F("balance") - reservation.ride.cost
+#         wallet.save()
+#         wallet.refresh_from_db()
 
-        reservation.payment = Reservation.PaymentStatus.PAID
-        reservation.save()
+#         reservation.payment = Reservation.PaymentStatus.PAID
+#         reservation.save()
         
-        return Transaction.objects.create(
-            wallet=wallet,
-            reservation=reservation,
-            amount=reservation.ride.cost,
-            transaction_type=Transaction.TransactionType.PAYMENT
-        )
+#         return Transaction.objects.create(
+#             wallet=wallet,
+#             reservation=reservation,
+#             amount=reservation.ride.cost,
+#             transaction_type=Transaction.TransactionType.PAYMENT
+#         )

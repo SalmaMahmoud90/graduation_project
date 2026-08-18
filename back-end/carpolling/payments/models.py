@@ -9,7 +9,6 @@ class Transaction(models.Model):
         DEPOSIT = "deposit", "Deposit"
         PAYMENT = "payment", "Payment"
         EARNING = "earning", "Earning"
-        REFUND = "refund", "Refund"
 
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
     reservation = models.ForeignKey('rides.Reservation', on_delete=models.SET_NULL, null=True, blank=True)

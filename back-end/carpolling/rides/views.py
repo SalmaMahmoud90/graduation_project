@@ -188,26 +188,67 @@ class CancelReservationView(APIView):
         )
 
 class AcceptReservationView(APIView):
+
+    @transaction.atomic
     def post(self, request, reservation_id):
+
         user = request.user
+
         if user.user_type != "driver":
             return Response(
-                {"error": "Only drivers can accept reservations"}, 
+                {"error": "Only drivers can accept reservations"},
                 status=status.HTTP_403_FORBIDDEN
             )
+        
         try:
-            reservation = Reservation.objects.get(id=reservation_id)
+            reservation = Reservation.objects.select_related(
+                "ride__driver__user",
+                "rider__user"
+            ).get(id=reservation_id)
+
         except Reservation.DoesNotExist:
-            return Response({"error": "Reservation not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Reservation not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         if reservation.ride.driver.user != user:
             return Response(
                 {"error": "You can only accept reservations for your rides"},
                 status=status.HTTP_403_FORBIDDEN
             )
+
         if reservation.status != Reservation.ReservationStatus.PENDING:
-            return Response({"error": "Only pending reservations can be accepted"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Only pending reservations can be accepted"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        wallet = Wallet.objects.select_for_update().get(
+            user=reservation.rider.user
+        )
+
+        if wallet.balance < reservation.ride.cost:
+            return Response(
+                {"error": "Insufficient balance."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        wallet.balance = F("balance") - reservation.ride.cost
+        wallet.save()
+        wallet.refresh_from_db()
+
+        payment_transaction = Transaction.objects.create(
+            wallet=wallet,
+            reservation=reservation,
+            amount=reservation.ride.cost,
+            transaction_type=Transaction.TransactionType.PAYMENT
+        )
+
         reservation.status = Reservation.ReservationStatus.ACCEPTED
+        reservation.payment = Reservation.PaymentStatus.PAID
         reservation.save()
+
         safe_send_notification(
             user=reservation.rider.user,
             title="Reservation Accepted",
@@ -223,8 +264,13 @@ class AcceptReservationView(APIView):
                 "ride_id": str(reservation.ride.id),
             }
         )
+
         return Response(
-            {"message": "Reservation accepted successfully"},
+            {
+                "message": "Reservation accepted and payment completed successfully.",
+                "transaction_id": payment_transaction.id,
+                "remaining_balance": wallet.balance
+            },
             status=status.HTTP_200_OK
         )
 
@@ -262,23 +308,6 @@ class RejectReservationView(APIView):
             return Response(
                 {"error": "Reservation cannot be rejected"},
                 status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if reservation.payment == Reservation.PaymentStatus.PAID:
-
-            wallet = Wallet.objects.select_for_update().get(
-                user=reservation.rider.user
-            )
-
-            wallet.balance = F("balance") + reservation.ride.cost
-            wallet.save()
-            wallet.refresh_from_db()
-
-            Transaction.objects.create(
-                wallet=wallet,
-                reservation=reservation,
-                amount=reservation.ride.cost,
-                transaction_type=Transaction.TransactionType.REFUND
             )
 
         reservation.status = Reservation.ReservationStatus.REJECTED
