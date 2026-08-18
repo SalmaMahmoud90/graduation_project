@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db.models import F, Sum
 
 from payments.models import Transaction, Wallet
-
+from notifications.services import safe_send_notification
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -89,15 +89,38 @@ class CancelRideView(APIView):
 
         ride.status = Ride.RideStatus.CANCELLED
         ride.save(update_fields=["status"])
-        Reservation.objects.filter(
+        reservations= Reservation.objects.filter(
         ride=ride,
         status__in=[
             Reservation.ReservationStatus.PENDING,
             Reservation.ReservationStatus.ACCEPTED
         ]
-        ).update(
+        )
+        for reservation in reservations:
+
+            safe_send_notification(
+
+                user=reservation.rider.user,
+
+                title="Ride Cancelled",
+
+                body=(
+                    f"The ride from "
+                    f"{reservation.ride.location} to "
+                    f"{reservation.ride.destination} "
+                    f"has been cancelled."
+                ),
+
+                data={
+                    "type": "ride_cancelled",
+                    "ride_id": str(reservation.ride.id),
+                    "reservation_id": str(reservation.id),
+                }
+            )
+        reservations.update(
             status=Reservation.ReservationStatus.CANCELLED
         )
+
         return Response({"message": "Ride cancelled successfully"}, status=status.HTTP_200_OK)
 
 class CreateReservationView(APIView):
@@ -111,7 +134,25 @@ class CreateReservationView(APIView):
 
         serializer = CreateReservationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save(rider=request.user.rider)
+            reservation = serializer.save(rider=request.user.rider)
+
+            driver_user = reservation.ride.driver.user
+
+            safe_send_notification(
+                user=driver_user,
+                title="New Reservation",
+                body=(
+                    f"{reservation.rider.user.name} "
+                    f"requested a reservation for your ride "
+                    f"from {reservation.ride.location} "
+                    f"to {reservation.ride.destination}."
+                ),
+                data={
+                    "type": "new_reservation",
+                    "reservation_id": str(reservation.id),
+                    "ride_id": str(reservation.ride.id),
+                }
+)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -167,6 +208,21 @@ class AcceptReservationView(APIView):
             return Response({"error": "Only pending reservations can be accepted"}, status=status.HTTP_400_BAD_REQUEST)
         reservation.status = Reservation.ReservationStatus.ACCEPTED
         reservation.save()
+        safe_send_notification(
+            user=reservation.rider.user,
+            title="Reservation Accepted",
+            body=(
+                f"Your reservation for "
+                f"{reservation.ride.location} to "
+                f"{reservation.ride.destination} "
+                f"has been accepted."
+            ),
+            data={
+                "type": "reservation_accepted",
+                "reservation_id": str(reservation.id),
+                "ride_id": str(reservation.ride.id),
+            }
+        )
         return Response(
             {"message": "Reservation accepted successfully"},
             status=status.HTTP_200_OK
@@ -227,6 +283,25 @@ class RejectReservationView(APIView):
 
         reservation.status = Reservation.ReservationStatus.REJECTED
         reservation.save()
+        safe_send_notification(
+
+            user=reservation.rider.user,
+
+            title="Reservation Rejected",
+
+            body=(
+                f"Your reservation for "
+                f"{reservation.ride.location} to "
+                f"{reservation.ride.destination} "
+                f"has been rejected."
+            ),
+
+            data={
+                "type": "reservation_rejected",
+                "reservation_id": str(reservation.id),
+                "ride_id": str(reservation.ride.id),
+            }
+        )
 
         return Response(
             {"message": "Reservation rejected successfully"},
@@ -382,7 +457,21 @@ class CompleteRideView(APIView):
 
         ride.status = Ride.RideStatus.COMPLETED
         ride.save()
-
+        safe_send_notification(
+            user=ride.driver.user,
+            title="Payment Received",
+            body=(
+                f"The payment for your ride from "
+                f"{ride.location} to "
+                f"{ride.destination} "
+                f"has been added to your wallet."
+            ),
+            data={
+                "type": "payment_received",
+                "ride_id": str(ride.id),
+                "amount": str(total_earnings),
+            }
+        )
         return Response(
             {
                 "message": "Ride completed successfully",
