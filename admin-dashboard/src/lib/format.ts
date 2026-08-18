@@ -9,6 +9,29 @@ export function formatDateTime(iso: string, locale?: string) {
   }
 }
 
+/** Calendar date only (e.g. daily summary rows, which carry no time). */
+export function formatDate(iso: string, locale?: string) {
+  try {
+    return new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(
+      new Date(iso),
+    )
+  } catch {
+    return iso
+  }
+}
+
+/** Short date for dense axes, e.g. "Aug 14". */
+export function formatDateShort(iso: string, locale?: string) {
+  try {
+    return new Intl.DateTimeFormat(locale, {
+      month: 'short',
+      day: 'numeric',
+    }).format(new Date(iso))
+  } catch {
+    return iso
+  }
+}
+
 /** Some departure values are a time of day only (no calendar date). */
 export function formatRideDeparture(value: string, locale?: string) {
   if (!value) return '—'

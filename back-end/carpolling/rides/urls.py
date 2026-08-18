@@ -14,4 +14,5 @@ urlpatterns = [
     path("my_rides/", MyRidesView.as_view(), name="my-rides"),
     path("my_reservations/", MyReservationView.as_view(), name="my-reservations"),
     path("ride_details/<int:ride_id>/", ViewRideDetails.as_view(), name="ride-details"),
+    path("complete_ride/<int:ride_id>/", CompleteRideView.as_view(), name= "complete_ride")
 ]

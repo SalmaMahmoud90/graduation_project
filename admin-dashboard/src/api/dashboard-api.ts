@@ -1,5 +1,7 @@
 import { apiFetch } from '@/api/http'
 import type {
+  ApiDailySummaryRow,
+  ApiDashboardStatistics,
   ApiDepositRequestDetail,
   ApiDepositRequestRow,
   ApiPaginatedResponse,
@@ -192,6 +194,16 @@ export function rejectDepositRequest(depositRequestId: number) {
       body: JSON.stringify({}),
     },
   )
+}
+
+/** Aggregated platform statistics from the DB analytics views. */
+export function fetchDashboardStatistics() {
+  return apiFetch<ApiDashboardStatistics>('/api/dashboard/statistics/')
+}
+
+/** Per-day platform totals, newest first (as returned by the API). */
+export function fetchDailySummary() {
+  return apiFetch<ApiDailySummaryRow[]>('/api/dashboard/daily_summary/')
 }
 
 export function fetchDashboardRideDetail(rideId: string) {

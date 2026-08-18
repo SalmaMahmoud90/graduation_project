@@ -34,11 +34,53 @@ export const translations: Record<Locale, Record<string, string>> = {
     'sidebar.mobileTitle': 'Sidebar',
     'sidebar.mobileDescription': 'Open the menu on smaller screens.',
     'nav.overview': 'Overview',
+    'nav.statistics': 'Statistics',
     'nav.users': 'Users',
     'nav.rides': 'Rides',
     'nav.bookings': 'Bookings',
     'nav.deposits': 'Deposit Requests',
     'nav.reports': 'Reports',
+    'statistics.error':
+      'Something went wrong loading the statistics. Try refreshing.',
+    'statistics.title': 'Statistics',
+    'statistics.description':
+      'Platform analytics: daily activity, popular routes, and the most active drivers and riders.',
+    'statistics.daily.title': 'Daily activity',
+    'statistics.daily.description':
+      'Rides created and reservations made per day, from the daily platform summary.',
+    'statistics.daily.rides': 'Rides created',
+    'statistics.daily.reservations': 'Reservations made',
+    'statistics.daily.emptyTitle': 'No daily summary yet',
+    'statistics.daily.emptyDescription':
+      'The daily summary is generated once a day by a scheduled job. Rows will appear here after the first run.',
+    'statistics.destinations.title': 'Popular destinations',
+    'statistics.destinations.description':
+      'Cities riders travel to most, by number of trips.',
+    'statistics.pickups.title': 'Popular pickup points',
+    'statistics.pickups.description':
+      'Pickup locations riders request most often.',
+    'statistics.drivers.title': 'Top drivers by trips',
+    'statistics.drivers.description':
+      'Drivers ranked by how many rides they have published.',
+    'statistics.drivers.emptyTitle': 'No drivers yet',
+    'statistics.drivers.emptyDescription':
+      'Once drivers publish rides, they will be ranked here.',
+    'statistics.riders.title': 'Most active riders',
+    'statistics.riders.description':
+      'Riders ranked by how many reservations they have made.',
+    'statistics.riders.emptyTitle': 'No riders yet',
+    'statistics.riders.emptyDescription':
+      'Once riders start booking, they will be ranked here.',
+    'statistics.table.driver': 'Driver',
+    'statistics.table.trips': 'Trips',
+    'statistics.table.rider': 'Rider',
+    'statistics.table.reservations': 'Reservations',
+    'statistics.dailyTable.title': 'Daily summary',
+    'statistics.dailyTable.description':
+      'Day-by-day totals, most recent first.',
+    'statistics.dailyTable.date': 'Date',
+    'statistics.dailyTable.rides': 'Rides created',
+    'statistics.dailyTable.reservations': 'Reservations made',
     'dashboard.error':
       'Something went wrong loading this page. Try refreshing.',
     'dashboard.title': 'Overview',
@@ -283,11 +325,53 @@ export const translations: Record<Locale, Record<string, string>> = {
     'sidebar.mobileTitle': 'الشريط الجانبي',
     'sidebar.mobileDescription': 'افتح القائمة على الشاشات الأصغر.',
     'nav.overview': 'نظرة عامة',
+    'nav.statistics': 'الإحصائيات',
     'nav.users': 'المستخدمون',
     'nav.rides': 'الرحلات',
     'nav.bookings': 'الحجوزات',
     'nav.deposits': 'طلبات الإيداع',
     'nav.reports': 'البلاغات',
+    'statistics.error':
+      'حدث خطأ أثناء تحميل الإحصائيات. جرّب التحديث.',
+    'statistics.title': 'الإحصائيات',
+    'statistics.description':
+      'تحليلات المنصة: النشاط اليومي، والمسارات الأكثر شيوعًا، وأنشط السائقين والركاب.',
+    'statistics.daily.title': 'النشاط اليومي',
+    'statistics.daily.description':
+      'عدد الرحلات المنشورة والحجوزات لكل يوم، من الملخص اليومي للمنصة.',
+    'statistics.daily.rides': 'الرحلات المنشورة',
+    'statistics.daily.reservations': 'الحجوزات',
+    'statistics.daily.emptyTitle': 'لا يوجد ملخص يومي بعد',
+    'statistics.daily.emptyDescription':
+      'يُنشأ الملخص اليومي مرة واحدة يوميًا عبر مهمة مجدولة. ستظهر البيانات هنا بعد أول تشغيل.',
+    'statistics.destinations.title': 'الوجهات الأكثر شيوعًا',
+    'statistics.destinations.description':
+      'المدن التي يقصدها الركاب أكثر، حسب عدد الرحلات.',
+    'statistics.pickups.title': 'نقاط الانطلاق الأكثر شيوعًا',
+    'statistics.pickups.description':
+      'نقاط الالتقاط التي يطلبها الركاب أكثر من غيرها.',
+    'statistics.drivers.title': 'أكثر السائقين رحلات',
+    'statistics.drivers.description':
+      'ترتيب السائقين حسب عدد الرحلات التي نشروها.',
+    'statistics.drivers.emptyTitle': 'لا سائقون بعد',
+    'statistics.drivers.emptyDescription':
+      'بمجرد أن ينشر السائقون رحلات، سيظهر ترتيبهم هنا.',
+    'statistics.riders.title': 'أنشط الركاب',
+    'statistics.riders.description':
+      'ترتيب الركاب حسب عدد الحجوزات التي قاموا بها.',
+    'statistics.riders.emptyTitle': 'لا ركاب بعد',
+    'statistics.riders.emptyDescription':
+      'بمجرد أن يبدأ الركاب بالحجز، سيظهر ترتيبهم هنا.',
+    'statistics.table.driver': 'السائق',
+    'statistics.table.trips': 'الرحلات',
+    'statistics.table.rider': 'الراكب',
+    'statistics.table.reservations': 'الحجوزات',
+    'statistics.dailyTable.title': 'الملخص اليومي',
+    'statistics.dailyTable.description':
+      'الإجماليات يومًا بيوم، الأحدث أولًا.',
+    'statistics.dailyTable.date': 'التاريخ',
+    'statistics.dailyTable.rides': 'الرحلات المنشورة',
+    'statistics.dailyTable.reservations': 'الحجوزات',
     'dashboard.error':
       'حدث خطأ أثناء تحميل الصفحة. جرّب التحديث.',
     'dashboard.title': 'نظرة عامة',

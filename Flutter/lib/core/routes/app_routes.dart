@@ -1,7 +1,6 @@
 import 'package:a_tareqaak/core/extension/page_builder_extension.dart';
 import 'package:a_tareqaak/core/utils/enums/enum_utils.dart';
 import 'package:a_tareqaak/data/models/report/report_model.dart';
-import 'package:a_tareqaak/data/models/ride/ride_model.dart';
 import 'package:a_tareqaak/data/models/rides/ride_data_model.dart';
 import 'package:a_tareqaak/presentation/screens/auth/forgot_password_screen.dart';
 import 'package:a_tareqaak/presentation/screens/auth/reset_password/reset_password_screen.dart';
@@ -17,9 +16,9 @@ import 'package:a_tareqaak/presentation/screens/driver_rides/search_ride_form_sc
 import 'package:a_tareqaak/presentation/screens/driver_rides/select_city_screen.dart';
 import 'package:a_tareqaak/presentation/screens/home/widgets/driver_bottom_nav_bar.dart';
 import 'package:a_tareqaak/presentation/screens/notifications/notifications_screen.dart';
-import 'package:a_tareqaak/presentation/screens/profile/driver_profile_screen.dart';
-import 'package:a_tareqaak/presentation/screens/profile/edit_driver_profile_screen.dart';
-import 'package:a_tareqaak/presentation/screens/profile/report_details_screen.dart';
+import 'package:a_tareqaak/presentation/screens/profile/edit_user_profile_screen.dart';
+import 'package:a_tareqaak/presentation/screens/profile/user_profile_screen.dart';
+import 'package:a_tareqaak/presentation/screens/report/report_details_screen.dart';
 import 'package:a_tareqaak/presentation/screens/report/my_reports_screen.dart';
 import 'package:a_tareqaak/presentation/screens/report/send_report_screen.dart';
 import 'package:a_tareqaak/presentation/screens/rider_rides/search_results_screen.dart';
@@ -192,7 +191,7 @@ class DriverProfileRoute extends GoRouteData with $DriverProfileRoute {
 
   @override
   CustomTransitionPage<void> buildPage(context, state) {
-    return DriverProfileScreen(isOtherUser: isOtherUser ?? false)
+    return UserProfileScreen(isOtherUser: isOtherUser ?? false)
         .buildPage(pageAnimation: PageAnimation.slide);
   }
 }
@@ -205,7 +204,7 @@ class EditDriverProfileRoute extends GoRouteData with $EditDriverProfileRoute {
 
   @override
   CustomTransitionPage<void> buildPage(context, state) {
-    return EditDriverProfileScreen(isMandatory: isMandatory ?? false)
+    return EditUserProfileScreen(isMandatory: isMandatory ?? false)
         .buildPage(pageAnimation: PageAnimation.slide);
   }
 }

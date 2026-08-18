@@ -44,9 +44,9 @@ class PaySerializer(serializers.ModelSerializer):
                 "This isn't your reservation."
             )
 
-        if reservation.status != Reservation.ReservationStatus.ACCEPTED:
+        if reservation.status != Reservation.ReservationStatus.PENDING:
             raise serializers.ValidationError(
-                "Only accepted reservations can be paid."
+                "Only pending reservations can be paid."
             )
 
         if reservation.payment != Reservation.PaymentStatus.UNPAID:
@@ -66,7 +66,7 @@ class PaySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context["request"].user
 
-        wallet = Wallet.objects.get(user=user)
+        wallet = Wallet.objects.select_for_update().get(user=user)
         reservation = validated_data["reservation"]
 
         wallet.balance = F("balance") - reservation.ride.cost

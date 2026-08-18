@@ -37,4 +37,18 @@ class ApiEndpoints {
   static String reservationCancel(int id) => '/reservations/$id/cancel/';
   static String reservationAccept(int id) => '/reservations/$id/accept/';
   static String reservationReject(int id) => '/reservations/$id/reject/';
+
+  // Report
+  static const String report = '/report';
+  static String reportUser(int id) => '/user/$id/';
+  static String shareRides(int id) => '/shared_rides/$id/';
+  static const String myReports = '/my_reports/';
+
+  // Payment
+  static const String payments = '/payments';
+  static const viewBalance = '/view_balance/';
+  static const depositeRequest  = '/deposite_request/';
+  static const viewDepositeRequests = '/view_deposite_request/';
+  static const viewTransaction = '/view_transaction/';
+  static const pay = '/pay/';
 }

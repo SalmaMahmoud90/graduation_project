@@ -14,19 +14,27 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../../../data/data_source/auth/auth_remote_data_source.dart' as _i319;
 import '../../../data/data_source/auth/auth_storage_data_source.dart' as _i300;
+import '../../../data/data_source/payment/payment_remote_data_source.dart'
+    as _i716;
 import '../../../data/data_source/profile/profile_remote_data_source.dart'
     as _i1017;
+import '../../../data/data_source/report/report_remote_data_source.dart'
+    as _i705;
 import '../../../data/data_source/rides/rides_remote_data_source.dart' as _i972;
 import '../../../data/models/auth/forgot_password_response/forgot_password_response_model.dart'
     as _i402;
 import '../../../data/models/auth/token/tokens_model.dart' as _i9;
 import '../../../data/models/auth/user/user_model.dart' as _i1011;
 import '../../../data/models/base/base_model.dart' as _i480;
+import '../../../data/models/payment/payment_models.dart' as _i434;
 import '../../../data/models/profile/profile_model.dart' as _i705;
+import '../../../data/models/report/report_data_model.dart' as _i359;
 import '../../../data/models/rides/reservation_data_model.dart' as _i156;
 import '../../../data/models/rides/ride_data_model.dart' as _i277;
 import '../../../data/repository/auth/auth_repository.dart' as _i728;
+import '../../../data/repository/payment/payment_repository.dart' as _i1032;
 import '../../../data/repository/profile/profile_repository.dart' as _i732;
+import '../../../data/repository/report/report_repository.dart' as _i1034;
 import '../../../data/repository/rides/rides_repository.dart' as _i459;
 import '../../../domain/entity/auth/forgot_password/forgot_password_entity.dart'
     as _i146;
@@ -43,11 +51,13 @@ import '../../../domain/entity/auth/verify_email/verify_email_entity.dart'
     as _i592;
 import '../../../domain/entity/auth/verify_reset_code/verify_reset_code_entity.dart'
     as _i31;
+import '../../../domain/entity/payment/payment_entity.dart' as _i177;
 import '../../../domain/entity/profile/update_driver_profile_entity.dart'
     as _i307;
 import '../../../domain/entity/profile/update_rider_profile_entity.dart'
     as _i739;
 import '../../../domain/entity/profile/view_profile_entity.dart' as _i937;
+import '../../../domain/entity/report/report_entity.dart' as _i78;
 import '../../../domain/entity/rides/create_reservation_entity.dart' as _i88;
 import '../../../domain/entity/rides/create_ride_entity.dart' as _i361;
 import '../../../domain/entity/rides/id_entity.dart' as _i674;
@@ -55,7 +65,9 @@ import '../../../domain/entity/rides/rides_no_params_entity.dart' as _i110;
 import '../../../domain/entity/rides/search_rides_entity.dart' as _i40;
 import '../../../domain/entity/rides/update_ride_entity.dart' as _i1021;
 import '../../../domain/repository/auth/i_auth_repository.dart' as _i154;
+import '../../../domain/repository/payment/_payment_repository.dart' as _i660;
 import '../../../domain/repository/profile/i_profile_repository.dart' as _i950;
+import '../../../domain/repository/report/i_report_repository.dart' as _i58;
 import '../../../domain/repository/rides/i_rides_repository.dart' as _i879;
 import '../../../domain/usecase/auth/forgot_password/forgot_password_usecase.dart'
     as _i854;
@@ -73,11 +85,20 @@ import '../../../domain/usecase/auth/verify_email/verify_email_usecase.dart'
 import '../../../domain/usecase/auth/verify_reset_code/verify_reset_code_usecase.dart'
     as _i873;
 import '../../../domain/usecase/i_use_case.dart' as _i759;
+import '../../../domain/usecase/payment/create_deposit_request_usecase.dart'
+    as _i603;
+import '../../../domain/usecase/payment/get_wallet_balance_usecase.dart'
+    as _i853;
+import '../../../domain/usecase/payment/pay_reservation_usecase.dart' as _i511;
 import '../../../domain/usecase/profile/update_driver_profile_usecase.dart'
     as _i622;
 import '../../../domain/usecase/profile/update_rider_profile_usecase.dart'
     as _i589;
 import '../../../domain/usecase/profile/view_profile_usecase.dart' as _i688;
+import '../../../domain/usecase/report/create_report_usecase.dart' as _i577;
+import '../../../domain/usecase/report/get_my_reports_usecase.dart' as _i873;
+import '../../../domain/usecase/report/get_report_details_usecase.dart'
+    as _i379;
 import '../../../domain/usecase/rides/accept_reservation_usecase.dart'
     as _i1040;
 import '../../../domain/usecase/rides/cancel_reservation_usecase.dart'
@@ -106,14 +127,26 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i300.AuthStorageDataSource>(
       () => _i300.AuthStorageDataSource(),
     );
+    gh.factory<_i716.PaymentRemoteDataSource>(
+      () => _i716.PaymentRemoteDataSource(),
+    );
     gh.factory<_i1017.ProfileRemoteDataSource>(
       () => _i1017.ProfileRemoteDataSource(),
+    );
+    gh.factory<_i705.ReportRemoteDataSource>(
+      () => _i705.ReportRemoteDataSource(),
     );
     gh.factory<_i972.RidesRemoteDataSource>(
       () => _i972.RidesRemoteDataSource(),
     );
     gh.lazySingleton<_i218.LocalStorageHelper>(
       () => _i218.LocalStorageHelper(),
+    );
+    gh.factory<_i58.IReportRepository>(
+      () => _i1034.ReportRepository(gh<_i705.ReportRemoteDataSource>()),
+    );
+    gh.factory<_i660.IPaymentRepository>(
+      () => _i1032.PaymentRepository(gh<_i716.PaymentRemoteDataSource>()),
     );
     gh.factory<_i950.IProfileRepository>(
       () => _i732.ProfileRepository(gh<_i1017.ProfileRemoteDataSource>()),
@@ -130,8 +163,59 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i589.UpdateRiderProfileUseCase(gh<_i950.IProfileRepository>()),
       instanceName: 'UpdateRiderProfileUseCase',
     );
+    gh.factory<
+      _i759.IUseCase<_i480.BaseModel<_i359.ReportDataModel>?, _i674.IdEntity>
+    >(
+      () => _i379.GetReportDetailsUseCase(gh<_i58.IReportRepository>()),
+      instanceName: 'GetReportDetailsUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i434.DepositRequestDataModel>?,
+        _i177.CreateDepositRequestEntity
+      >
+    >(
+      () => _i603.CreateDepositRequestUseCase(gh<_i660.IPaymentRepository>()),
+      instanceName: 'CreateDepositRequestUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i359.ReportsListModel>?,
+        _i110.RidesNoParamsEntity
+      >
+    >(
+      () => _i873.GetMyReportsUseCase(gh<_i58.IReportRepository>()),
+      instanceName: 'GetMyReportsUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i359.ReportDataModel>?,
+        _i78.CreateReportEntity
+      >
+    >(
+      () => _i577.CreateReportUseCase(gh<_i58.IReportRepository>()),
+      instanceName: 'CreateReportUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i434.PayResponseModel>?,
+        _i177.PayReservationEntity
+      >
+    >(
+      () => _i511.PayReservationUseCase(gh<_i660.IPaymentRepository>()),
+      instanceName: 'PayReservationUseCase',
+    );
     gh.factory<_i879.IRidesRepository>(
       () => _i459.RidesRepository(gh<_i972.RidesRemoteDataSource>()),
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i434.WalletBalanceModel>?,
+        _i110.RidesNoParamsEntity
+      >
+    >(
+      () => _i853.GetWalletBalanceUseCase(gh<_i660.IPaymentRepository>()),
+      instanceName: 'GetWalletBalanceUseCase',
     );
     gh.factory<_i154.IAuthRepository>(
       () => _i728.AuthRepository(gh<_i319.AuthRemoteDataSource>()),
