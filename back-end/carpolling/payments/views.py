@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from payments.models import Wallet, DepositRequest, Transaction
 from .serializers import *
 from django.db import transaction
+from notifications.services import safe_send_notification
 # Create your views here.
 
 class ViewBalanceView(APIView):
@@ -63,10 +64,29 @@ class PayView(APIView):
         )
 
         if serializer.is_valid():
-            transaction = serializer.save()
+            transaction_obj = serializer.save()
+
+            reservation = transaction_obj.reservation
             wallet = Wallet.objects.get(user=request.user)
+
+            # Send notification after successful payment
+            safe_send_notification(
+                user=request.user,
+                title="Payment Successful",
+                body=(
+                    f"Payment for your ride from "
+                    f"{reservation.ride.location} to "
+                    f"{reservation.ride.destination} "
+                    f"was completed successfully."
+                ),
+                data={
+                    "type": "payment_success",
+                    "reservation_id": str(reservation.id),
+                    "ride_id": str(reservation.ride.id),
+                }
+            )
             return Response({ "message": "Payment completed successfully.", 
-                             "transaction_id": transaction.id, 
+                             "transaction_id": transaction_obj.id, 
                              "remaining_balance": wallet.balance},
                                status=status.HTTP_200_OK)
 
