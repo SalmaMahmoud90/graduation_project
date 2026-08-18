@@ -79,7 +79,7 @@ class MyReportsView(APIView):
         )
 
         return Response(
-            serializer.data,
+            {"reports": serializer.data},
             status=status.HTTP_200_OK
         )
     

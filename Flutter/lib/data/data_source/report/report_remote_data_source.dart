@@ -48,7 +48,7 @@ class ReportRemoteDataSource extends BaseRemoteDataSource<dynamic> {
   Future<Either<AppException, BaseModel<ReportDataModel>?>> getReportDetails(
       IdEntity data) {
     return fetchData<ReportDataModel>(
-      endpoint: '/view_report_details/${data.id}/',
+      endpoint: ApiEndpoints.viewReportDetails(data.id),
       fromJsonT: (json) =>
           ReportDataModel.fromJson(json as Map<String, dynamic>),
     );

@@ -1,7 +1,10 @@
 import 'package:a_tareqaak/core/routes/app_routes.dart';
-import 'package:a_tareqaak/data/models/report/report_model.dart';
-import 'package:a_tareqaak/presentation/cubit/report/reports_cubit.dart';
-import 'package:a_tareqaak/presentation/cubit/report/reports_state.dart';
+import 'package:a_tareqaak/data/models/report/report_data_model.dart';
+import 'package:a_tareqaak/domain/entity/rides/rides_no_params_entity.dart';
+import 'package:a_tareqaak/presentation/bloc/report/get_my_reports/get_my_reports_bloc.dart';
+import 'package:a_tareqaak/presentation/bloc/report/get_my_reports/i_get_my_reports_event.dart';
+import 'package:a_tareqaak/presentation/bloc/report/get_my_reports/i_get_my_reports_state.dart';
+import 'package:a_tareqaak/presentation/screens/report/report_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,7 +23,8 @@ class MyReportsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ReportsCubit()..fetchReports(),
+      create: (_) => GetMyReportsBloc()
+        ..add(const GetMyReportsEvent(RidesNoParamsEntity())),
       child: const _MyReportsContent(),
     );
   }
@@ -66,22 +70,43 @@ class _MyReportsContent extends StatelessWidget {
                 ],
               ),
             ),
-
             Expanded(
-              child: BlocBuilder<ReportsCubit, ReportsState>(
+              child: BlocBuilder<GetMyReportsBloc, IGetMyReportsState>(
                 builder: (context, state) {
-                  final cubit = context.read<ReportsCubit>();
-                  final reports = cubit.reportsList;
+                  if (state is GetMyReportsLoading ||
+                      state is GetMyReportsInitial) {
+                    return Center(
+                      child:
+                          CircularProgressIndicator(color: AppColors.primary),
+                    );
+                  }
+                  if (state is GetMyReportsFailed) {
+                    return _MessageView(
+                      message: state.message,
+                      onRetry: () => context.read<GetMyReportsBloc>().add(
+                          const GetMyReportsEvent(RidesNoParamsEntity())),
+                    );
+                  }
+                  final reports = state is GetMyReportsLoaded
+                      ? (state.responseModel?.data?.reports ??
+                          <ReportDataModel>[])
+                      : <ReportDataModel>[];
 
-                  return ListView.separated(
-                    padding: EdgeInsets.all(AppPaddingWidth.p20),
-                    itemCount: reports.length,
-                    separatorBuilder: (_, __) =>
-                        SizedBox(height: AppHeight.h12),
-                    itemBuilder: (context, index) {
-                      final report = reports[index];
-                      return _buildReportCard(context, report);
-                    },
+                  if (reports.isEmpty) {
+                    return _MessageView(message: tr.no_data);
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: () async => context.read<GetMyReportsBloc>().add(
+                        const GetMyReportsEvent(RidesNoParamsEntity())),
+                    child: ListView.separated(
+                      padding: EdgeInsets.all(AppPaddingWidth.p20),
+                      itemCount: reports.length,
+                      separatorBuilder: (_, __) =>
+                          SizedBox(height: AppHeight.h12),
+                      itemBuilder: (context, index) =>
+                          _buildReportCard(context, reports[index]),
+                    ),
                   );
                 },
               ),
@@ -92,8 +117,9 @@ class _MyReportsContent extends StatelessWidget {
     );
   }
 
-  Widget _buildReportCard(BuildContext context, ReportModel report) {
-    final bool isPending = report.status == 'معلق';
+  Widget _buildReportCard(BuildContext context, ReportDataModel report) {
+    final tr = context.loc;
+    final bool isPending = report.status != 'reviewed';
 
     return Container(
       padding: EdgeInsets.all(AppPaddingWidth.p16),
@@ -109,11 +135,7 @@ class _MyReportsContent extends StatelessWidget {
         ],
       ),
       child: InkWell(
-        onTap: () {
-          // النقر على البلاغ يفتحه بصفحة تفاصيل البلاغ
-          ReportDetailsRoute($extra: report).push(context);
-        
-        },
+        onTap: () => ReportDetailsRoute($extra: report).push(context),
         child: Column(
           spacing: AppHeight.h8,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,14 +155,14 @@ class _MyReportsContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppRadius.r6),
                   ),
                   child: BodyTitle(
-                    text: report.status,
+                    text: localizeReportStatus(tr, report.status),
                     fontSize: AppFontSize.s12,
                     color: isPending ? AppColors.orange : AppColors.darkGreen,
                     fontWeight: AppFontWeight.bold,
                   ),
                 ),
                 SectionTitle(
-                  text: report.type,
+                  text: localizeReportType(tr, report.type),
                   fontSize: AppFontSize.s16,
                 ),
               ],
@@ -149,7 +171,7 @@ class _MyReportsContent extends StatelessWidget {
               children: [
                 Expanded(
                   child: BodyTitle(
-                    text: report.description,
+                    text: report.reason ?? '',
                     fontSize: AppFontSize.s13,
                     color: AppColors.greyText,
                     maxLines: 2,
@@ -162,33 +184,43 @@ class _MyReportsContent extends StatelessWidget {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                BodyTitle(
-                  text: report.date,
-                  fontSize: AppFontSize.s12,
-                  color: AppColors.greyText,
-                ),
-                Row(
-                  spacing: AppWidth.w4,
-                  children: [
-                    FaIcon(
-                      FontAwesomeIcons.comment,
-                      size: AppSize.s12,
-                      color: AppColors.greyText,
-                    ),
-                    BodyTitle(
-                      text: report.commentsCount.toString(),
-                      fontSize: AppFontSize.s12,
-                      color: AppColors.greyText,
-                    ),
-                  ],
-                ),
-              ],
+            BodyTitle(
+              text: formatReportDate(report.createdAt),
+              fontSize: AppFontSize.s12,
+              color: AppColors.greyText,
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _MessageView extends StatelessWidget {
+  final String message;
+  final VoidCallback? onRetry;
+
+  const _MessageView({required this.message, this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    final tr = context.loc;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        spacing: AppHeight.h12,
+        children: [
+          BodyTitle(
+            text: message,
+            textAlign: TextAlign.center,
+            color: AppColors.greyText,
+          ),
+          if (onRetry != null)
+            TextButton(
+              onPressed: onRetry,
+              child: BodyTitle(text: tr.retry, color: AppColors.primary),
+            ),
+        ],
       ),
     );
   }
