@@ -87,6 +87,9 @@ import '../../../domain/usecase/auth/verify_reset_code/verify_reset_code_usecase
 import '../../../domain/usecase/i_use_case.dart' as _i759;
 import '../../../domain/usecase/payment/create_deposit_request_usecase.dart'
     as _i603;
+import '../../../domain/usecase/payment/get_deposit_requests_usecase.dart'
+    as _i986;
+import '../../../domain/usecase/payment/get_transactions_usecase.dart' as _i569;
 import '../../../domain/usecase/payment/get_wallet_balance_usecase.dart'
     as _i853;
 import '../../../domain/usecase/payment/pay_reservation_usecase.dart' as _i511;
@@ -164,6 +167,15 @@ extension GetItInjectableX on _i174.GetIt {
       instanceName: 'UpdateRiderProfileUseCase',
     );
     gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i434.TransactionsListModel>?,
+        _i110.RidesNoParamsEntity
+      >
+    >(
+      () => _i569.GetTransactionsUseCase(gh<_i660.IPaymentRepository>()),
+      instanceName: 'GetTransactionsUseCase',
+    );
+    gh.factory<
       _i759.IUseCase<_i480.BaseModel<_i359.ReportDataModel>?, _i674.IdEntity>
     >(
       () => _i379.GetReportDetailsUseCase(gh<_i58.IReportRepository>()),
@@ -204,6 +216,15 @@ extension GetItInjectableX on _i174.GetIt {
     >(
       () => _i511.PayReservationUseCase(gh<_i660.IPaymentRepository>()),
       instanceName: 'PayReservationUseCase',
+    );
+    gh.factory<
+      _i759.IUseCase<
+        _i480.BaseModel<_i434.DepositRequestsListModel>?,
+        _i110.RidesNoParamsEntity
+      >
+    >(
+      () => _i986.GetDepositRequestsUseCase(gh<_i660.IPaymentRepository>()),
+      instanceName: 'GetDepositRequestsUseCase',
     );
     gh.factory<_i879.IRidesRepository>(
       () => _i459.RidesRepository(gh<_i972.RidesRemoteDataSource>()),

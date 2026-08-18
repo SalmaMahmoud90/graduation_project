@@ -774,4 +774,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get manage_reservations => 'إدارة طلبات الحجز';
+
+  @override
+  String get deposit_requests_title => 'طلبات الإيداع';
+
+  @override
+  String get no_deposit_requests => 'لا توجد طلبات إيداع حتى الآن';
+
+  @override
+  String get no_transactions => 'لا توجد معاملات حتى الآن';
+
+  @override
+  String get charge_request_failed => 'تعذر إرسال طلب الشحن';
+
+  @override
+  String get approved_status => 'مقبول';
+
+  @override
+  String get trx_deposit => 'إيداع';
+
+  @override
+  String get trx_payment => 'دفع';
+
+  @override
+  String get trx_earning => 'أرباح';
+
+  @override
+  String get trx_refund => 'استرجاع';
+
+  @override
+  String get wallet_history_only => 'يمكنك مراجعة سجل معاملاتك المالية هنا.';
 }

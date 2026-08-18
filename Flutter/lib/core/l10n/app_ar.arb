@@ -279,5 +279,15 @@
   "pending_reservations_title": "طلبات الحجز المعلقة",
   "pickup_location_label": "مكان الالتقاء",
   "no_pending_reservations": "لا توجد طلبات حجز معلقة حالياً",
-  "manage_reservations": "إدارة طلبات الحجز"
+  "manage_reservations": "إدارة طلبات الحجز",
+  "deposit_requests_title": "طلبات الإيداع",
+  "no_deposit_requests": "لا توجد طلبات إيداع حتى الآن",
+  "no_transactions": "لا توجد معاملات حتى الآن",
+  "charge_request_failed": "تعذر إرسال طلب الشحن",
+  "approved_status": "مقبول",
+  "trx_deposit": "إيداع",
+  "trx_payment": "دفع",
+  "trx_earning": "أرباح",
+  "trx_refund": "استرجاع",
+  "wallet_history_only": "يمكنك مراجعة سجل معاملاتك المالية هنا."
 }

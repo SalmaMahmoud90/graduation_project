@@ -1615,6 +1615,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage Reservations'**
   String get manage_reservations;
+
+  /// No description provided for @deposit_requests_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit Requests'**
+  String get deposit_requests_title;
+
+  /// No description provided for @no_deposit_requests.
+  ///
+  /// In en, this message translates to:
+  /// **'No deposit requests yet'**
+  String get no_deposit_requests;
+
+  /// No description provided for @no_transactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet'**
+  String get no_transactions;
+
+  /// No description provided for @charge_request_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to submit the recharge request'**
+  String get charge_request_failed;
+
+  /// No description provided for @approved_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get approved_status;
+
+  /// No description provided for @trx_deposit.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit'**
+  String get trx_deposit;
+
+  /// No description provided for @trx_payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get trx_payment;
+
+  /// No description provided for @trx_earning.
+  ///
+  /// In en, this message translates to:
+  /// **'Earning'**
+  String get trx_earning;
+
+  /// No description provided for @trx_refund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get trx_refund;
+
+  /// No description provided for @wallet_history_only.
+  ///
+  /// In en, this message translates to:
+  /// **'You can review your transaction history here.'**
+  String get wallet_history_only;
 }
 
 class _AppLocalizationsDelegate
