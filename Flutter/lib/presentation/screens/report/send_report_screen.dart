@@ -1,8 +1,10 @@
 import 'package:a_tareqaak/core/l10n/app_localizations.dart';
 import 'package:a_tareqaak/core/routes/app_routes.dart';
+import 'package:a_tareqaak/domain/entity/report/report_entity.dart';
 import 'package:a_tareqaak/presentation/bloc/report/create_report/create_report_bloc.dart';
+import 'package:a_tareqaak/presentation/bloc/report/create_report/i_create_report_event.dart';
 import 'package:a_tareqaak/presentation/bloc/report/create_report/i_create_report_state.dart';
-import 'package:a_tareqaak/presentation/cubit/report/create_report_cubit.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,27 +15,31 @@ import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
 import 'package:a_tareqaak/presentation/widgets/custom_elevated_button.dart';
+import 'package:a_tareqaak/presentation/widgets/custom_snack_bar.dart';
 import 'package:a_tareqaak/presentation/widgets/form/custom_input_field.dart';
 import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
 import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
 
 class SendReportScreen extends StatelessWidget {
-  const SendReportScreen({super.key});
+  final int userId; // معرّف المستخدم المُبلَّغ عنه
+  final int? rideId; // معرّف الرحلة المرتبطة بالبلاغ (اختياري)
+
+  const SendReportScreen({super.key, required this.userId, this.rideId});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_)=> CreateReportBloc()),
-        BlocProvider(create: (_)=> CreateReportCubit()), 
-      ],
-      child: const _SendReportContent(),
+    return BlocProvider(
+      create: (_) => CreateReportBloc(),
+      child: _SendReportContent(userId: userId, rideId: rideId),
     );
   }
 }
 
 class _SendReportContent extends StatefulWidget {
-  const _SendReportContent();
+  final int userId;
+  final int? rideId;
+
+  const _SendReportContent({required this.userId, this.rideId});
 
   @override
   State<_SendReportContent> createState() => _SendReportContentState();
@@ -87,9 +93,15 @@ class _SendReportContentState extends State<_SendReportContent> {
         child: BlocConsumer<CreateReportBloc, ICreateReportState>(
           listener: (context, state) {
             if (state is CreateReportLoaded) {
-              // عند إرسال البلاغ الانتقال المباشر لشاشة بلاغاتي
+              // عند نجاح إرسال البلاغ الانتقال المباشر لشاشة بلاغاتي
               MyReportsRoute().go(context);
-             
+            } else if (state is CreateReportFailed) {
+              showCustomSnackBar(
+                context: context,
+                title: tr.error_title,
+                message: state.message,
+                contentType: ContentType.failure,
+              );
             }
           },
           builder: (context, state) => SingleChildScrollView(
@@ -258,18 +270,15 @@ class _SendReportContentState extends State<_SendReportContent> {
                 ),
 
                 // زر إرسال البلاغ الرئيسي
-                
-                CustomElevatedButton(
+                BlocBuilder<CreateReportBloc, ICreateReportState>(
+                  builder: (context, state) {
+                    return CustomElevatedButton(
                       height: AppHeight.h50,
                       width: double.infinity,
                       borderRadius: AppRadius.r12,
                       color: AppColors.primary,
                       loading: state is CreateReportLoading,
-                      onPressed: () {
-                        context.read<CreateReportCubit>().updateReport(
-                         
-                          );
-                      },
+                      onPressed: () => _submitReport(context, tr),
                       child: BodyTitle(
                         text: tr.send_report_btn,
                         color: AppColors.white,
@@ -277,14 +286,37 @@ class _SendReportContentState extends State<_SendReportContent> {
                         fontWeight: AppFontWeight.bold,
                       ),
                     );
-                 
-                 
+                  },
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  // بناء كيان البلاغ وإرساله عبر الـ API
+  void _submitReport(BuildContext context, AppLocalizations tr) {
+    final reason = _detailsController.text.trim();
+    if (reason.isEmpty) {
+      showCustomSnackBar(
+        context: context,
+        title: tr.warning_title,
+        message: tr.explain_details_sub,
+        contentType: ContentType.warning,
+      );
+      return;
+    }
+
+    final entity = CreateReportEntity(
+      userId: widget.userId,
+      type: reportTypes[selectedTypeIndex]['titleKey'] as String,
+      reason: reason,
+      ride: widget.rideId,
+    );
+
+    context.read<CreateReportBloc>().add(CreateReportEvent(entity));
   }
 
   String _getTranslatedTitle(AppLocalizations tr, String key) {

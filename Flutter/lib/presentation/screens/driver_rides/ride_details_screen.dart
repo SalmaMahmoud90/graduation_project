@@ -1,6 +1,8 @@
 
 
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
+import 'package:a_tareqaak/core/helper/share_helper.dart';
+import 'package:a_tareqaak/core/l10n/app_localizations.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
@@ -33,6 +35,25 @@ class RideDetailsScreen extends StatelessWidget {
 
 class _RideDetailsContent extends StatelessWidget {
   const _RideDetailsContent();
+
+  // بناء نص مشاركة الرحلة وإرساله عبر share_plus
+  void _shareRide(BuildContext context, AppLocalizations tr, RideDataModel? ride) {
+    if (ride == null) return;
+
+    final buffer = StringBuffer()
+      ..writeln(tr.ride_details_title)
+      ..writeln('${tr.departure_location}: ${ride.location ?? ''}')
+      ..writeln('${tr.destination}: ${ride.destination ?? ''}')
+      ..writeln(
+          '${tr.date_and_time}: ${ride.departureDate ?? ''} ${ride.departureTime ?? ''}')
+      ..writeln('${tr.driver}: ${ride.driverInfo?.driverName ?? ''}')
+      ..writeln('${tr.price}: ${ride.cost ?? ''} ${tr.syrian_pound}');
+
+    ShareHelper.shareText(
+      buffer.toString().trim(),
+      subject: tr.share_ride,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +186,7 @@ class _RideDetailsContent extends StatelessWidget {
                       width: double.infinity,
                       borderRadius: AppRadius.r12,
                       color: AppColors.primary,
-                      onPressed: () {},
+                      onPressed: () => _shareRide(context, tr, ride),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         spacing: AppWidth.w8,
