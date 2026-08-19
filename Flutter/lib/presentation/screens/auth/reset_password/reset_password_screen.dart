@@ -1,3 +1,4 @@
+import 'package:a_tareqaak/core/extension/validation_extension.dart';
 import 'package:a_tareqaak/presentation/bloc/auth/reset_password/i_reset_password_event.dart';
 import 'package:a_tareqaak/presentation/bloc/auth/reset_password/i_reset_password_state.dart';
 import 'package:a_tareqaak/presentation/cubit/auth/reset_password/reset_password_state.dart';
@@ -48,6 +49,8 @@ class _ResetPasswordContent extends StatefulWidget {
 
 class _ResetPasswordContentState extends State<_ResetPasswordContent> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  var _passwordcontroller  = TextEditingController();
+  var _confirmcontroller  = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -143,15 +146,11 @@ class _ResetPasswordContentState extends State<_ResetPasswordContent> {
                           onChanged: (val) {
                             cubit.newPasswordChanged(val);
                           },
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return tr.field_required;
-                            }
-                            if (value.length < 8) {
-                              return tr.password_too_short;
-                            }
-                            return null;
-                          },
+                          validator: (value) => AppValidators.validatePassword(
+                            value,
+                            tr.field_required,
+                            tr.passwords_dont_match,
+                          ),
                         );
                       },
                     ),
@@ -161,6 +160,7 @@ class _ResetPasswordContentState extends State<_ResetPasswordContent> {
                       builder: (context, cubitState) {
                         final cubit = context.read<ResetPasswordCubit>();
                         return CustomInputField(
+                          controller: _confirmcontroller,
                           hintText: tr.confirm_new_password,
                           title: tr.confirm_new_password,
                           isExpanded: true,
@@ -189,16 +189,12 @@ class _ResetPasswordContentState extends State<_ResetPasswordContent> {
                           onChanged: (val) {
                             cubit.confirmPasswordChanged(val);
                           },
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return tr.field_required;
-                            }
-                            if (value !=
-                                cubitState.entity?.newPassword) {
-                              return tr.passwords_dont_match;
-                            }
-                            return null;
-                          },
+                          validator: (value) => AppValidators.validateConfirmPassword(
+                            value,
+                            _confirmcontroller.text,
+                            tr.field_required,
+                            tr.passwords_dont_match,
+                          ),
                         );
                       },
                     ),

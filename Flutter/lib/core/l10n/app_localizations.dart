@@ -1675,6 +1675,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You can review your transaction history here.'**
   String get wallet_history_only;
+
+  /// No description provided for @camera_permission_needed.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission is required.'**
+  String get camera_permission_needed;
+
+  /// No description provided for @gallery_permission_needed.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery access permission is required.'**
+  String get gallery_permission_needed;
+
+  /// No description provided for @photo_shoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get photo_shoot;
+
+  /// No description provided for @selection_from_gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get selection_from_gallery;
 }
 
 class _AppLocalizationsDelegate

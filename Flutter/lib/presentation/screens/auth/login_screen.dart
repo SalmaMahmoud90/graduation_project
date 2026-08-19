@@ -1,3 +1,4 @@
+import 'package:a_tareqaak/core/extension/validation_extension.dart';
 import 'package:a_tareqaak/core/routes/app_routes.dart';
 import 'package:a_tareqaak/presentation/bloc/auth/login/i_login_event.dart';
 import 'package:a_tareqaak/presentation/bloc/auth/login/i_login_state.dart';
@@ -38,6 +39,7 @@ class LoginScreen extends StatelessWidget {
 
 class _LoginContent extends StatefulWidget {
   const _LoginContent({super.key});
+  
 
   @override
   State<_LoginContent> createState() => _LoginContentState();
@@ -45,7 +47,8 @@ class _LoginContent extends StatefulWidget {
 
 class _LoginContentState extends State<_LoginContent> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  var _passwordcontroller = TextEditingController();
+  var _emailcontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final tr = context.loc;
@@ -132,6 +135,7 @@ class _LoginContentState extends State<_LoginContent> {
 
                     // حقل البريد الإلكتروني (يحدث LoginCubit)
                     CustomInputField(
+                      controller: _emailcontroller,
                       hintText: tr.email_hint,
                       title: tr.email,
                       isExpanded: true,
@@ -154,11 +158,17 @@ class _LoginContentState extends State<_LoginContent> {
                       builder: (context, cubitState) {
                         final cubit = context.read<LoginCubit>();
                         return CustomInputField(
+                          controller: _passwordcontroller,
                           hintText: tr.password_hint,
                           title: tr.password,
                           isSecure: cubitState.isPasswordObscured,
                           isExpanded: true,
                           maxLines: 1,
+                          validator: (value) => AppValidators.validatePassword(
+                            value,
+                            tr.field_required,
+                            tr.passwords_dont_match,
+                          ),
                           onChanged: (val) {
                             cubit.passwordChanged(val);
                           },
@@ -181,6 +191,7 @@ class _LoginContentState extends State<_LoginContent> {
                             onPressed: () {
                               cubit.togglePasswordVisibility();
                             },
+                            
                           ),
                         );
                       },

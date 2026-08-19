@@ -811,4 +811,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get wallet_history_only =>
       'You can review your transaction history here.';
+
+  @override
+  String get camera_permission_needed => 'Camera permission is required.';
+
+  @override
+  String get gallery_permission_needed =>
+      'Gallery access permission is required.';
+
+  @override
+  String get photo_shoot => 'Take Photo';
+
+  @override
+  String get selection_from_gallery => 'Choose from Gallery';
 }

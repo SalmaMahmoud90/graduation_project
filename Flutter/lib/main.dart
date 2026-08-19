@@ -1,5 +1,6 @@
 
 import 'package:a_tareqaak/presentation/cubit/profile/driver_profile_cubit.dart';
+import 'package:a_tareqaak/presentation/cubit/theme/theme_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -61,10 +62,14 @@ final GlobalKey<ScaffoldMessengerState>
   // تحميل اللغة المحفوظة مسبقاً
   final initialLocale = await _loadInitialLocale();
 
+  // تحميل وضع الثيم المحفوظ مسبقاً
+  final initialThemeMode = await loadInitialThemeMode();
+
   // تشغيل التطبيق
   runApp(
     MyApp(
       initialLocale: initialLocale,
+      initialThemeMode: initialThemeMode,
     ),
   );
 
@@ -83,10 +88,13 @@ class MyApp extends StatefulWidget {
   const MyApp({
     super.key,
     required this.initialLocale,
+    required this.initialThemeMode,
   });
 
   // اللغة المحفوظة
   final Locale initialLocale;
+  // وضع الثيم المحفوظ
+  final ThemeMode initialThemeMode;
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -146,6 +154,15 @@ class _MyAppState extends State<MyApp> {
             initialLocale: widget.initialLocale,
           ),
         ),
+
+        // ======================
+        // Theme Cubit (Dark / Light)
+        // ======================
+        BlocProvider<ThemeCubit>(
+          create: (_) => ThemeCubit(
+            initialThemeMode: widget.initialThemeMode,
+          ),
+        ),
    
        // ======================
         // Driver Profile Cubit
@@ -176,54 +193,60 @@ class _MyAppState extends State<MyApp> {
 
         child: BlocBuilder<LanguageCubit, Locale>(
           builder: (context, locale) {
+            return BlocBuilder<ThemeCubit, ThemeMode>(
+              builder: (context, themeMode) {
 
-            return MaterialApp.router(
+                final isDark = themeMode == ThemeMode.dark;
 
-              // إزالة شعار Debug
-              debugShowCheckedModeBanner: false,
+                return MaterialApp.router(
 
-              // مفتاح الرسائل العامة
-              scaffoldMessengerKey:
-                  rootScaffoldMessengerKey,
+                  // إزالة شعار Debug
+                  debugShowCheckedModeBanner: false,
 
-              // الوضع الافتراضي
-              themeMode: ThemeMode.light,
+                  // مفتاح الرسائل العامة
+                  scaffoldMessengerKey:
+                      rootScaffoldMessengerKey,
 
-              // الثيم الفاتح
-              theme: AppTheme.lightTheme(
-                locale.languageCode,
-              ),
+                  // الوضع الحالي للثيم (من ThemeCubit)
+                  themeMode: themeMode,
 
-              // الثيم الداكن
-              darkTheme: AppTheme.darkTheme(
-                locale.languageCode,
-              ),
-
-              // اللغة الحالية
-              locale: locale,
-
-              // اللغات المدعومة
-              supportedLocales:
-                  AppLocalizations.supportedLocales,
-
-              // ملفات الترجمة
-              localizationsDelegates:
-                  AppLocalizations.localizationsDelegates,
-
-              // إعدادات التنقل
-              routerConfig: _router,
-
-              // Wrapper عام لكل الشاشات
-              builder: (
-                context,
-                child,
-              ) {
-                return Container(
-                  color: AppColors.backGround,
-                  child: SafeArea(
-                    top: false,
-                    child: child!,
+                  // الثيم الفاتح
+                  theme: AppTheme.lightTheme(
+                    locale.languageCode,
                   ),
+
+                  // الثيم الداكن
+                  darkTheme: AppTheme.darkTheme(
+                    locale.languageCode,
+                  ),
+
+                  // اللغة الحالية
+                  locale: locale,
+
+                  // اللغات المدعومة
+                  supportedLocales:
+                      AppLocalizations.supportedLocales,
+
+                  // ملفات الترجمة
+                  localizationsDelegates:
+                      AppLocalizations.localizationsDelegates,
+
+                  // إعدادات التنقل
+                  routerConfig: _router,
+
+                  // Wrapper عام لكل الشاشات
+                  builder: (
+                    context,
+                    child,
+                  ) {
+                    return Container(
+                      color: isDark ? AppColors.darkBackground : AppColors.backGround,
+                      child: SafeArea(
+                        top: false,
+                        child: child!,
+                      ),
+                    );
+                  },
                 );
               },
             );

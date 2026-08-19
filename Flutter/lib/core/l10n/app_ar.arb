@@ -168,7 +168,7 @@
   "driver_name": "اسم السائق",
   "share_ride": "مشاركة الرحلة",
   "view_profile": "عرض البروفايل",
-  "dark_mode": "تغيير الوضع",
+  "dark_mode": "تغيير الثيم",
   "dark": "داكن",
   "light": "فاتح",
   "customer_service": "خدمة العملاء",
@@ -289,5 +289,10 @@
   "trx_payment": "دفع",
   "trx_earning": "أرباح",
   "trx_refund": "استرجاع",
-  "wallet_history_only": "يمكنك مراجعة سجل معاملاتك المالية هنا."
+  "wallet_history_only": "يمكنك مراجعة سجل معاملاتك المالية هنا.",
+  "camera_permission_needed" : "يجب إعطاء إذن للوصول إلى الكاميرا",
+  "gallery_permission_needed" : "يجب إعطاء إذن للوصول إلى المعرض",
+  "photo_shoot" : "التقاط صورة",
+  "selection_from_gallery" : "اختيار من المعرض"
+  
 }

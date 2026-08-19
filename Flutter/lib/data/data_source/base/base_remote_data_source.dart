@@ -38,13 +38,9 @@ class BaseRemoteDataSource<T> {
               error: r.data?['error'] as String?,
             ));
           }
-          // The backend returns flat bodies (no `data` envelope), e.g. forgot
-          // password replies with `{message, email, reset_token}` at the top
-          // level. Wrap such bodies so the model is parsed from the whole
-          // response; already-enveloped responses pass through unchanged.
-          final Map<String, dynamic> body = r.data!;
+          final Map<String, dynamic> body = Map<String, dynamic>.from(r.data!);
           final Map<String, dynamic> payload =
-              body.containsKey('data') ? body : {...body, 'data': body};
+              body.containsKey('data') ? body : Map<String, dynamic>.from({...body, 'data': body});
           return Right(BaseModel<R>.fromJson(payload, fromJsonT));
         },
       );
@@ -78,12 +74,9 @@ class BaseRemoteDataSource<T> {
         (e) => Left(e),
         (r) {
           if (r.data == null) return const Right(null);
-          // Wrap flat bodies (no `data` envelope) so fromJsonT receives the
-          // whole response — matches the backend which returns flat / named-key
-          // bodies (e.g. `{rides: [...]}`, `{ride: {...}}`, `{user: {...}}`).
-          final body = r.data!;
-          final payload =
-              body.containsKey('data') ? body : {...body, 'data': body};
+          final Map<String, dynamic> body = Map<String, dynamic>.from(r.data!);
+          final Map<String, dynamic> payload =
+              body.containsKey('data') ? body : Map<String, dynamic>.from({...body, 'data': body});
           return Right(BaseModel<R>.fromJson(payload, fromJsonT));
         },
       );
@@ -125,9 +118,9 @@ class BaseRemoteDataSource<T> {
               error: r.data?['error'] as String?,
             ));
           }
-          final body = r.data!;
-          final payload =
-              body.containsKey('data') ? body : {...body, 'data': body};
+          final Map<String, dynamic> body = Map<String, dynamic>.from(r.data!);
+          final Map<String, dynamic> payload =
+              body.containsKey('data') ? body : Map<String, dynamic>.from({...body, 'data': body});
           return Right(BaseModel<R>.fromJson(payload, fromJsonT));
         },
       );
@@ -165,9 +158,9 @@ class BaseRemoteDataSource<T> {
               error: r.data?['error'] as String?,
             ));
           }
-          final body = r.data!;
-          final payload =
-              body.containsKey('data') ? body : {...body, 'data': body};
+          final Map<String, dynamic> body = Map<String, dynamic>.from(r.data!);
+          final Map<String, dynamic> payload =
+              body.containsKey('data') ? body : Map<String, dynamic>.from({...body, 'data': body});
           return Right(BaseModel<R>.fromJson(payload, fromJsonT));
         },
       );

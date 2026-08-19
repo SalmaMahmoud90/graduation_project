@@ -286,5 +286,10 @@
   "trx_payment": "Payment",
   "trx_earning": "Earning",
   "trx_refund": "Refund",
-  "wallet_history_only": "You can review your transaction history here."
+  "wallet_history_only": "You can review your transaction history here.",
+  "camera_permission_needed": "Camera permission is required.",
+"gallery_permission_needed": "Gallery access permission is required.",
+"photo_shoot": "Take Photo",
+"selection_from_gallery": "Choose from Gallery"
+
 }

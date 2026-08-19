@@ -92,7 +92,7 @@ class NetworkHelper {
     final version = await getVersion();
 
     return _performRequest(() {
-      return _dio.get(
+      return _dio.get<Map<String, dynamic>>(
         url,
         data: data,
         queryParameters: queryParams,
@@ -102,7 +102,7 @@ class NetworkHelper {
   }
 
   /// Executes a POST request with optional data and files.
-  Future<Either<ApiException, Response>> post(
+  Future<Either<ApiException, Response<Map<String, dynamic>>>> post(
     String url, {
     dynamic data,
     bool isFormDate = true,
@@ -116,7 +116,7 @@ class NetworkHelper {
     final formData = isFormDate ? await _buildFormData(data, files) : data;
 
     return _performRequest(() {
-      return _dio.post(
+      return _dio.post<Map<String, dynamic>>(
         url,
         options: Options(headers: _buildHeaders(token, version, isMultipart: isFormDate)),
         data: formData,
@@ -124,7 +124,7 @@ class NetworkHelper {
     });
   }
 
-  Future<Either<ApiException, Response>> put(
+  Future<Either<ApiException, Response<Map<String, dynamic>>>> put(
     String url, {
     dynamic data,
     bool isFormDate = true,
@@ -136,7 +136,7 @@ class NetworkHelper {
     final formData = isFormDate ? await _buildFormData(data, files) : data;
 
     return _performRequest(() {
-      return _dio.put(
+      return _dio.put<Map<String, dynamic>>(
         url,
         options: Options(headers: _buildHeaders(token, version, isMultipart: isFormDate)),
         data: formData,
@@ -145,7 +145,7 @@ class NetworkHelper {
   }
 
   /// Executes a PATCH request with data and optional files.
-  Future<Either<ApiException, Response>> patch(
+  Future<Either<ApiException, Response<Map<String, dynamic>>>> patch(
     String url, {
     dynamic data,
     bool isFormData = true,
@@ -158,7 +158,7 @@ class NetworkHelper {
     final payload = isFormData ? await _buildFormData(data, files) : data;
 
     return _performRequest(() {
-      return _dio.patch(
+      return _dio.patch<Map<String, dynamic>>(
         url,
         options: Options(headers: _buildHeaders(token, version, isMultipart: isFormData)),
         data: payload,
@@ -200,7 +200,7 @@ class NetworkHelper {
   }
  */
   /// Executes a DELETE request with optional data.
-  Future<Either<ApiException, Response>> delete(
+  Future<Either<ApiException, Response<Map<String, dynamic>>>> delete(
     String url, {
     Map<String, dynamic>? queryParams,
     dynamic data,
@@ -212,9 +212,8 @@ class NetworkHelper {
     final payload = isFormData ? await _buildFormData(data, null) : data;
 
     return _performRequest(() {
-      return _dio.delete(
+      return _dio.delete<Map<String, dynamic>>(
         url,
-
         options: Options(headers: _buildHeaders(token, version, isMultipart: isFormData)),
         data: payload,
         queryParameters: queryParams,

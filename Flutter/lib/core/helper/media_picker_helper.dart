@@ -1,9 +1,14 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
 import 'package:a_tareqaak/presentation/widgets/text/body_title.dart';
+import 'package:a_tareqaak/presentation/widgets/custom_snack_bar.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:a_tareqaak/core/extension/localization_extension.dart';
 
 class MediaPickerHelper {
   final ImagePicker picker = ImagePicker();
@@ -13,14 +18,11 @@ class MediaPickerHelper {
 
   Future<List<String>> pickImages() async {
     try {
-      // Clear previous selection
       selectedImages = await picker.pickMultiImage();
       if (selectedImages.isEmpty) {
         debugPrint('No images selected.');
         return [];
       }
-
-      // Map selected images to their paths
       return selectedImages.map((file) => file.path).toList();
     } catch (e) {
       debugPrint('Error picking images: $e');
@@ -28,7 +30,16 @@ class MediaPickerHelper {
     }
   }
 
-  Future<String?> pickImageFromCamera() async {
+  Future<String?> pickImageFromCamera(BuildContext context) async {
+    final permission = Permission.camera;
+    final status = await permission.request();
+    if (!status.isGranted) {
+      if (status.isPermanentlyDenied) {
+        _showPermissionSnackBar(context, context.loc.camera_permission_needed);
+      }
+      return null;
+    }
+
     try {
       selectedImage = await picker.pickImage(source: ImageSource.camera);
 
@@ -45,7 +56,16 @@ class MediaPickerHelper {
     }
   }
 
-  Future<String?> pickImageFromGallery() async {
+  Future<String?> pickImageFromGallery(BuildContext context) async {
+    final permission = Permission.photos;
+    final status = await permission.request();
+    if (!status.isGranted) {
+      if (status.isPermanentlyDenied) {
+        _showPermissionSnackBar(context, context.loc.gallery_permission_needed);
+      }
+      return null;
+    }
+
     try {
       selectedImage = await picker.pickImage(source: ImageSource.gallery);
 
@@ -78,6 +98,7 @@ class MediaPickerHelper {
     }
   }
   Future<String?> pickImage(BuildContext context) async {
+    final tr = context.loc;
     final result = await showModalBottomSheet<String>(
       backgroundColor: AppColors.white,
       context: context,
@@ -90,7 +111,7 @@ class MediaPickerHelper {
             children: [
               ListTile(
                 leading: const Icon(Icons.camera_alt, color: AppColors.primary),
-                title: const BodyTitle(text: "photo_shoot", color: AppColors.blueText),
+                title: BodyTitle(text: tr.photo_shoot, color: AppColors.blueText),
                 onTap: () {
                   Navigator.pop(context, 'camera');
                 },
@@ -98,7 +119,7 @@ class MediaPickerHelper {
               Divider(color: AppColors.greyDivider, height: 0, thickness: 0.7, endIndent: AppHeight.h20, indent: AppHeight.h20),
               ListTile(
                 leading: const Icon(Icons.photo_library, color: AppColors.primary),
-                title: const BodyTitle(text: "selection_from_gallery", color: AppColors.blueText),
+                title: BodyTitle(text: tr.selection_from_gallery, color: AppColors.blueText),
                 onTap: () {
                   Navigator.pop(context, 'gallery');
                 },
@@ -110,9 +131,9 @@ class MediaPickerHelper {
     );
 
     if (result == 'camera') {
-      return await pickImageFromCamera();
+      return await pickImageFromCamera(context);
     } else if (result == 'gallery') {
-      return await pickImageFromGallery();
+      return await pickImageFromGallery(context);
     }
     return null;
   }
@@ -145,4 +166,12 @@ class MediaPickerHelper {
     }
   }
 
+  void _showPermissionSnackBar(BuildContext context, String message) {
+    showCustomSnackBar(
+      context: context,
+      title: context.loc.error_title,
+      message: message,
+      contentType: ContentType.failure,
+    );
+  }
 }

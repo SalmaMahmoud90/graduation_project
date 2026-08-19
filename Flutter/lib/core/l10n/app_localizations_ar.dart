@@ -440,7 +440,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get view_profile => 'عرض البروفايل';
 
   @override
-  String get dark_mode => 'تغيير الوضع';
+  String get dark_mode => 'تغيير الثيم';
 
   @override
   String get dark => 'داكن';
@@ -804,4 +804,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wallet_history_only => 'يمكنك مراجعة سجل معاملاتك المالية هنا.';
+
+  @override
+  String get camera_permission_needed => 'يجب إعطاء إذن للوصول إلى الكاميرا';
+
+  @override
+  String get gallery_permission_needed => 'يجب إعطاء إذن للوصول إلى المعرض';
+
+  @override
+  String get photo_shoot => 'التقاط صورة';
+
+  @override
+  String get selection_from_gallery => 'اختيار من المعرض';
 }

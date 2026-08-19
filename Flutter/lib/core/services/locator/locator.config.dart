@@ -9,11 +9,14 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:dartz/dartz.dart' as _i590;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
 import '../../../data/data_source/auth/auth_remote_data_source.dart' as _i319;
 import '../../../data/data_source/auth/auth_storage_data_source.dart' as _i300;
+import '../../../data/data_source/location/location_websocket_data_source.dart'
+    as _i255;
 import '../../../data/data_source/payment/payment_remote_data_source.dart'
     as _i716;
 import '../../../data/data_source/profile/profile_remote_data_source.dart'
@@ -32,6 +35,7 @@ import '../../../data/models/report/report_data_model.dart' as _i359;
 import '../../../data/models/rides/reservation_data_model.dart' as _i156;
 import '../../../data/models/rides/ride_data_model.dart' as _i277;
 import '../../../data/repository/auth/auth_repository.dart' as _i728;
+import '../../../data/repository/location/ride_track_repository.dart' as _i502;
 import '../../../data/repository/payment/payment_repository.dart' as _i1032;
 import '../../../data/repository/profile/profile_repository.dart' as _i732;
 import '../../../data/repository/report/report_repository.dart' as _i1034;
@@ -51,6 +55,9 @@ import '../../../domain/entity/auth/verify_email/verify_email_entity.dart'
     as _i592;
 import '../../../domain/entity/auth/verify_reset_code/verify_reset_code_entity.dart'
     as _i31;
+import '../../../domain/entity/location/ride_tracking_connection_entity.dart'
+    as _i78;
+import '../../../domain/entity/location/send_location_entity.dart' as _i115;
 import '../../../domain/entity/payment/payment_entity.dart' as _i177;
 import '../../../domain/entity/profile/update_driver_profile_entity.dart'
     as _i307;
@@ -65,6 +72,8 @@ import '../../../domain/entity/rides/rides_no_params_entity.dart' as _i110;
 import '../../../domain/entity/rides/search_rides_entity.dart' as _i40;
 import '../../../domain/entity/rides/update_ride_entity.dart' as _i1021;
 import '../../../domain/repository/auth/i_auth_repository.dart' as _i154;
+import '../../../domain/repository/location/i_ride_tracking_repository.dart'
+    as _i257;
 import '../../../domain/repository/payment/_payment_repository.dart' as _i660;
 import '../../../domain/repository/profile/i_profile_repository.dart' as _i950;
 import '../../../domain/repository/report/i_report_repository.dart' as _i58;
@@ -85,6 +94,13 @@ import '../../../domain/usecase/auth/verify_email/verify_email_usecase.dart'
 import '../../../domain/usecase/auth/verify_reset_code/verify_reset_code_usecase.dart'
     as _i873;
 import '../../../domain/usecase/i_use_case.dart' as _i759;
+import '../../../domain/usecase/location/connect_to_ride_tracking_usecase.dart'
+    as _i722;
+import '../../../domain/usecase/location/disconnect_from_ride_tracking_usecase.dart'
+    as _i132;
+import '../../../domain/usecase/location/listen_to_location_update_usecase.dart'
+    as _i33;
+import '../../../domain/usecase/location/send_location_usecase.dart' as _i568;
 import '../../../domain/usecase/payment/create_deposit_request_usecase.dart'
     as _i603;
 import '../../../domain/usecase/payment/get_deposit_requests_usecase.dart'
@@ -130,6 +146,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i300.AuthStorageDataSource>(
       () => _i300.AuthStorageDataSource(),
     );
+    gh.factory<_i255.LocationWebSocketDataSource>(
+      () => _i255.LocationWebSocketDataSource(),
+    );
     gh.factory<_i716.PaymentRemoteDataSource>(
       () => _i716.PaymentRemoteDataSource(),
     );
@@ -154,11 +173,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i950.IProfileRepository>(
       () => _i732.ProfileRepository(gh<_i1017.ProfileRemoteDataSource>()),
     );
+    gh.factory<_i257.IRideTrackingRepository>(
+      () => _i502.RideTrackingRepository(
+        gh<_i255.LocationWebSocketDataSource>(),
+        gh<_i218.LocalStorageHelper>(),
+      ),
+    );
     gh.factory<
       _i759.IUseCase<_i480.BaseModel<dynamic>?, _i307.UpdateDriverProfileEntity>
     >(
       () => _i622.UpdateDriverProfileUseCase(gh<_i950.IProfileRepository>()),
       instanceName: 'UpdateDriverProfileUseCase',
+    );
+    gh.factory<_i759.IUseCase<_i590.Unit, _i78.RideTrackingConnectionEntity>>(
+      () => _i722.ConnectToRideTrackingUseCase(
+        gh<_i257.IRideTrackingRepository>(),
+      ),
+      instanceName: 'ConnectToRideTrackingUseCase',
     );
     gh.factory<
       _i759.IUseCase<_i480.BaseModel<dynamic>?, _i739.UpdateRiderProfileEntity>
@@ -250,6 +281,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1040.ResendVerificationUseCase(gh<_i154.IAuthRepository>()),
       instanceName: 'ResendVerificationUseCase',
     );
+    gh.factory<_i759.IUseCase<_i590.Unit, _i759.NoParams>>(
+      () => _i132.DisconnectFromRideTrackingUseCase(
+        gh<_i257.IRideTrackingRepository>(),
+      ),
+      instanceName: 'DisconnectFromRideTrackingUseCase',
+    );
     gh.factory<_i759.IUseCase<_i480.BaseModel<dynamic>?, _i674.IdEntity>>(
       () => _i1035.CancelReservationUseCase(gh<_i879.IRidesRepository>()),
       instanceName: 'CancelReservationUseCase',
@@ -299,6 +336,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i612.CreateReservationUseCase(gh<_i879.IRidesRepository>()),
       instanceName: 'CreateReservationUseCase',
     );
+    gh.factory<_i759.IUseCase<_i590.Unit, _i115.SendLocationEntity>>(
+      () => _i568.SendLocationUseCase(gh<_i257.IRideTrackingRepository>()),
+      instanceName: 'SendLocationUseCase',
+    );
     gh.factory<_i759.IUseCase<_i480.BaseModel<dynamic>?, _i674.IdEntity>>(
       () => _i437.RejectReservationUseCase(gh<_i879.IRidesRepository>()),
       instanceName: 'RejectReservationUseCase',
@@ -317,6 +358,11 @@ extension GetItInjectableX on _i174.GetIt {
     >(
       () => _i1068.CreateRideUseCase(gh<_i879.IRidesRepository>()),
       instanceName: 'CreateRideUseCase',
+    );
+    gh.factory<_i33.ListenToLocationUpdatesUseCase>(
+      () => _i33.ListenToLocationUpdatesUseCase(
+        gh<_i257.IRideTrackingRepository>(),
+      ),
     );
     gh.factory<_i759.IUseCase<_i480.BaseModel<dynamic>?, _i674.IdEntity>>(
       () => _i790.CancelRideUseCase(gh<_i879.IRidesRepository>()),

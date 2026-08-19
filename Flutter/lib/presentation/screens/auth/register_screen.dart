@@ -205,15 +205,11 @@ class _RegisterContentState extends State<_RegisterContent> {
                           size: AppSize.s20,
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return tr.field_required;
-                        }
-                        if (!value.isValidEmail) {
-                          return tr.enter_valid_email;
-                        }
-                        return null;
-                      },
+                      validator: (value) => AppValidators.validateEmail(
+                        value,
+                        tr.field_required,
+                        tr.enter_valid_email,
+                      ),
                     ),
 
                     // حقل كلمة المرور
@@ -248,15 +244,12 @@ class _RegisterContentState extends State<_RegisterContent> {
                               cubit.togglePasswordVisibility();
                             },
                           ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return tr.field_required;
-                            }
-                            if (value.length < 6) {
-                              return tr.password_too_short;
-                            }
-                            return null;
-                          },
+                          validator: (value) => AppValidators.validatePassword(
+                          
+                            value,
+                            tr.field_required,
+                            tr.password_too_short,
+                          ),
                         );
                       },
                     ),
@@ -294,15 +287,12 @@ class _RegisterContentState extends State<_RegisterContent> {
                               cubit.toggleConfirmPasswordVisibility();
                             },
                           ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return tr.field_required;
-                            }
-                            if (value != _passwordController.text) {
-                              return tr.passwords_dont_match;
-                            }
-                            return null;
-                          },
+                          validator: (value) => AppValidators.validateConfirmPassword(
+                            value,
+                            _passwordController.text,
+                            tr.field_required,
+                            tr.passwords_dont_match,
+                          ),
                         );
                       },
                     ),

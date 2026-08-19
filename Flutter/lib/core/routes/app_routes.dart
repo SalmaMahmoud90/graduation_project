@@ -21,6 +21,7 @@ import 'package:a_tareqaak/presentation/screens/profile/user_profile_screen.dart
 import 'package:a_tareqaak/presentation/screens/report/report_details_screen.dart';
 import 'package:a_tareqaak/presentation/screens/report/my_reports_screen.dart';
 import 'package:a_tareqaak/presentation/screens/report/send_report_screen.dart';
+import 'package:a_tareqaak/presentation/screens/ride_tracking/ride_tracking_screen.dart';
 import 'package:a_tareqaak/presentation/screens/rider_rides/search_results_screen.dart';
 import 'package:a_tareqaak/presentation/screens/rider_rides/widgets/rider_bottom_nav_bar.dart';
 import 'package:a_tareqaak/presentation/screens/settings/settings_screen.dart';
@@ -566,5 +567,21 @@ class DriverReservationsRoute extends GoRouteData with $DriverReservationsRoute 
   @override
   CustomTransitionPage<void> buildPage(context, state) {
     return DriverReservationsScreen().buildPage(pageAnimation: PageAnimation.slide);
+  }
+}
+
+@TypedGoRoute<RideTrackingRoute>(path: '/ride_tracking')
+class RideTrackingRoute extends GoRouteData with $RideTrackingRoute {
+  final RideDataModel $extra;
+  final bool isDriver;
+
+  RideTrackingRoute({required this.$extra, this.isDriver = false});
+
+  @override
+  CustomTransitionPage<void> buildPage(BuildContext context, GoRouterState state) {
+    return RideTrackingScreen(
+      ride: $extra,
+      isDriver: isDriver,
+    ).buildPage(pageAnimation: PageAnimation.slide);
   }
 }

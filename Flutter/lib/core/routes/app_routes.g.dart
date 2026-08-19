@@ -34,6 +34,7 @@ List<RouteBase> get $appRoutes => [
   $searchRideFormRoute,
   $searchResultsRoute,
   $driverReservationsRoute,
+  $rideTrackingRoute,
 ];
 
 RouteBase get $splashRoute => GoRouteData.$route(
@@ -1087,4 +1088,48 @@ mixin $DriverReservationsRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $rideTrackingRoute => GoRouteData.$route(
+  path: '/ride_tracking',
+  hasOverriddenOnExit: false,
+  factory: $RideTrackingRoute._fromState,
+);
+
+mixin $RideTrackingRoute on GoRouteData {
+  static RideTrackingRoute _fromState(GoRouterState state) => RideTrackingRoute(
+    isDriver:
+        _$convertMapValue(
+          'is-driver',
+          state.uri.queryParameters,
+          _$boolConverter,
+        ) ??
+        false,
+    $extra: state.extra as RideDataModel,
+  );
+
+  RideTrackingRoute get _self => this as RideTrackingRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/ride_tracking',
+    queryParams: {
+      if (_self.isDriver != false) 'is-driver': _self.isDriver.toString(),
+    },
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }

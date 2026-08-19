@@ -1,12 +1,11 @@
 
 import 'package:a_tareqaak/core/routes/app_routes.dart';
-import 'package:a_tareqaak/core/services/locator/locator.dart';
 import 'package:a_tareqaak/presentation/cubit/language/language_cubit.dart';
+import 'package:a_tareqaak/presentation/cubit/theme/theme_cubit.dart';
 import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:a_tareqaak/core/extension/localization_extension.dart';
 import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
@@ -63,7 +62,11 @@ class SettingsScreen extends StatelessWidget {
                   itemCount: 7,
                   separatorBuilder: (context, index) => SizedBox(height: AppHeight.h12),
                  itemBuilder:(context, index) => _buildSettingCard(
-                      icon: icons[index],
+                      icon: index !=3 ?
+                      icons[index] :
+                       context.watch<ThemeCubit>().isDarkMode
+        ? FontAwesomeIcons.sun
+        : FontAwesomeIcons.moon,
                       title: titles[index],
                       onTap: () {
                         index == 0
@@ -73,7 +76,7 @@ class SettingsScreen extends StatelessWidget {
                                 : index == 2
                                 ?  context.read<LanguageCubit>().toggleLanguage()
                                     : index == 3
-                                  ?   debugPrint('Dark Mode Tapped')
+                                  ?   context.read<ThemeCubit>().toggleTheme()
                                         : index == 4
                                         ? CustomerServiceRoute().push(context)
                                         : index == 5
