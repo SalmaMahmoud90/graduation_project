@@ -69,3 +69,4 @@ test/*.log.diff
 **/firebase/serviceAccountKey.json
 website/assets/song.mp3
 website/assets/wallpaper.mp4
+website/assets/atareeqak.apk
