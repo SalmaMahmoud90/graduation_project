@@ -67,3 +67,5 @@ test/*.log.diff
 .env
 *.pyc
 **/firebase/serviceAccountKey.json
+website/assets/song.mp3
+website/assets/wallpaper.mp4

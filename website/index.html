@@ -15,9 +15,53 @@
     <!-- App font (Noto Kufi Arabic + Geist) is self-hosted in styles.css/fonts -->
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body class="intro-open">
+    <!-- ===================== Intro splash ===================== -->
+    <!-- Fullscreen video + centered logo. Tap/click to start the song and enter. -->
+    <div id="intro" class="intro" role="button" tabindex="0" aria-label="اضغط للبدء">
+      <video
+        class="intro__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+      >
+        <source src="assets/wallpaper.mp4" type="video/mp4" />
+      </video>
+      <div class="intro__overlay" aria-hidden="true"></div>
+      <div class="intro__content">
+        <img
+          src="assets/atareeqak-logo.png"
+          alt="عطريقك"
+          class="intro__logo"
+          width="766"
+          height="385"
+        />
+        <p class="intro__hint">اضغط للبدء</p>
+      </div>
+    </div>
+
     <!-- ===================== Hero (teal) ===================== -->
     <header class="hero">
+      <!-- Background video (purple → recoloured to brand teal via hue filter) -->
+      <video
+        class="hero__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+      >
+        <source src="assets/wallpaper.mp4" type="video/mp4" />
+      </video>
+      <div class="hero__overlay" aria-hidden="true"></div>
+
+      <!-- Background song — starts on load from 0:20 (see script at page end) -->
+      <audio id="hero-song" src="assets/song.mp3" preload="auto"></audio>
+
       <nav class="nav container" aria-label="التنقل الرئيسي">
         <a class="nav__brand" href="#top" aria-label="عطريقك — الصفحة الرئيسية">
           <img
@@ -28,7 +72,7 @@
             height="385"
           />
         </a>
-        <a class="btn btn--ghost" data-apk href="assets/atareeqak.apk">حمّل التطبيق</a>
+        <a class="btn btn--ghost" data-apk href="#download">حمّل التطبيق</a>
       </nav>
 
       <div class="hero__inner container" id="top">
@@ -38,7 +82,7 @@
           ووصّل بأمان.
         </p>
         <div class="hero__actions">
-          <a class="btn btn--gold" data-apk href="assets/atareeqak.apk" aria-label="تحميل تطبيق عطريقك">
+          <a class="btn btn--gold" data-apk href="#" aria-label="تحميل تطبيق عطريقك">
             <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M12 3v10m0 0 4-4m-4 4-4-4M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"
@@ -49,8 +93,9 @@
                 stroke-linejoin="round"
               />
             </svg>
-            حمّل التطبيق
+            حمّل التطبيق (APK)
           </a>
+          <span class="hero__hint">لأجهزة أندرويد — الرابط سيتوفر قريبًا</span>
         </div>
       </div>
 
@@ -210,6 +255,76 @@
           if (!href || href === '#') e.preventDefault()
         })
       })
+
+      // Intro splash + background song. Autoplay-with-sound is blocked, so the
+      // song only starts on the user's click/tap on the fullscreen intro — the
+      // same click also dismisses the splash and reveals the page underneath.
+      ;(function () {
+        var song = document.getElementById('hero-song')
+        var intro = document.getElementById('intro')
+        var START = 20
+
+        function toStart() {
+          if (!song) return
+          try {
+            song.currentTime = START
+          } catch (e) {}
+        }
+        function playSong() {
+          if (!song) return
+          if (song.currentTime < START) toStart()
+          var p = song.play()
+          if (p && p.catch) p.catch(function () {})
+        }
+
+        if (song) {
+          song.addEventListener('loadedmetadata', toStart)
+          // Loop, but always from 0:20 (skips the first 20s intro each time).
+          song.addEventListener('ended', function () {
+            toStart()
+            playSong()
+          })
+        }
+
+        var entered = false
+        function enter() {
+          if (entered || !intro) return
+          entered = true
+          playSong() // user gesture -> audio is allowed
+          // Make sure the hero background video keeps playing behind the page.
+          var hv = document.querySelector('.hero__video')
+          if (hv) {
+            var hp = hv.play()
+            if (hp && hp.catch) hp.catch(function () {})
+          }
+          intro.classList.add('is-hidden')
+          document.body.classList.remove('intro-open')
+          window.setTimeout(function () {
+            var iv = intro.querySelector('.intro__video')
+            if (iv) iv.pause()
+            intro.style.display = 'none'
+          }, 700)
+        }
+
+        if (intro) {
+          intro.addEventListener('click', enter)
+          intro.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+              e.preventDefault()
+              enter()
+            }
+          })
+        }
+      })()
+
+      // Respect users who prefer reduced motion: hold the videos on their first frame.
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.hero__video, .intro__video').forEach(function (v) {
+          v.addEventListener('loadeddata', function () {
+            v.pause()
+          })
+        })
+      }
     </script>
   </body>
 </html>
