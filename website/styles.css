@@ -1,0 +1,427 @@
+/* ============================================================
+   Atareeqak (عطريقك) landing page
+   Palette + fonts mirror the app (Flutter AppColors / dashboard theme).
+   Fonts are the same self-hosted files the admin dashboard ships:
+   Noto Kufi Arabic (400/500/700) for Arabic, Geist Variable for Latin.
+   ============================================================ */
+
+/* --- Noto Kufi Arabic — Arabic subset --- */
+@font-face {
+  font-family: 'Noto Kufi Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/noto-kufi-arabic-arabic-400-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891,
+    U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41,
+    U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E,
+    U+1EC71-1ECB4, U+1ED01-1ED3D, U+1EE00-1EEF1;
+}
+@font-face {
+  font-family: 'Noto Kufi Arabic';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/noto-kufi-arabic-arabic-500-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891,
+    U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41,
+    U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E,
+    U+1EC71-1ECB4, U+1ED01-1ED3D, U+1EE00-1EEF1;
+}
+@font-face {
+  font-family: 'Noto Kufi Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/noto-kufi-arabic-arabic-700-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891,
+    U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41,
+    U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E,
+    U+1EC71-1ECB4, U+1ED01-1ED3D, U+1EE00-1EEF1;
+}
+/* --- Noto Kufi Arabic — Latin subset (digits, acronyms) --- */
+@font-face {
+  font-family: 'Noto Kufi Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/noto-kufi-arabic-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Noto Kufi Arabic';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/noto-kufi-arabic-latin-500-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Noto Kufi Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/noto-kufi-arabic-latin-700-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* --- Geist Variable — Latin fallback (same as dashboard) --- */
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('fonts/geist-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('fonts/geist-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --primary: #006874; /* brand teal */
+  --primary-dark: #00415f;
+  --primary-light: #00a3b5;
+  --gold: #fec327; /* logoOrange accent */
+  --cream: #f7eedd;
+  --canvas: #f6f6f6; /* app background */
+  --ink: #281e27; /* blackText */
+  --muted: #7a7a7a; /* greyText */
+  --white: #ffffff;
+  --border: #e6e6e6;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(0, 65, 95, 0.08);
+  --maxw: 1080px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: 'Noto Kufi Arabic', 'Geist Variable', system-ui, sans-serif;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+
+/* ---------------- Buttons ---------------- */
+.btn {
+  --btn-bg: var(--primary);
+  --btn-fg: var(--white);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 24px;
+  border-radius: 999px;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+.btn__icon {
+  width: 20px;
+  height: 20px;
+}
+.btn--gold {
+  --btn-bg: var(--gold);
+  --btn-fg: #4a3410;
+  box-shadow: 0 8px 22px rgba(254, 195, 39, 0.35);
+}
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--white);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+.btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.btn--lg {
+  padding: 16px 30px;
+  font-size: 1.05rem;
+}
+
+/* ---------------- Hero ---------------- */
+.hero {
+  position: relative;
+  background: radial-gradient(
+      1100px 480px at 80% -10%,
+      var(--primary-light),
+      transparent 60%
+    ),
+    linear-gradient(160deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: var(--white);
+  padding-bottom: 88px;
+  overflow: hidden;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 18px;
+}
+.nav__brand {
+  display: inline-flex;
+  align-items: center;
+}
+.nav__logo {
+  height: 40px;
+  width: auto;
+}
+
+.hero__inner {
+  text-align: center;
+  padding-top: 40px;
+  padding-bottom: 20px;
+}
+.hero__title {
+  margin: 0 auto;
+  max-width: 16ch;
+  font-size: clamp(2rem, 5.5vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.hero__subtitle {
+  margin: 18px auto 0;
+  max-width: 46ch;
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.9);
+}
+.hero__actions {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.hero__hint {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* soft wave/curve separating hero from the light canvas */
+.hero__wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 60px;
+  background: var(--canvas);
+  border-radius: 100% 100% 0 0 / 100% 100% 0 0;
+}
+
+/* ---------------- Sections ---------------- */
+.section {
+  padding-block: 72px;
+}
+.section--muted {
+  background: var(--white);
+  border-block: 1px solid var(--border);
+}
+.section__title {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+.section__lead {
+  margin: 10px auto 0;
+  max-width: 48ch;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ---------------- Feature cards ---------------- */
+.cards {
+  list-style: none;
+  margin: 44px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 26px 22px;
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(0, 65, 95, 0.12);
+}
+.card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--cream);
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+.card__icon svg {
+  width: 28px;
+  height: 28px;
+}
+.card__title {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.card__text {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ---------------- Steps ---------------- */
+.steps {
+  list-style: none;
+  margin: 44px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.step {
+  text-align: center;
+  padding: 8px;
+}
+.step__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--white);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.step__title {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.step__text {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ---------------- Download CTA band ---------------- */
+.cta {
+  background: linear-gradient(160deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: var(--white);
+  padding-block: 64px;
+}
+.cta__inner {
+  text-align: center;
+}
+.cta__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  font-weight: 700;
+}
+.cta__text {
+  margin: 10px 0 26px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ---------------- Footer ---------------- */
+.footer {
+  background: var(--canvas);
+  padding-block: 26px;
+}
+.footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer__brand {
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+.footer__copy {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------------- Small screens ---------------- */
+@media (max-width: 560px) {
+  .section {
+    padding-block: 56px;
+  }
+  .nav__logo {
+    height: 34px;
+  }
+  .btn {
+    padding: 12px 20px;
+  }
+  .footer__inner {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto;
+    transition: none !important;
+  }
+}

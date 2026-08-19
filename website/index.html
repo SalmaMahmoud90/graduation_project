@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>عطريقك — شارك رحلتك مع الجميع</title>
+    <meta
+      name="description"
+      content="عطريقك تطبيق لمشاركة الرحلات للجميع: احجز مقعدك، شارك التكلفة، ووصّل بأمان إلى وجهتك."
+    />
+    <meta name="theme-color" content="#006874" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/atareeqak-logo.png" />
+
+    <!-- App font (Noto Kufi Arabic + Geist) is self-hosted in styles.css/fonts -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- ===================== Hero (teal) ===================== -->
+    <header class="hero">
+      <nav class="nav container" aria-label="التنقل الرئيسي">
+        <a class="nav__brand" href="#top" aria-label="عطريقك — الصفحة الرئيسية">
+          <img
+            src="assets/atareeqak-logo.png"
+            alt="عطريقك"
+            class="nav__logo"
+            width="766"
+            height="385"
+          />
+        </a>
+        <a class="btn btn--ghost" data-apk href="assets/atareeqak.apk">حمّل التطبيق</a>
+      </nav>
+
+      <div class="hero__inner container" id="top">
+        <h1 class="hero__title">رحلتك… أسهل وأوفر</h1>
+        <p class="hero__subtitle">
+          عطريقك يجمع الناس في رحلات مشتركة موثوقة — احجز مقعدك، شارك التكلفة،
+          ووصّل بأمان.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--gold" data-apk href="assets/atareeqak.apk" aria-label="تحميل تطبيق عطريقك">
+            <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 3v10m0 0 4-4m-4 4-4-4M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            حمّل التطبيق
+          </a>
+        </div>
+      </div>
+
+      <div class="hero__wave" aria-hidden="true"></div>
+    </header>
+
+    <main>
+      <!-- ===================== Features ===================== -->
+      <section class="section container" aria-labelledby="features-title">
+        <h2 class="section__title" id="features-title">لماذا عطريقك؟</h2>
+        <p class="section__lead">
+          كل ما تحتاجه للتنقّل بين وجهاتك اليومية في مكان واحد.
+        </p>
+
+        <ul class="cards" role="list">
+          <li class="card">
+            <span class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M5 16 6.5 9.5A2 2 0 0 1 8.45 8h7.1a2 2 0 0 1 1.95 1.5L19 16M5 16h14M5 16v2m14-2v2M7.5 13h9"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <h3 class="card__title">رحلات مشتركة</h3>
+            <p class="card__text">
+              اعثر على رحلة إلى وجهتك أو انشر رحلتك، وشارك التكلفة مع رفاق الطريق.
+            </p>
+          </li>
+
+          <li class="card">
+            <span class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M4 7h13a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11M16 12h.01"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <h3 class="card__title">محفظة إلكترونية</h3>
+            <p class="card__text">
+              ادفع واستقبل بسهولة عبر محفظتك داخل التطبيق، بدون تعقيد.
+            </p>
+          </li>
+
+          <li class="card">
+            <span class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 3 5 6v5c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Zm-2.5 8.5 1.8 1.8 3.7-3.8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <h3 class="card__title">أمان وموثوقية</h3>
+            <p class="card__text">
+              حسابات موثّقة ونظام بلاغات يحافظ على سلامة الجميع في كل رحلة.
+            </p>
+          </li>
+
+          <li class="card">
+            <span class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                />
+                <circle cx="12" cy="11" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+            </span>
+            <h3 class="card__title">تتبّع مباشر</h3>
+            <p class="card__text">
+              تابع رحلتك وموقعك لحظة بلحظة حتى تصل إلى وجهتك.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ===================== How it works ===================== -->
+      <section class="section section--muted" aria-labelledby="steps-title">
+        <div class="container">
+          <h2 class="section__title" id="steps-title">كيف يعمل؟</h2>
+          <p class="section__lead">ثلاث خطوات وتكون في طريقك.</p>
+
+          <ol class="steps" role="list">
+            <li class="step">
+              <span class="step__num">١</span>
+              <h3 class="step__title">أنشئ حسابك</h3>
+              <p class="step__text">سجّل بسرعة كسائق أو راكب.</p>
+            </li>
+            <li class="step">
+              <span class="step__num">٢</span>
+              <h3 class="step__title">اختر رحلتك</h3>
+              <p class="step__text">ابحث عن رحلة مناسبة أو انشر رحلتك الخاصة.</p>
+            </li>
+            <li class="step">
+              <span class="step__num">٣</span>
+              <h3 class="step__title">انطلق</h3>
+              <p class="step__text">شارك الطريق والتكلفة، ووصّل بأمان.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ===================== Download CTA ===================== -->
+      <section class="cta" id="download" aria-labelledby="cta-title">
+        <div class="container cta__inner">
+          <h2 class="cta__title" id="cta-title">جاهز تبدأ؟ حمّل عطريقك الآن</h2>
+          <p class="cta__text">نسخة أندرويد (APK). الرابط سيتوفر قريبًا.</p>
+          <a class="btn btn--gold btn--lg" data-apk href="#" aria-label="تحميل تطبيق عطريقك">
+            <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 3v10m0 0 4-4m-4 4-4-4M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            حمّل التطبيق (APK)
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================== Footer ===================== -->
+    <footer class="footer">
+      <div class="container footer__inner">
+        <span class="footer__brand">عطريقك</span>
+        <span class="footer__copy">© 2026 عطريقك — جميع الحقوق محفوظة.</span>
+      </div>
+    </footer>
+
+    <script>
+      // The APK link isn't wired up yet. Until an href is set, keep clicks on
+      // the page instead of jumping to the top. Replace href="#" with the real
+      // APK URL to enable downloads.
+      document.querySelectorAll('[data-apk]').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+          var href = el.getAttribute('href')
+          if (!href || href === '#') e.preventDefault()
+        })
+      })
+    </script>
+  </body>
+</html>
