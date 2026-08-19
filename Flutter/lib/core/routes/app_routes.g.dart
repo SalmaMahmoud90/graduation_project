@@ -398,6 +398,11 @@ mixin $DriverProfileRoute on GoRouteData {
           state.uri.queryParameters,
           _$boolConverter,
         ),
+        otherUserId: _$convertMapValue(
+          'other-user-id',
+          state.uri.queryParameters,
+          int.tryParse,
+        ),
       );
 
   DriverProfileRoute get _self => this as DriverProfileRoute;
@@ -408,6 +413,8 @@ mixin $DriverProfileRoute on GoRouteData {
     queryParams: {
       if (_self.isOtherUser != null)
         'is-other-user': _self.isOtherUser!.toString(),
+      if (_self.otherUserId != null)
+        'other-user-id': _self.otherUserId!.toString(),
     },
   );
 
@@ -600,10 +607,25 @@ RouteBase get $sendReportRoute => GoRouteData.$route(
 );
 
 mixin $SendReportRoute on GoRouteData {
-  static SendReportRoute _fromState(GoRouterState state) => SendReportRoute();
+  static SendReportRoute _fromState(GoRouterState state) => SendReportRoute(
+    userId: int.parse(state.uri.queryParameters['user-id']!),
+    rideId: _$convertMapValue(
+      'ride-id',
+      state.uri.queryParameters,
+      int.tryParse,
+    ),
+  );
+
+  SendReportRoute get _self => this as SendReportRoute;
 
   @override
-  String get location => GoRouteData.$location('/send-report');
+  String get location => GoRouteData.$location(
+    '/send-report',
+    queryParams: {
+      'user-id': _self.userId.toString(),
+      if (_self.rideId != null) 'ride-id': _self.rideId!.toString(),
+    },
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

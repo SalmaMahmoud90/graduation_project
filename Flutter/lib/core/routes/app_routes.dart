@@ -112,7 +112,7 @@ class EditRideRoute extends GoRouteData with $EditRideRoute {
   });
   @override
   CustomTransitionPage<void> buildPage(context, state) {
-    return const EditRideScreen().buildPage(pageAnimation: PageAnimation.slide);
+    return EditRideScreen(ride: $extra).buildPage(pageAnimation: PageAnimation.slide);
   }
 }
 
@@ -188,13 +188,16 @@ class CustomerServiceRoute extends GoRouteData with $CustomerServiceRoute {
 @TypedGoRoute<DriverProfileRoute>(path: '/driver-profile')
 class DriverProfileRoute extends GoRouteData with $DriverProfileRoute {
   final bool? isOtherUser;
+  final int? otherUserId;
 
-  DriverProfileRoute({this.isOtherUser});
+  DriverProfileRoute({this.isOtherUser, this.otherUserId});
 
   @override
   CustomTransitionPage<void> buildPage(context, state) {
-    return UserProfileScreen(isOtherUser: isOtherUser ?? false)
-        .buildPage(pageAnimation: PageAnimation.slide);
+    return UserProfileScreen(
+      isOtherUser: isOtherUser ?? false,
+      otherUserId: otherUserId,
+    ).buildPage(pageAnimation: PageAnimation.slide);
   }
 }
 
@@ -356,9 +359,15 @@ class DriverShellScreen extends StatelessWidget {
 
 @TypedGoRoute<SendReportRoute>(path: '/send-report')
 class SendReportRoute extends GoRouteData with $SendReportRoute {
+  final int userId;
+  final int? rideId;
+
+  const SendReportRoute({required this.userId, this.rideId});
+
   @override
   CustomTransitionPage<void> buildPage(context, state) {
-    return const SendReportScreen().buildPage(pageAnimation: PageAnimation.slide);
+    return SendReportScreen(userId: userId, rideId: rideId)
+        .buildPage(pageAnimation: PageAnimation.slide);
   }
 }
 

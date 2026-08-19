@@ -18,10 +18,12 @@ import 'package:a_tareqaak/presentation/widgets/text/section_title.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final bool isOtherUser; // خاصية فحص هل البروفايل لمستخدم آخر لتحديد خيار الإبلاغ
+  final int? otherUserId; // معرّف المستخدم الآخر لاستخدامه في الإبلاغ
 
   const UserProfileScreen({
     super.key,
     this.isOtherUser = false,
+    this.otherUserId,
   });
 
   @override
@@ -44,14 +46,18 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return _ProfileContent(isOtherUser: widget.isOtherUser);
+    return _ProfileContent(
+      isOtherUser: widget.isOtherUser,
+      otherUserId: widget.otherUserId,
+    );
   }
 }
 
 class _ProfileContent extends StatelessWidget {
   final bool isOtherUser;
+  final int? otherUserId;
 
-  const _ProfileContent({required this.isOtherUser});
+  const _ProfileContent({required this.isOtherUser, this.otherUserId});
 
   void _showReportDialog(BuildContext context) {
     final tr = context.loc;
@@ -68,7 +74,7 @@ class _ProfileContent extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(dialogCtx);
-              SendReportRoute().push(context);
+              SendReportRoute(userId: otherUserId ?? 0).push(context);
             },
             child: BodyTitle(text: tr.ok, color: AppColors.red),
           ),
@@ -284,33 +290,36 @@ class _ProfileContent extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: CustomElevatedButton(
-                            height: AppHeight.h45,
-                            borderRadius: AppRadius.r12,
-                            color: AppColors.white,
-                            borderSide: const BorderSide(color: AppColors.red),
-                            onPressed: () {
-                              SendReportRoute().push(context);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              spacing: AppWidth.w8,
-                              children: [
-                                FaIcon(
-                                  FontAwesomeIcons.flag,
-                                  color: AppColors.red,
-                                  size: AppSize.s16,
-                                ),
-                                BodyTitle(
-                                  text: tr.report,
-                                  color: AppColors.red,
-                                  fontWeight: AppFontWeight.bold,
-                                ),
-                              ],
+                        // زر الإبلاغ يظهر للمستخدمين الآخرين فقط
+                        if (isOtherUser)
+                          Expanded(
+                            child: CustomElevatedButton(
+                              height: AppHeight.h45,
+                              borderRadius: AppRadius.r12,
+                              color: AppColors.white,
+                              borderSide: const BorderSide(color: AppColors.red),
+                              onPressed: () {
+                                SendReportRoute(userId: otherUserId ?? 0)
+                                    .push(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                spacing: AppWidth.w8,
+                                children: [
+                                  FaIcon(
+                                    FontAwesomeIcons.flag,
+                                    color: AppColors.red,
+                                    size: AppSize.s16,
+                                  ),
+                                  BodyTitle(
+                                    text: tr.report,
+                                    color: AppColors.red,
+                                    fontWeight: AppFontWeight.bold,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),

@@ -1,3 +1,6 @@
+import 'package:a_tareqaak/presentation/bloc/auth/resend_reset_code/i_resend_reset_code_event.dart';
+import 'package:a_tareqaak/presentation/bloc/auth/resend_reset_code/i_resend_reset_code_state.dart';
+import 'package:a_tareqaak/presentation/bloc/auth/resend_reset_code/resend_reset_code_bloc.dart';
 import 'package:a_tareqaak/presentation/bloc/auth/resend_verification/i_resend_verification_event.dart';
 import 'package:a_tareqaak/presentation/bloc/auth/verify_email/i_verify_email_event.dart';
 import 'package:a_tareqaak/presentation/bloc/auth/verify_email/i_verify_email_state.dart';
@@ -17,6 +20,7 @@ import 'package:a_tareqaak/core/resources/app_colors.dart';
 import 'package:a_tareqaak/core/resources/app_fonts.dart';
 import 'package:a_tareqaak/core/resources/app_values.dart';
 import 'package:a_tareqaak/core/routes/app_routes.dart';
+import 'package:a_tareqaak/domain/entity/auth/resend_reset_code/resend_reset_code.dart';
 import 'package:a_tareqaak/domain/entity/auth/resend_verification/resend_verification_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/verify_email/verify_email_entity.dart';
 import 'package:a_tareqaak/domain/entity/auth/verify_reset_code/verify_reset_code_entity.dart';
@@ -49,6 +53,7 @@ class CheckCodeScreen extends StatelessWidget {
         BlocProvider(create: (_) => VerifyEmailBloc()),
         BlocProvider(create: (_) => VerifyResetCodeBloc()),
         BlocProvider(create: (_) => ResendVerificationBloc()),
+        BlocProvider(create: (_) => ResendResetCodeBloc()),
       ],
       child: _CheckCodeContent(
         email: email,
@@ -198,6 +203,27 @@ class _CheckCodeContentState extends State<_CheckCodeContent> {
                   ResetPasswordRoute(resetToken: widget.resetToken!).pushReplacement(context);
                   
                 } else if (apiState is VerifyResetCodeFailed) {
+                  showCustomSnackBar(
+                    context: context,
+                    title: tr.error_title,
+                    message: apiState.message,
+                    contentType: ContentType.failure,
+                  );
+                }
+              },
+            ),
+
+            // 3. الاستماع لنتيجة إعادة إرسال كود استعادة كلمة المرور
+            BlocListener<ResendResetCodeBloc, IResendResetCodeState>(
+              listener: (context, apiState) {
+                if (apiState is ResendResetCodeLoaded) {
+                  showCustomSnackBar(
+                    context: context,
+                    title: tr.success_title,
+                    message: tr.resend_code,
+                    contentType: ContentType.success,
+                  );
+                } else if (apiState is ResendResetCodeFailed) {
                   showCustomSnackBar(
                     context: context,
                     title: tr.error_title,
@@ -363,7 +389,6 @@ class _CheckCodeContentState extends State<_CheckCodeContent> {
                 // المؤقت الزمني وزر إعادة الإرسال
                 BlocBuilder<VerifyEmailCubit, VerifyEmailCubitState>(
                   builder: (context, cubitState) {
-                    final cubit = context.read<VerifyEmailCubit>();
                     return Column(
                       spacing: AppHeight.h8,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -389,13 +414,25 @@ class _CheckCodeContentState extends State<_CheckCodeContent> {
                         InkWell(
                           onTap: cubitState.canResend
                               ? () {
-                                  // 👈 الاستدعاء بالاسم المعتمد ResendVerificationEvent
-                                  context.read<ResendVerificationBloc>().add(
-                                        ResendVerificationEvent(
-                                          ResendVerificationEntity(
-                                              email: widget.email),
-                                        ),
-                                      );
+                                  if (widget.isForgotPassword) {
+                                    // إعادة إرسال كود استعادة كلمة المرور
+                                    context.read<ResendResetCodeBloc>().add(
+                                          ResendResetCodeEvent(
+                                            ResendResetCodeEntity(
+                                              resetToken:
+                                                  widget.resetToken ?? '',
+                                            ),
+                                          ),
+                                        );
+                                  } else {
+                                    // 👈 الاستدعاء بالاسم المعتمد ResendVerificationEvent
+                                    context.read<ResendVerificationBloc>().add(
+                                          ResendVerificationEvent(
+                                            ResendVerificationEntity(
+                                                email: widget.email),
+                                          ),
+                                        );
+                                  }
                                 }
                               : null,
                           child: Row(
