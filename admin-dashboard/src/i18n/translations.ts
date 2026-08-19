@@ -47,12 +47,12 @@ export const translations: Record<Locale, Record<string, string>> = {
       'Platform analytics: daily activity, popular routes, and the most active drivers and riders.',
     'statistics.daily.title': 'Daily activity',
     'statistics.daily.description':
-      'Rides created and reservations made per day, from the daily platform summary.',
+      'Rides created and reservations made per day.',
     'statistics.daily.rides': 'Rides created',
     'statistics.daily.reservations': 'Reservations made',
     'statistics.daily.emptyTitle': 'No daily summary yet',
     'statistics.daily.emptyDescription':
-      'The daily summary is generated once a day by a scheduled job. Rows will appear here after the first run.',
+      'Daily activity is updated once a day. It will appear here after the first day.',
     'statistics.destinations.title': 'Popular destinations',
     'statistics.destinations.description':
       'Cities riders travel to most, by number of trips.',
@@ -81,17 +81,18 @@ export const translations: Record<Locale, Record<string, string>> = {
     'statistics.dailyTable.date': 'Date',
     'statistics.dailyTable.rides': 'Rides created',
     'statistics.dailyTable.reservations': 'Reservations made',
-    'statistics.views.title': 'Database views',
+    'statistics.views.title': 'Reports',
     'statistics.views.description':
-      'Every analytics view in the database. Pick one to load it on its own.',
-    'statistics.views.menuTitle': 'Views',
-    'statistics.views.rowCount': '{count} rows',
-    'statistics.views.emptyTitle': 'No data yet',
+      'Pick a report to explore. Each one loads on its own so it stays fast.',
+    'statistics.views.menuTitle': 'All reports',
+    'statistics.views.rowCount': '{count} records',
+    'statistics.views.emptyTitle': 'Nothing to show yet',
     'statistics.views.emptyDescription':
-      'This view has no rows to show right now.',
+      'There are no records for this report right now.',
     'statistics.views.error':
-      'Something went wrong loading this view. Try another or refresh.',
-    'statistics.views.truncated': 'Showing the first {shown} of {total} rows.',
+      'Something went wrong loading this report. Try another or refresh.',
+    'statistics.views.truncated':
+      'Showing the first {shown} of {total} records.',
     'dashboard.error':
       'Something went wrong loading this page. Try refreshing.',
     'dashboard.title': 'Overview',
@@ -349,12 +350,12 @@ export const translations: Record<Locale, Record<string, string>> = {
       'تحليلات المنصة: النشاط اليومي، والمسارات الأكثر شيوعًا، وأنشط السائقين والركاب.',
     'statistics.daily.title': 'النشاط اليومي',
     'statistics.daily.description':
-      'عدد الرحلات المنشورة والحجوزات لكل يوم، من الملخص اليومي للمنصة.',
+      'عدد الرحلات المنشورة والحجوزات لكل يوم.',
     'statistics.daily.rides': 'الرحلات المنشورة',
     'statistics.daily.reservations': 'الحجوزات',
     'statistics.daily.emptyTitle': 'لا يوجد ملخص يومي بعد',
     'statistics.daily.emptyDescription':
-      'يُنشأ الملخص اليومي مرة واحدة يوميًا عبر مهمة مجدولة. ستظهر البيانات هنا بعد أول تشغيل.',
+      'يُحدَّث النشاط اليومي مرة واحدة يوميًا. سيظهر هنا بعد اليوم الأول.',
     'statistics.destinations.title': 'الوجهات الأكثر شيوعًا',
     'statistics.destinations.description':
       'المدن التي يقصدها الركاب أكثر، حسب عدد الرحلات.',
@@ -383,17 +384,17 @@ export const translations: Record<Locale, Record<string, string>> = {
     'statistics.dailyTable.date': 'التاريخ',
     'statistics.dailyTable.rides': 'الرحلات المنشورة',
     'statistics.dailyTable.reservations': 'الحجوزات',
-    'statistics.views.title': 'عروض قاعدة البيانات',
+    'statistics.views.title': 'التقارير',
     'statistics.views.description':
-      'كل عروض التحليلات في قاعدة البيانات. اختر عرضًا لتحميله وحده.',
-    'statistics.views.menuTitle': 'العروض',
-    'statistics.views.rowCount': '{count} صفوف',
-    'statistics.views.emptyTitle': 'لا توجد بيانات بعد',
+      'اختر تقريرًا لاستعراضه. يُحمّل كل تقرير على حدة ليبقى سريعًا.',
+    'statistics.views.menuTitle': 'كل التقارير',
+    'statistics.views.rowCount': '{count} سجل',
+    'statistics.views.emptyTitle': 'لا شيء لعرضه بعد',
     'statistics.views.emptyDescription':
-      'لا توجد صفوف لعرضها في هذا العرض حاليًا.',
+      'لا توجد سجلات لهذا التقرير حاليًا.',
     'statistics.views.error':
-      'حدث خطأ أثناء تحميل هذا العرض. جرّب عرضًا آخر أو حدّث الصفحة.',
-    'statistics.views.truncated': 'عرض أول {shown} من {total} صفًا.',
+      'حدث خطأ أثناء تحميل هذا التقرير. جرّب تقريرًا آخر أو حدّث الصفحة.',
+    'statistics.views.truncated': 'عرض أول {shown} من {total} سجل.',
     'dashboard.error':
       'حدث خطأ أثناء تحميل الصفحة. جرّب التحديث.',
     'dashboard.title': 'نظرة عامة',
