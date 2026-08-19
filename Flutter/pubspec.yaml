@@ -121,25 +121,7 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Rubik
-      fonts:
-        - asset: assets/fonts/rubik/Rubik-Light.ttf
-          weight: 200
-        - asset: assets/fonts/rubik/Rubik-Light.ttf
-          weight: 300
-        - asset: assets/fonts/rubik/Rubik-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/rubik/Rubik-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/rubik/Rubik-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/rubik/Rubik-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/rubik/Rubik-ExtraBold.ttf
-          weight: 800
-        - asset: assets/fonts/rubik/Rubik-Black.ttf
-          weight: 900
-
+    
     - family: Tajawal
       fonts:
         - asset: assets/fonts/tajawal/Tajawal-ExtraLight.ttf
@@ -178,51 +160,4 @@ flutter:
         - asset: assets/fonts/cairo/Cairo-Black.ttf
           weight: 900
 
-    - family: Almarai
-      fonts:
-        - asset: assets/fonts/almarai/Almarai-Light.ttf
-          weight: 300
-        - asset: assets/fonts/almarai/Almarai-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/almarai/Almarai-Regular.ttf
-          weight: 500
-        - asset: assets/fonts/almarai/Almarai-Bold.ttf
-          weight: 600
-        - asset: assets/fonts/almarai/Almarai-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/almarai/Almarai-ExtraBold.ttf
-          weight: 800
-
-    - family: Noto
-      fonts:
-        - asset: assets/fonts/noto/NotoSansArabic-Thin.ttf
-          weight: 100
-        - asset: assets/fonts/noto/NotoSansArabic-ExtraLight.ttf
-          weight: 200
-        - asset: assets/fonts/noto/NotoSansArabic-Light.ttf
-          weight: 300
-        - asset: assets/fonts/noto/NotoSansArabic-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/noto/NotoSansArabic-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/noto/NotoSansArabic-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/noto/NotoSansArabic-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/noto/NotoSansArabic-ExtraBold.ttf
-          weight: 800
-        - asset: assets/fonts/noto/NotoSansArabic-Black.ttf
-          weight: 900
-    - family: MyFont
-      fonts:
-        - asset: assets/fonts/Braniella.ttf
-    - family: MyFontt
-      fonts:
-        - asset: assets/fonts/Faldith.otf
-    - family: MyFonttt
-      fonts:
-        - asset: assets/fonts/BucklaneScript_PERSONAL_USE_ONLY.otf
-
-
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
+   

@@ -3,11 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppFontFamily {
   static const String tajawal = "Tajawal";
-  static const String rubik = "Rubik";
-  static const String poppins = "Poppins";
   static const String cairo = "Cairo";
-  static const String almarai = "Almarai";
-  static const String noto = "Noto";
+  
 }
 
 class AppFontSize {
